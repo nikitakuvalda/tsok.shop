@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TSOK BOX — Гибкая Рутина | Pearl by Tais</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        :root {
+            --sub-accent: #c9956e;
+            --sub-gold:   #b8862a;
+            --sub-pearl:  #f0ebe4;
+            --sub-dark:   #2c2320;
+        }
+
+        /* ─── HERO ─── */
+        .sub-hero {
+            min-height: 92vh;
+            display: flex; align-items: center;
+            background: linear-gradient(160deg, #1c1714 0%, #2c2320 60%, #3a2e28 100%);
+            position: relative; overflow: hidden;
+        }
+        .sub-hero__deco {
+            position: absolute; inset: 0; pointer-events: none;
+        }
+        .sub-hero__deco-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(201,149,110,0.15);
+        }
+        .sub-hero__deco-ring:nth-child(1) { width: 600px; height: 600px; top: -150px; right: -100px; }
+        .sub-hero__deco-ring:nth-child(2) { width: 400px; height: 400px; top: -50px;  right: 0px; border-color: rgba(201,149,110,0.08); }
+        .sub-hero__deco-ring:nth-child(3) { width: 200px; height: 200px; bottom: 80px; left: 60px; border-color: rgba(201,149,110,0.1); }
+        .sub-hero__inner {
+            position: relative; z-index: 2;
+            padding: 120px var(--pad-x) 100px;
+            display: grid; grid-template-columns: 1fr 420px;
+            gap: 80px; align-items: center;
+            width: 100%; max-width: 1400px; margin: 0 auto;
+        }
+        .sub-hero__eyebrow {
+            display: inline-flex; align-items: center; gap: 12px;
+            font-size: 11px; font-weight: 600; letter-spacing: 0.22em;
+            text-transform: uppercase; color: var(--sub-accent);
+            margin-bottom: 28px;
+        }
+        .sub-hero__eyebrow::before { content:''; width:28px; height:1px; background:var(--sub-accent); }
+        .sub-hero__title {
+            font-family: var(--font-display);
+            font-size: clamp(52px, 7vw, 96px);
+            font-weight: 400; line-height: 0.92;
+            color: white; margin-bottom: 32px;
+            letter-spacing: -0.01em;
+        }
+        .sub-hero__title em { font-style: italic; color: var(--sub-accent); }
+        .sub-hero__desc {
+            font-size: 16px; font-weight: 300; line-height: 1.8;
+            color: rgba(255,255,255,0.6); max-width: 500px; margin-bottom: 48px;
+        }
+        .sub-hero__perks {
+            display: flex; flex-direction: column; gap: 14px; margin-bottom: 48px;
+        }
+        .sub-hero__perk {
+            display: flex; align-items: center; gap: 14px;
+            font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.75);
+        }
+        .sub-hero__perk-icon {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: rgba(201,149,110,0.15);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; font-size: 14px;
+        }
+        .sub-hero__cta { display: flex; gap: 16px; flex-wrap: wrap; }
+
+        /* Hero preview card */
+        .sub-hero__preview {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(201,149,110,0.2);
+            backdrop-filter: blur(20px);
+            padding: 36px;
+            border-radius: 2px;
+        }
+        .preview-label {
+            font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+            color: var(--sub-accent); margin-bottom: 20px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .preview-label::after { content:''; flex:1; height:1px; background:rgba(201,149,110,0.2); }
+        .preview-products { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+        .preview-product {
+            display: flex; align-items: center; gap: 14px; padding: 12px;
+            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+        }
+        .preview-product__img {
+            width: 40px; height: 50px; background: rgba(240,235,228,0.1);
+            flex-shrink: 0; overflow: hidden;
+        }
+        .preview-product__img img { width:100%; height:100%; object-fit:cover; }
+        .preview-product__name { font-size: 13px; color: rgba(255,255,255,0.8); flex:1; }
+        .preview-product__price { font-size: 13px; font-weight: 500; color: white; }
+        .preview-progress { margin-bottom: 20px; }
+        .preview-progress__bar {
+            height: 4px; background: rgba(255,255,255,0.1);
+            position: relative; border-radius: 2px; margin-bottom: 8px;
+        }
+        .preview-progress__fill {
+            position: absolute; left:0; top:0; height:100%;
+            background: linear-gradient(90deg, var(--sub-accent), var(--sub-gold));
+            border-radius: 2px; width: 63%; transition: width 0.5s ease;
+        }
+        .preview-progress__labels {
+            display: flex; justify-content: space-between;
+            font-size: 11px; color: rgba(255,255,255,0.4);
+        }
+        .preview-total {
+            display: flex; justify-content: space-between; align-items: baseline;
+            padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);
+        }
+        .preview-total__label { font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; text-transform: uppercase; }
+        .preview-total__price { font-family: var(--font-display); font-size: 28px; color: white; }
+        @media (max-width: 1024px) {
+            .sub-hero__inner { grid-template-columns: 1fr; gap: 48px; }
+            .sub-hero__preview { max-width: 440px; }
+        }
+
+        /* ─── HOW IT WORKS ─── */
+        .how-section {
+            padding: var(--section-y) var(--pad-x);
+            background: var(--color-off-white);
+            border-bottom: 1px solid var(--color-fem-border);
+        }
+        .how-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 1px; background: var(--color-fem-border);
+            margin-top: 64px;
+        }
+        .how-step {
+            background: var(--color-off-white);
+            padding: 44px 32px;
+            transition: background 0.3s;
+        }
+        .how-step:hover { background: var(--color-fem-card); }
+        .how-step__num {
+            font-family: var(--font-display);
+            font-size: 72px; font-weight: 300;
+            color: rgba(44,35,32,0.08); line-height: 1;
+            margin-bottom: 20px;
+        }
+        .how-step__title {
+            font-size: 14px; font-weight: 600; letter-spacing: 0.08em;
+            text-transform: uppercase; margin-bottom: 12px;
+        }
+        .how-step__desc {
+            font-size: 14px; font-weight: 300; line-height: 1.7;
+            color: var(--color-fem-muted);
+        }
+        @media (max-width: 768px) { .how-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 480px) { .how-grid { grid-template-columns: 1fr; } }
+
+        /* ─── CONSTRUCTOR ─── */
+        .constructor-section {
+            padding: var(--section-y) var(--pad-x);
+            background: var(--color-fem-card);
+        }
+        .constructor-layout {
+            display: grid; grid-template-columns: 1fr 380px;
+            gap: 48px; align-items: start;
+            margin-top: 64px;
+        }
+        @media (max-width: 1100px) { .constructor-layout { grid-template-columns: 1fr; } }
+
+        /* Products list */
+        .constructor-products { display: flex; flex-direction: column; gap: 1px; background: var(--color-fem-border); }
+        .constructor-product {
+            background: var(--color-off-white);
+            display: flex; align-items: center; gap: 20px;
+            padding: 20px 24px;
+            transition: background 0.2s;
+        }
+        .constructor-product:hover { background: #faf9f7; }
+        .constructor-product__img {
+            width: 60px; height: 75px; flex-shrink: 0;
+            background: var(--color-fem-card); overflow: hidden;
+        }
+        .constructor-product__img img { width:100%; height:100%; object-fit:cover; }
+        .constructor-product__info { flex:1; min-width: 0; }
+        .constructor-product__name {
+            font-family: var(--font-display); font-size: 18px; font-weight: 400;
+            margin-bottom: 4px;
+        }
+        .constructor-product__meta {
+            font-size: 12px; color: var(--color-fem-muted); letter-spacing: 0.04em;
+        }
+        .constructor-product__price {
+            font-size: 15px; font-weight: 500; flex-shrink: 0;
+        }
+        .constructor-product__qty {
+            display: flex; align-items: center;
+            border: 1px solid var(--color-fem-border);
+            flex-shrink: 0;
+        }
+        .constructor-product__qty button {
+            width: 36px; height: 36px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; line-height: 1;
+            transition: background 0.2s;
+        }
+        .constructor-product__qty button:hover { background: var(--color-fem-card); }
+        .constructor-product__qty span {
+            width: 32px; text-align: center;
+            font-size: 14px; font-weight: 500;
+        }
+
+        /* Progress panel */
+        .constructor-panel {
+            background: white;
+            border: 1px solid var(--color-fem-border);
+            padding: 32px;
+            position: sticky; top: calc(var(--top-h) + 20px);
+        }
+        .progress-section { margin-bottom: 32px; }
+        .progress-header {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: 12px;
+        }
+        .progress-label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+        .progress-amount {
+            font-family: var(--font-display); font-size: 22px; font-weight: 400;
+        }
+        .progress-bar-wrap {
+            height: 6px; background: var(--color-fem-border);
+            border-radius: 3px; position: relative; overflow: hidden;
+            margin-bottom: 16px;
+        }
+        .progress-bar-fill {
+            height: 100%; border-radius: 3px;
+            background: linear-gradient(90deg, #c9956e, #b8862a);
+            transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+            width: 0%;
+        }
+        .progress-milestones { display: flex; flex-direction: column; gap: 10px; }
+        .progress-milestone {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px;
+            border: 1px solid var(--color-fem-border);
+            transition: border-color 0.3s, background 0.3s;
+            opacity: 0.45;
+        }
+        .progress-milestone.is-unlocked {
+            border-color: #c9956e;
+            background: rgba(201,149,110,0.06);
+            opacity: 1;
+        }
+        .progress-milestone__icon { font-size: 18px; flex-shrink:0; }
+        .progress-milestone__text { flex:1; }
+        .progress-milestone__title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+        .progress-milestone__sub { font-size: 11px; color: var(--color-fem-muted); }
+        .progress-milestone__check {
+            width: 20px; height: 20px; border-radius: 50%;
+            background: var(--color-fem-border);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 10px; flex-shrink: 0;
+            transition: background 0.3s;
+        }
+        .progress-milestone.is-unlocked .progress-milestone__check {
+            background: #c9956e; color: white;
+        }
+
+        /* Panel totals */
+        .panel-totals { border-top: 1px solid var(--color-fem-border); padding-top: 24px; margin-bottom: 24px; }
+        .panel-line {
+            display: flex; justify-content: space-between;
+            font-size: 13px; margin-bottom: 8px; color: var(--color-fem-muted);
+        }
+        .panel-line strong { color: var(--color-fem-text); font-weight: 500; }
+        .panel-line--total {
+            display: flex; justify-content: space-between; align-items: baseline;
+            padding-top: 12px; border-top: 1px solid var(--color-fem-border);
+            margin-top: 8px;
+        }
+        .panel-line--total .label { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+        .panel-line--total .price { font-family: var(--font-display); font-size: 28px; }
+
+        /* Subscribe toggle */
+        .sub-toggle { margin-bottom: 20px; }
+        .sub-toggle__options {
+            display: grid; grid-template-columns: 1fr 1fr;
+            border: 1px solid var(--color-fem-border); gap: 0;
+        }
+        .sub-toggle__option {
+            padding: 14px 12px; text-align: center; cursor: pointer;
+            font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+            text-transform: uppercase; transition: all 0.22s;
+            color: var(--color-fem-muted);
+            border-right: 1px solid var(--color-fem-border);
+        }
+        .sub-toggle__option:last-child { border-right: none; }
+        .sub-toggle__option.is-active {
+            background: var(--color-fem-text); color: white;
+        }
+        .sub-toggle__discount {
+            text-align: center; font-size: 11px; color: #c9956e;
+            margin-top: 8px; font-weight: 500;
+        }
+
+        /* ─── CABINET (лк) ─── */
+        .cabinet-section {
+            padding: var(--section-y) var(--pad-x);
+            background: var(--color-off-white);
+        }
+        .cabinet-grid {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 1px; background: var(--color-fem-border);
+            margin-top: 64px;
+        }
+        .cabinet-card {
+            background: var(--color-off-white);
+            padding: 44px 40px;
+            transition: background 0.25s;
+        }
+        .cabinet-card:hover { background: white; }
+        .cabinet-card__icon {
+            font-size: 28px; margin-bottom: 20px;
+        }
+        .cabinet-card__title {
+            font-family: var(--font-display);
+            font-size: 22px; font-weight: 400; margin-bottom: 12px;
+        }
+        .cabinet-card__desc {
+            font-size: 14px; font-weight: 300; line-height: 1.7;
+            color: var(--color-fem-muted); margin-bottom: 24px;
+        }
+        .cabinet-card--cancel { border-left: 3px solid rgba(44,35,32,0.1); }
+        .cabinet-card--cancel .cabinet-card__title { font-size: 18px; }
+        @media (max-width: 768px) { .cabinet-grid { grid-template-columns: 1fr; } }
+
+        /* ─── NOTIFY SECTION ─── */
+        .notify-section {
+            padding: var(--section-y) var(--pad-x);
+            background: #1c1714; color: white;
+        }
+        .notify-preview {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(201,149,110,0.2);
+            padding: 32px 36px; margin-top: 48px;
+            max-width: 560px;
+        }
+        .notify-preview__from {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 20px; padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .notify-preview__avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: var(--sub-accent);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: 600; color: white;
+        }
+        .notify-preview__sender { font-size: 13px; font-weight: 500; }
+        .notify-preview__time { font-size: 11px; color: rgba(255,255,255,0.35); margin-left: auto; }
+        .notify-preview__body {
+            font-size: 15px; font-weight: 300; line-height: 1.8;
+            color: rgba(255,255,255,0.75);
+        }
+        .notify-preview__body strong { color: white; font-weight: 500; }
+        .notify-preview__actions { display: flex; gap: 12px; margin-top: 20px; }
+        .notify-btn {
+            padding: 10px 20px; font-size: 12px; font-weight: 500;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            border: 1px solid rgba(201,149,110,0.4);
+            color: var(--sub-accent); cursor: pointer;
+            transition: all 0.22s;
+        }
+        .notify-btn:hover { background: var(--sub-accent); color: white; border-color: var(--sub-accent); }
+
+        /* ─── FAQ ─── */
+        .faq-section {
+            padding: var(--section-y) var(--pad-x);
+            background: var(--color-fem-card);
+        }
+        .faq-list {
+            max-width: 800px; margin: 64px auto 0;
+        }
+        .faq-item {
+            border-bottom: 1px solid var(--color-fem-border);
+        }
+        .faq-btn {
+            width: 100%; display: flex; justify-content: space-between;
+            align-items: center; padding: 24px 0;
+            font-size: 15px; font-weight: 400; text-align: left;
+            gap: 20px; cursor: pointer;
+            transition: color 0.2s;
+        }
+        .faq-btn:hover { color: var(--color-accent); }
+        .faq-btn__icon {
+            width: 24px; height: 24px; flex-shrink: 0;
+            border: 1px solid var(--color-fem-border);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; transition: all 0.3s;
+        }
+        .faq-btn[aria-expanded=true] .faq-btn__icon { background: var(--color-fem-text); color: white; border-color: var(--color-fem-text); transform: rotate(45deg); }
+        .faq-answer {
+            overflow: hidden; max-height: 0;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+        }
+        .faq-answer.is-open { max-height: 400px; }
+        .faq-answer__inner {
+            padding: 0 0 24px;
+            font-size: 14px; font-weight: 300; line-height: 1.8;
+            color: var(--color-fem-muted);
+        }
+
+        /* ─── INTERACTIVE DEMO ─── */
+        .demo-min-warn {
+            font-size: 12px; color: #c9956e; text-align: center;
+            padding: 10px; background: rgba(201,149,110,0.08);
+            border: 1px solid rgba(201,149,110,0.2);
+            margin-bottom: 16px; display: none;
+        }
+        .demo-min-warn.is-visible { display: block; }
+    </style>
+</head>
+<body>
+
+    <!-- ═════ SITE TOP ═════ -->
+    <div class="site-top" id="siteTop">
+        <div class="promo-bar">
+            TSOK BOX — Ваша персональная коробочка ухода &nbsp;·&nbsp; <a href="#constructor">Собрать свой бокс →</a>
+        </div>
+        <div class="header-group" id="headerGroup">
+            <header class="header">
+                <div class="header__inner">
+                    <div class="header__left">
+                        <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                        </button>
+                        <nav class="desktop-nav desktop-only">
+                            <a href="index.html" class="nav-link">Главная</a>
+                            <a href="catalog.html" class="nav-link">Каталог</a>
+                            <a href="subscription.html" class="nav-link" style="color:var(--color-accent);font-weight:500;">TSOK BOX ✦</a>
+                            <a href="index.html#our-story" class="nav-link">О нас</a>
+                        </nav>
+                    </div>
+                    <div class="header__center">
+                        <a href="catalog.html" aria-label="цок-цок Pearl by Tais">
+                            <img src="img/цок-цок.svg" alt="цок-цок" style="height:44px;width:auto;display:block;"
+                                 onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+                            <svg viewBox="0 0 230 58" xmlns="http://www.w3.org/2000/svg" style="height:44px;width:auto;display:none;">
+                                <text x="115" y="31" font-family="'Cormorant Garamond',Georgia,serif" font-size="30" font-weight="400" letter-spacing="5" text-anchor="middle" fill="#2c2320">цок-цок</text>
+                                <text x="115" y="51" font-family="'Cormorant Garamond',Georgia,serif" font-size="13" font-style="italic" letter-spacing="2" text-anchor="middle" fill="#8a7a72">Pearl by Tais</text>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="header__right">
+                        <button class="icon-btn" id="headerFavBtn" style="position:relative;" aria-label="Избранное">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+                            <span class="fav-count">0</span>
+                        </button>
+                        <button class="icon-btn" id="cartOpenBtn" style="position:relative;" aria-label="Корзина">
+                            <span class="desktop-only btn-text">Корзина</span>
+                            <svg class="mobile-only" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6a2 2 0 0 1 4 0v2"/></svg>
+                            <span class="cart-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+        </div>
+    </div>
+
+    <!-- ═════ HERO ═════ -->
+    <section class="sub-hero">
+        <div class="sub-hero__deco">
+            <div class="sub-hero__deco-ring"></div>
+            <div class="sub-hero__deco-ring"></div>
+            <div class="sub-hero__deco-ring"></div>
+        </div>
+        <div class="sub-hero__inner">
+            <div class="sub-hero__text">
+                <div class="sub-hero__eyebrow">Персональная подписка</div>
+                <h1 class="sub-hero__title">
+                    TSOK<br><em>BOX</em>
+                </h1>
+                <p class="sub-hero__desc">
+                    Собери свою рутину ухода — и получай её каждые 30 дней. Меняй состав когда хочешь, пропускай месяц без штрафов, отменяй в один клик.
+                </p>
+                <div class="sub-hero__perks">
+                    <div class="sub-hero__perk">
+                        <div class="sub-hero__perk-icon">✦</div>
+                        <span>Ты собираешь бокс сам — только то, что нужно</span>
+                    </div>
+                    <div class="sub-hero__perk">
+                        <div class="sub-hero__perk-icon">🚚</div>
+                        <span>Бесплатная доставка от 4 000 ₽</span>
+                    </div>
+                    <div class="sub-hero__perk">
+                        <div class="sub-hero__perk-icon">🎁</div>
+                        <span>Secret Gift в коробке от 5 000 ₽</span>
+                    </div>
+                    <div class="sub-hero__perk">
+                        <div class="sub-hero__perk-icon">⚡</div>
+                        <span>Автосписание раз в 30 дней — без лишних действий</span>
+                    </div>
+                </div>
+                <div class="sub-hero__cta">
+                    <a href="#constructor" class="btn btn--dark" style="background:#c9956e;border-color:#c9956e;">
+                        Собрать свой бокс
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </a>
+                    <a href="#how" class="btn btn--outline-dark" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);">Как это работает</a>
+                </div>
+            </div>
+            <!-- Preview card -->
+            <div class="sub-hero__preview">
+                <div class="preview-label">Пример бокса</div>
+                <div class="preview-products">
+                    <div class="preview-product">
+                        <div class="preview-product__img"><img src="img/Pearl3.jpg" alt=""></div>
+                        <span class="preview-product__name">Tonic Youth Restoring</span>
+                        <span class="preview-product__price">93 ₽</span>
+                    </div>
+                    <div class="preview-product">
+                        <div class="preview-product__img"><img src="img/Pearl1.jpg" alt=""></div>
+                        <span class="preview-product__name">Foam Mousse Moisture</span>
+                        <span class="preview-product__price">96 ₽</span>
+                    </div>
+                    <div class="preview-product">
+                        <div class="preview-product__img"><img src="img/Pearl6.jpg" alt=""></div>
+                        <span class="preview-product__name">Velvet Oil Blend</span>
+                        <span class="preview-product__price">69 ₽</span>
+                    </div>
+                </div>
+                <div class="preview-progress">
+                    <div class="preview-progress__bar"><div class="preview-progress__fill"></div></div>
+                    <div class="preview-progress__labels">
+                        <span>258 ₽ из 400 ₽</span>
+                        <span>🚚 ещё 142 ₽ до доставки</span>
+                    </div>
+                </div>
+                <div class="preview-total">
+                    <span class="preview-total__label">Итого / мес</span>
+                    <span class="preview-total__price">258 ₽</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═════ HOW IT WORKS ═════ -->
+    <section class="how-section" id="how">
+        <div style="max-width:1400px;margin:0 auto;">
+            <div class="anim-fade-up">
+                <span class="label">Просто и прозрачно</span>
+                <h2 class="section__title" style="margin-top:12px;">Как работает<br><em>TSOK BOX</em></h2>
+            </div>
+            <div class="how-grid">
+                <div class="how-step">
+                    <div class="how-step__num">01</div>
+                    <div class="how-step__title">Собери рутину</div>
+                    <p class="how-step__desc">Выбери продукты которые хочешь получать каждый месяц. Минимальный порог — 4 000 ₽ для активации подписки.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step__num">02</div>
+                    <div class="how-step__title">Оформи подписку</div>
+                    <p class="how-step__desc">Выбери «Подписаться» при оформлении. Привязывается карта, первое списание — сразу. Далее раз в 30 дней.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step__num">03</div>
+                    <div class="how-step__title">Меняй состав</div>
+                    <p class="how-step__desc">В личном кабинете в любой момент убери что закончилось нескоро, добавь что хочется попробовать. Сумма пересчитается автоматически.</p>
+                </div>
+                <div class="how-step">
+                    <div class="how-step__num">04</div>
+                    <div class="how-step__title">Получай и радуйся</div>
+                    <p class="how-step__desc">За 3 дня до отправки приходит уведомление в email и Telegram. Можно пропустить месяц или поменять состав — без штрафов.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═════ PRE-BUILT BOXES ═════ -->
+    <section style="padding:var(--section-y) var(--pad-x);background:var(--color-off-white);border-bottom:1px solid var(--color-fem-border);" id="ready-boxes">
+        <div style="max-width:1400px;margin:0 auto;">
+            <div class="anim-fade-up" style="text-align:center;margin-bottom:64px;">
+                <span class="label">Собрали за вас</span>
+                <h2 class="section__title" style="margin-top:12px;">Готовые боксы<br><em>на месяц</em></h2>
+                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7;">Взяли самое нужное для полного ритуала. Добавь в подписку одним кликом — или собери свой.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--color-fem-border);">
+
+                <!-- Pearl by Tais Box -->
+                <div style="background:white;padding:48px 40px;">
+                    <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;">
+                        <span style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--color-accent);">Pearl by Tais</span>
+                        <span style="background:var(--color-fem-text);color:white;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;">ХИТ</span>
+                    </div>
+                    <h3 style="font-family:var(--font-display);font-size:clamp(28px,3vw,42px);font-weight:400;line-height:1.05;margin-bottom:14px;">Ритуал<br><em>Жемчужины</em></h3>
+                    <p style="font-size:14px;font-weight:300;line-height:1.7;color:var(--color-fem-muted);margin-bottom:24px;">Полный утренний и вечерний уход: очищение, тонизирование, питание волос — всё на месяц.</p>
+                    <div style="display:flex;flex-direction:column;gap:0;margin-bottom:24px;border-top:1px solid var(--color-fem-border);">
+                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
+                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="img/Pearl3.jpg" style="width:100%;height:100%;object-fit:cover;"></div>
+                            <div style="flex:1;font-size:13px;">Tonic Youth Restoring <span style="color:var(--color-fem-muted);">150 мл</span></div>
+                            <span style="font-size:13px;font-weight:500;">93 BYN</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
+                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="img/Pearl1.jpg" style="width:100%;height:100%;object-fit:cover;"></div>
+                            <div style="flex:1;font-size:13px;">Foam Mousse Moisture <span style="color:var(--color-fem-muted);">150 мл</span></div>
+                            <span style="font-size:13px;font-weight:500;">96 BYN</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
+                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="img/Pearl5.jpg" style="width:100%;height:100%;object-fit:cover;"></div>
+                            <div style="flex:1;font-size:13px;">Hair Tonic Radiance <span style="color:var(--color-fem-muted);">200 мл</span></div>
+                            <span style="font-size:13px;font-weight:500;">88 BYN</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
+                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="img/Pearl7.jpg" style="width:100%;height:100%;object-fit:cover;"></div>
+                            <div style="flex:1;font-size:13px;">Micellar Water <span style="color:var(--color-fem-muted);">200 мл</span></div>
+                            <span style="font-size:13px;font-weight:500;">99 BYN</span>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:24px;padding-top:16px;border-top:1px solid var(--color-fem-border);">
+                        <span style="font-family:var(--font-display);font-size:36px;font-weight:400;">376 BYN</span>
+                        <span style="font-size:13px;color:var(--color-fem-muted);">/ месяц</span>
+                    </div>
+                    <button class="btn btn--dark" style="width:100%;" onclick="loadReadyBox('pearl')">
+                        Выбрать этот бокс
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+
+                <!-- INTELEGENTOFF Box -->
+                <div style="background:#0e0b09;color:white;padding:48px 40px;position:relative;overflow:hidden;">
+                    <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;border:1px solid rgba(255,255,255,0.04);"></div>
+                    <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;">
+                        <span style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--color-accent);">INTELEGENTOFF</span>
+                        <span style="background:var(--color-accent);color:white;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;">МУЖСКОЙ</span>
+                    </div>
+                    <h3 style="font-family:var(--font-brutal);font-size:clamp(28px,3vw,48px);line-height:0.88;margin-bottom:14px;color:white;letter-spacing:0.03em;">INTEL<span style="color:var(--color-accent);">.</span>BOX</h3>
+                    <p style="font-size:14px;font-weight:300;line-height:1.7;color:rgba(255,255,255,0.45);margin-bottom:24px;">Мужской ритуал: очищение, увлажнение, защита. Концентрированные формулы на месяц.</p>
+                    <div style="display:flex;flex-direction:column;margin-bottom:24px;border-top:1px solid rgba(255,255,255,0.08);">
+                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                            <div style="width:40px;height:50px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.25);">фото</div>
+                            <div style="flex:1;font-size:13px;color:rgba(255,255,255,0.8);">Face Wash Intense <span style="color:rgba(255,255,255,0.3);">150 мл</span></div>
+                            <span style="font-size:13px;font-weight:500;color:white;">110 BYN</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                            <div style="width:40px;height:50px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.25);">фото</div>
+                            <div style="flex:1;font-size:13px;color:rgba(255,255,255,0.8);">Moisturizer Power <span style="color:rgba(255,255,255,0.3);">50 мл</span></div>
+                            <span style="font-size:13px;font-weight:500;color:white;">145 BYN</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
+                            <div style="width:40px;height:50px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.25);">фото</div>
+                            <div style="flex:1;font-size:13px;color:rgba(255,255,255,0.8);">Beard Oil Brutal <span style="color:rgba(255,255,255,0.3);">30 мл</span></div>
+                            <span style="font-size:13px;font-weight:500;color:white;">120 BYN</span>
+                        </div>
+                    </div>
+                    <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);">
+                        <span style="font-family:var(--font-display);font-size:36px;font-weight:400;color:white;">375 BYN</span>
+                        <span style="font-size:13px;color:rgba(255,255,255,0.35);">/ месяц</span>
+                    </div>
+                    <button class="btn btn--accent" style="width:100%;" onclick="loadReadyBox('homme')">
+                        Выбрать этот бокс
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <style>@media(max-width:768px){#ready-boxes>div>div:nth-child(2){grid-template-columns:1fr!important;}}</style>
+    </section>
+
+    <!-- ═════ DURATION SLIDER ═════ -->
+    <section style="padding:var(--section-y) var(--pad-x);background:var(--color-fem-text);color:white;" id="duration">
+        <div style="max-width:860px;margin:0 auto;text-align:center;">
+            <span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.35);">Выбери срок</span>
+            <h2 style="font-family:var(--font-display);font-size:clamp(40px,5vw,72px);font-weight:400;line-height:0.95;color:white;margin:16px 0 10px;">
+                Чем дольше —<br><em style="color:#c9956e;">тем выгоднее</em>
+            </h2>
+            <p style="font-size:15px;font-weight:300;color:rgba(255,255,255,0.4);margin-bottom:56px;max-width:400px;margin-left:auto;margin-right:auto;">3 месяца — хит продаж. 12 месяцев — нереально выгодно.</p>
+
+            <!-- Slider -->
+            <div style="margin-bottom:48px;">
+                <style>
+                    #durationSlider{width:100%;-webkit-appearance:none;height:3px;background:rgba(255,255,255,0.12);outline:none;cursor:pointer;border-radius:2px;}
+                    #durationSlider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#c9956e;cursor:pointer;box-shadow:0 0 0 4px rgba(201,149,110,0.2);}
+                    #durationSlider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#c9956e;cursor:pointer;border:none;}
+                </style>
+                <input type="range" id="durationSlider" min="1" max="12" value="3">
+                <div style="display:flex;justify-content:space-between;margin-top:14px;">
+                    <span style="font-size:11px;color:rgba(255,255,255,0.3);cursor:pointer;" onclick="setDur(1)">1 мес</span>
+                    <span style="font-size:11px;cursor:pointer;font-weight:600;color:#c9956e;" onclick="setDur(3)">3 мес ✦</span>
+                    <span style="font-size:11px;color:rgba(255,255,255,0.3);cursor:pointer;" onclick="setDur(6)">6 мес</span>
+                    <span style="font-size:11px;color:rgba(255,255,255,0.3);cursor:pointer;" onclick="setDur(12)">12 мес 🔥</span>
+                </div>
+            </div>
+
+            <!-- Result grid -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.06);margin-bottom:28px;">
+                <div style="background:#1c1714;padding:28px 16px;">
+                    <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Срок</div>
+                    <div style="font-family:var(--font-display);font-size:38px;color:white;line-height:1;" id="durMonths">3 мес</div>
+                </div>
+                <div style="background:#1c1714;padding:28px 16px;border-left:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);">
+                    <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Скидка</div>
+                    <div style="font-family:var(--font-display);font-size:38px;color:#c9956e;line-height:1;" id="durDiscount">−15%</div>
+                </div>
+                <div style="background:#1c1714;padding:28px 16px;">
+                    <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Экономия</div>
+                    <div style="font-family:var(--font-display);font-size:38px;color:white;line-height:1;" id="durSaving">~169 ₽</div>
+                </div>
+            </div>
+
+            <!-- Badge -->
+            <div id="durBadge" style="display:inline-block;background:#c9956e;color:white;padding:10px 28px;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:32px;">
+                ✦ Хит продаж — 3 месяца
+            </div>
+            <br>
+            <a href="#constructor" class="btn" style="background:#c9956e;border-color:#c9956e;color:white;">
+                Собрать свой бокс
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+    </section>
+
+    <!-- ═════ CONSTRUCTOR ═════ -->
+    <section class="constructor-section" id="constructor">
+        <div style="max-width:1400px;margin:0 auto;">
+            <div class="anim-fade-up">
+                <span class="label">Собери свой</span>
+                <h2 class="section__title" style="margin-top:12px;">Конструктор<br><em>бокса</em></h2>
+                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:520px;line-height:1.7;">Добавляй продукты плюсиком. Бесплатная доставка от 400 BYN. Чем больше — тем больше бонусов.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin:32px 0 0;" id="boxFilters">
+                <button onclick="filterBox('all')" id="boxFilterAll" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--color-fem-text);background:var(--color-fem-text);color:white;cursor:pointer;transition:all 0.22s;">Все</button>
+                <button onclick="filterBox('face')" id="boxFilterFace" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--color-fem-border);background:transparent;color:var(--color-fem-muted);cursor:pointer;transition:all 0.22s;">Лицо Pearl</button>
+                <button onclick="filterBox('hair')" id="boxFilterHair" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--color-fem-border);background:transparent;color:var(--color-fem-muted);cursor:pointer;transition:all 0.22s;">Волосы Pearl</button>
+                <button onclick="filterBox('homme')" id="boxFilterHomme" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.15);background:#0e0b09;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.22s;">INTELEGENTOFF</button>
+            </div>
+            <div class="constructor-layout" style="margin-top:32px;">
+                <div>
+                    <div class="constructor-products" id="constructorProducts"></div>
+                </div>
+                <div class="constructor-panel">
+                    <div class="progress-section">
+                        <div class="progress-header">
+                            <span class="progress-label">Твой бокс</span>
+                            <span class="progress-amount"><span id="progressAmount">0</span> BYN</span>
+                        </div>
+                        <div class="progress-bar-wrap">
+                            <div class="progress-bar-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-milestones">
+                            <div class="progress-milestone" id="milestone1">
+                                <div class="progress-milestone__icon">🚚</div>
+                                <div class="progress-milestone__text">
+                                    <div class="progress-milestone__title">Бесплатная доставка СДЭК</div>
+                                    <div class="progress-milestone__sub">Открывается от 400 BYN</div>
+                                </div>
+                                <div class="progress-milestone__check">✓</div>
+                            </div>
+                            <div class="progress-milestone" id="milestone2">
+                                <div class="progress-milestone__icon">🎁</div>
+                                <div class="progress-milestone__text">
+                                    <div class="progress-milestone__title">Secret Gift в коробке</div>
+                                    <div class="progress-milestone__sub">Открывается от 500 BYN</div>
+                                </div>
+                                <div class="progress-milestone__check">✓</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sub-toggle">
+                        <div class="sub-toggle__options">
+                            <div class="sub-toggle__option" id="toggleOnce" onclick="setMode('once')">Купить 1 раз</div>
+                            <div class="sub-toggle__option is-active" id="toggleSub" onclick="setMode('sub')">Подписка ✦</div>
+                        </div>
+                        <div class="sub-toggle__discount" id="subDiscount">Подписчики получают бонусы каждый месяц</div>
+                    </div>
+                    <div class="panel-totals">
+                        <div class="panel-line"><span>Товаров в боксе:</span><strong id="itemCount">0</strong></div>
+                        <div class="panel-line"><span>Доставка:</span><strong id="deliveryLine">рассчитывается</strong></div>
+                        <div class="panel-line--total">
+                            <span class="label">Итого</span>
+                            <span class="price"><span id="totalPrice">0</span> BYN</span>
+                        </div>
+                    </div>
+                    <div class="demo-min-warn" id="minWarn">Добавь ещё товаров — минимум 400 BYN для подписки</div>
+                    <button class="btn btn--dark" style="width:100%;background:#c9956e;border-color:#c9956e;" id="checkoutBtn" onclick="handleCheckout()">
+                        Оформить бокс
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    </button>
+                    <p style="font-size:11px;text-align:center;color:var(--color-fem-muted);margin-top:12px;">Отмена — одним кликом, без звонков</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═════ CABINET ═════ -->
+    <section class="cabinet-section" id="cabinet">
+        <div style="max-width:1400px;margin:0 auto;">
+            <div class="anim-fade-up">
+                <span class="label">Личный кабинет</span>
+                <h2 class="section__title" style="margin-top:12px;">Гибкая<br><em>рутина</em></h2>
+                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:520px;line-height:1.7;">Полный контроль над подпиской — как Apple Settings, только для твоей кожи.</p>
+            </div>
+            <div class="cabinet-grid">
+                <div class="cabinet-card">
+                    <div class="cabinet-card__icon">📅</div>
+                    <h3 class="cabinet-card__title">Дашборд подписки</h3>
+                    <p class="cabinet-card__desc">Видна дата следующей отправки, состав коробки и сумма автосписания. Всё в одном экране — как на главной Apple Watch.</p>
+                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;" onclick="alert('Доступно после оформления подписки')">Перейти в кабинет</button>
+                </div>
+                <div class="cabinet-card">
+                    <div class="cabinet-card__icon">✏️</div>
+                    <h3 class="cabinet-card__title">Изменить состав</h3>
+                    <p class="cabinet-card__desc">Убери пенку, добавь шампунь — система мгновенно пересчитает сумму следующего автосписания. Изменения вступают в силу до даты сборки.</p>
+                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;" onclick="alert('Доступно после оформления подписки')">Изменить бокс</button>
+                </div>
+                <div class="cabinet-card">
+                    <div class="cabinet-card__icon">⏸️</div>
+                    <h3 class="cabinet-card__title">Пропустить месяц</h3>
+                    <p class="cabinet-card__desc">Дата списания и отправки сдвигается на +30 дней. Без штрафов, без вопросов — одна кнопка. Используй, если продукты ещё не закончились.</p>
+                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;" onclick="alert('Доступно после оформления подписки')">Пропустить</button>
+                </div>
+                <div class="cabinet-card cabinet-card--cancel">
+                    <div class="cabinet-card__icon">🔓</div>
+                    <h3 class="cabinet-card__title">Отменить подписку</h3>
+                    <p class="cabinet-card__desc">Кнопка на видном месте — потому что мы верим: если отмену легко найти, ты меньше боишься подписываться. Отмена без звонков и ожиданий.</p>
+                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;border-color:rgba(44,35,32,0.2);" onclick="alert('Доступно после оформления подписки')">Отменить</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═════ NOTIFY ═════ -->
+    <section class="notify-section">
+        <div style="max-width:1400px;margin:0 auto;">
+            <div class="anim-fade-up">
+                <span class="label" style="color:rgba(255,255,255,0.4);">Умные уведомления</span>
+                <h2 class="section__title" style="margin-top:12px;color:white;">За 3 дня до<br><em style="color:#c9956e;">отправки</em></h2>
+                <p style="font-size:15px;font-weight:300;color:rgba(255,255,255,0.5);margin-top:16px;max-width:520px;line-height:1.7;">Мы напомним тебе вовремя — и дадим возможность поменять бокс до того, как он уйдёт.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-top:64px;">
+                <div>
+                    <div style="display:flex;flex-direction:column;gap:20px;margin-bottom:40px;">
+                        <div style="display:flex;gap:16px;align-items:flex-start;">
+                            <div style="width:40px;height:40px;border-radius:50%;background:rgba(201,149,110,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">📧</div>
+                            <div>
+                                <div style="font-size:14px;font-weight:500;color:white;margin-bottom:4px;">Email-уведомление</div>
+                                <div style="font-size:13px;font-weight:300;color:rgba(255,255,255,0.5);line-height:1.6;">Приходит за 3 дня до сборки бокса со ссылкой на редактирование</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:16px;align-items:flex-start;">
+                            <div style="width:40px;height:40px;border-radius:50%;background:rgba(201,149,110,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">✈️</div>
+                            <div>
+                                <div style="font-size:14px;font-weight:500;color:white;margin-bottom:4px;">Telegram-бот</div>
+                                <div style="font-size:13px;font-weight:300;color:rgba(255,255,255,0.5);line-height:1.6;">Подключи бота — и получи уведомление прямо в мессенджер</div>
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:16px;align-items:flex-start;">
+                            <div style="width:40px;height:40px;border-radius:50%;background:rgba(201,149,110,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">⚙️</div>
+                            <div>
+                                <div style="font-size:14px;font-weight:500;color:white;margin-bottom:4px;">Ты управляешь</div>
+                                <div style="font-size:13px;font-weight:300;color:rgba(255,255,255,0.5);line-height:1.6;">Прямо из уведомления — заменить продукт, пропустить или подтвердить</div>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#constructor" class="btn btn--dark" style="background:#c9956e;border-color:#c9956e;">Собрать бокс сейчас</a>
+                </div>
+                <div class="notify-preview">
+                    <div class="notify-preview__from">
+                        <div class="notify-preview__avatar">T</div>
+                        <div>
+                            <div class="notify-preview__sender">TSOK BOX</div>
+                            <div style="font-size:11px;color:rgba(255,255,255,0.35);">tsok.shop</div>
+                        </div>
+                        <span class="notify-preview__time">за 3 дня</span>
+                    </div>
+                    <div class="notify-preview__body">
+                        Привет! 👋 Через <strong>3 дня</strong> мы собираем твой <strong>TSOK BOX</strong>.<br><br>
+                        Если умывалка ещё не закончилась — ты можешь заменить её на другой продукт или пропустить этот месяц.<br><br>
+                        Никаких штрафов, один клик.
+                    </div>
+                    <div class="notify-preview__actions">
+                        <button class="notify-btn">Изменить состав</button>
+                        <button class="notify-btn">Пропустить месяц</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>@media(max-width:1024px){.notify-section > div > div:last-child{grid-template-columns:1fr!important;} .notify-preview{margin-top:0;}}</style>
+    </section>
+
+    <!-- ═════ FAQ ═════ -->
+    <section class="faq-section">
+        <div style="max-width:1400px;margin:0 auto;">
+            <div class="anim-fade-up" style="text-align:center;">
+                <span class="label">Вопросы и ответы</span>
+                <h2 class="section__title" style="margin-top:12px;">Всё что<br><em>хочется знать</em></h2>
+            </div>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
+                        Можно ли отменить подписку в любой момент?
+                        <span class="faq-btn__icon">+</span>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer__inner">Да, без условий и штрафов. Кнопка отмены находится на видном месте в личном кабинете — мы специально не прячем её. Если отменить за 24 часа до даты списания, текущий бокс уже не отправится.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
+                        Что будет если я пропущу месяц?
+                        <span class="faq-btn__icon">+</span>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer__inner">Дата следующего списания и отправки сдвинется ровно на +30 дней. Никаких удержаний, никаких вопросов. Можно пропускать неограниченное количество месяцев.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
+                        Когда я могу изменить состав бокса?
+                        <span class="faq-btn__icon">+</span>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer__inner">В любое время до даты сборки. За 3 дня до отправки придёт уведомление с прямой ссылкой на редактирование. После сборки изменения вступят в силу для следующего месяца.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
+                        Как работает Secret Gift?
+                        <span class="faq-btn__icon">+</span>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer__inner">При сумме бокса от 5 000 ₽ в коробку кладётся сюрприз — это может быть пробник новинки, мини-продукт или эксклюзивный аксессуар. Состав меняется каждый месяц и не анонсируется заранее.</div></div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
+                        Каким способом происходит оплата?
+                        <span class="faq-btn__icon">+</span>
+                    </button>
+                    <div class="faq-answer"><div class="faq-answer__inner">Привязывается карта (Visa, MasterCard, МИР). Списание происходит автоматически раз в 30 дней через ЮKassa или CloudPayments. Данные карты хранятся в зашифрованном виде на стороне платёжного провайдера.</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═════ FINAL CTA ═════ -->
+    <section style="padding:var(--section-y) var(--pad-x);background:var(--color-fem-text);color:white;text-align:center;">
+        <span style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Начни сегодня</span>
+        <h2 style="font-family:var(--font-display);font-size:clamp(48px,7vw,96px);font-weight:400;line-height:0.95;margin:20px 0 32px;color:white;">
+            Твоя рутина,<br><em>твои правила</em>
+        </h2>
+        <a href="#constructor" class="btn" style="background:#c9956e;border-color:#c9956e;color:white;font-size:13px;padding:18px 48px;">
+            Собрать TSOK BOX
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </section>
+
+    <!-- Footer, Overlays, Mobile menu -->
+    <footer class="footer">
+        <div class="footer__grid">
+            <div class="footer__logo-area">
+                <a href="index.html" class="footer__logo">цок-цок</a>
+                <div class="footer__brands" style="margin-top:16px;">
+                    <a href="catalog.html" class="footer__brand-link" style="color:rgba(255,255,255,0.8);">Pearl by Tais</a>
+                    <a href="catalog-homme.html" class="footer__brand-link">INTELEGENTOFF</a>
+                </div>
+            </div>
+            <div><div class="footer__col-title">TSOK BOX</div><nav class="footer__nav"><a href="#constructor">Собрать бокс</a><a href="#cabinet">Личный кабинет</a><a href="#how">Как работает</a></nav></div>
+            <div><div class="footer__col-title">Каталог</div><nav class="footer__nav"><a href="catalog.html">Pearl by Tais</a><a href="catalog-homme.html">INTELEGENTOFF</a></nav></div>
+            <div><div class="footer__col-title">Помощь</div><nav class="footer__nav"><a href="#">FAQ</a><a href="#">Доставка</a><a href="#">Контакты</a></nav></div>
+        </div>
+        <div class="footer__bottom">
+            <span class="footer__copy">© 2025 TSOK Boutique</span>
+            <div class="footer__legal"><a href="#">Политика конфиденциальности</a><a href="#">Оферта</a></div>
+        </div>
+    </footer>
+
+    <div class="global-overlay" id="globalOverlay"></div>
+    <div class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer__header"><h3>Корзина</h3><button class="close-btn" id="cartCloseBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+        <div class="cart-drawer__scroll"><div class="cart-drawer__body" id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div></div>
+        <div class="cart-drawer__footer"><div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div><a href="checkout.html" class="btn btn--dark">Оформить заказ</a></div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu__header">
+            <svg viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg" style="height:34px;width:auto;">
+                <text x="90" y="24" font-family="'Cormorant Garamond',Georgia,serif" font-size="22" font-weight="400" letter-spacing="4" text-anchor="middle" fill="#2c2320">цок-цок</text>
+                <text x="90" y="42" font-family="'Cormorant Garamond',Georgia,serif" font-size="11" font-style="italic" letter-spacing="1.5" text-anchor="middle" fill="#8a7a72">Pearl by Tais</text>
+            </svg>
+            <button class="close-btn" id="mobileMenuClose"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+        </div>
+        <div class="mobile-menu__body">
+            <nav class="mobile-nav">
+                <a href="index.html">Главная</a>
+                <a href="catalog.html">Каталог Pearl by Tais</a>
+                <a href="subscription.html" style="color:var(--color-accent);">✦ TSOK BOX (подписка)</a>
+                <a href="catalog-homme.html">INTELEGENTOFF</a>
+            </nav>
+        </div>
+    </div>
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="script.js"></script>
+    <script>
+    // ════════════════════════════════════════════
+    //  ALL PRODUCTS (Pearl + INTELEGENTOFF)
+    // ════════════════════════════════════════════
+    const PRODUCTS = [
+        { id:'pearl-01', name:'Foam Mousse Moisture',      size:'150 мл', price:96,  img:'img/Pearl1.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-02', name:'Face Tonic Toning',         size:'150 мл', price:93,  img:'img/Pearl2.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-03', name:'Tonic Youth Restoring',     size:'150 мл', price:93,  img:'img/Pearl3.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-04', name:'Foam Mousse Cleansing',     size:'150 мл', price:96,  img:'img/Pearl4.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-05', name:'Hair Tonic Radiance',       size:'200 мл', price:88,  img:'img/Pearl5.jpg', cat:'hair',  brand:'pearl' },
+        { id:'pearl-06', name:'Velvet Oil Blend',          size:'60 мл',  price:69,  img:'img/Pearl6.jpg', cat:'hair',  brand:'pearl' },
+        { id:'pearl-07', name:'Micellar Water Extract Mix',size:'200 мл', price:99,  img:'img/Pearl7.jpg', cat:'face',  brand:'pearl' },
+        { id:'homme-01', name:'Face Wash Intense',         size:'150 мл', price:110, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
+        { id:'homme-02', name:'Moisturizer Power',         size:'50 мл',  price:145, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
+        { id:'homme-03', name:'Beard Oil Brutal',          size:'30 мл',  price:120, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
+    ];
+
+    // ── State ──
+    let boxQty  = {};
+    let mode    = 'sub';
+    let curFilter = 'all';
+    const MIN_SUB = 400;
+    const GIFT_TH = 500;
+
+    // ── Duration slider ──
+    const DUR_DISCOUNTS = {
+        1:0, 2:5, 3:15, 4:15, 5:18, 6:20, 7:20, 8:22, 9:22, 10:23, 11:23, 12:25
+    };
+    const DUR_BADGES = {
+        1:'Без скидки',
+        2:'Небольшая выгода',
+        3:'✦ Хит продаж — 3 месяца',
+        6:'Отличный выбор — полгода',
+        12:'🔥 Максимальная выгода — год'
+    };
+    let curDuration = 3;
+
+    function setDur(n) {
+        curDuration = n;
+        const sl = document.getElementById('durationSlider');
+        if (sl) sl.value = n;
+        const pct = DUR_DISCOUNTS[n] || 0;
+        const baseTotal = 376; // example monthly total
+        const saving = Math.round(baseTotal * n * pct / 100);
+        document.getElementById('durMonths').textContent = n + ' мес';
+        document.getElementById('durDiscount').textContent = pct ? '−' + pct + '%' : '0%';
+        document.getElementById('durSaving').textContent = saving ? '~' + saving + ' BYN' : '—';
+        const badge = document.getElementById('durBadge');
+        if (badge) {
+            const label = DUR_BADGES[n] || (n + ' месяцев подписки');
+            badge.textContent = label;
+            badge.style.background = n === 12 ? '#b8862a' : n === 3 ? '#c9956e' : '#6b5e56';
+        }
+    }
+    const durSlider = document.getElementById('durationSlider');
+    if (durSlider) {
+        durSlider.addEventListener('input', () => setDur(+durSlider.value));
+        setDur(3);
+    }
+
+    // ── Filter ──
+    function filterBox(cat) {
+        curFilter = cat;
+        ['all','face','hair','homme'].forEach(c => {
+            const btn = document.getElementById('boxFilter' + c.charAt(0).toUpperCase() + c.slice(1));
+            if (!btn) return;
+            const isActive = c === cat;
+            if (c === 'homme') {
+                btn.style.background = isActive ? '#c9956e' : '#0e0b09';
+                btn.style.color = isActive ? 'white' : 'rgba(255,255,255,0.6)';
+                btn.style.borderColor = isActive ? '#c9956e' : 'rgba(255,255,255,0.15)';
+            } else {
+                btn.style.background = isActive ? 'var(--color-fem-text)' : 'transparent';
+                btn.style.color = isActive ? 'white' : 'var(--color-fem-muted)';
+                btn.style.borderColor = isActive ? 'var(--color-fem-text)' : 'var(--color-fem-border)';
+            }
+        });
+        renderConstructor();
+    }
+
+    // ── Load ready box ──
+    function loadReadyBox(type) {
+        boxQty = {};
+        if (type === 'pearl') {
+            boxQty['pearl-03'] = 1;
+            boxQty['pearl-01'] = 1;
+            boxQty['pearl-05'] = 1;
+            boxQty['pearl-07'] = 1;
+        } else if (type === 'homme') {
+            boxQty['homme-01'] = 1;
+            boxQty['homme-02'] = 1;
+            boxQty['homme-03'] = 1;
+        }
+        filterBox('all');
+        updatePanel();
+        document.getElementById('constructor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => showToast('Бокс добавлен — можешь изменить состав ниже', 'success'), 600);
+    }
+
+    // ── Helpers ──
+    function getTotal() {
+        return PRODUCTS.reduce((s, p) => s + p.price * (boxQty[p.id] || 0), 0);
+    }
+    function getCount() {
+        return Object.values(boxQty).reduce((s, q) => s + q, 0);
+    }
+
+    function updatePanel() {
+        const total  = getTotal();
+        const count  = getCount();
+        const pct    = Math.min(100, (total / MIN_SUB) * 100);
+
+        document.getElementById('progressAmount').textContent = total;
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('itemCount').textContent = count;
+        document.getElementById('totalPrice').textContent = total;
+
+        document.getElementById('milestone1').classList.toggle('is-unlocked', total >= MIN_SUB);
+        document.getElementById('milestone2').classList.toggle('is-unlocked', total >= GIFT_TH);
+
+        document.getElementById('deliveryLine').textContent =
+            total >= MIN_SUB ? '🚚 Бесплатно!' : 'ещё ' + (MIN_SUB - total) + ' BYN';
+
+        const warn = document.getElementById('minWarn');
+        if (mode === 'sub' && count > 0 && total < MIN_SUB) {
+            warn.classList.add('is-visible');
+        } else {
+            warn.classList.remove('is-visible');
+        }
+    }
+
+    function setQty(id, delta) {
+        const next = Math.max(0, (boxQty[id] || 0) + delta);
+        boxQty[id] = next;
+        const row = document.querySelector('[data-product-id="' + id + '"]');
+        if (row) {
+            row.querySelector('.qty-val').textContent = next;
+            row.querySelector('.qty-minus').disabled = next === 0;
+        }
+        updatePanel();
+    }
+
+    function setMode(m) {
+        mode = m;
+        document.getElementById('toggleOnce').classList.toggle('is-active', m === 'once');
+        document.getElementById('toggleSub').classList.toggle('is-active', m === 'sub');
+        updatePanel();
+    }
+
+    function handleCheckout() {
+        const total = getTotal();
+        const count = getCount();
+        if (count === 0) { alert('Добавь хотя бы один продукт'); return; }
+        if (mode === 'sub' && total < MIN_SUB) {
+            document.getElementById('minWarn').classList.add('is-visible');
+            document.getElementById('minWarn').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+        const items = PRODUCTS.filter(p => boxQty[p.id] > 0)
+            .map(p => p.name + ' x' + boxQty[p.id]).join(', ');
+        alert('✅ Бокс оформлен!\n\nСостав: ' + items + '\nИтого: ' + total + ' BYN\nРежим: ' +
+              (mode === 'sub' ? 'Подписка на ' + curDuration + ' мес (скидка ' + DUR_DISCOUNTS[curDuration] + '%)' : 'Разовая покупка') +
+              '\n\n(Здесь будет переход к оплате через ЮKassa / CloudPayments)');
+    }
+
+    // ── Render ──
+    function renderConstructor() {
+        const container = document.getElementById('constructorProducts');
+        const filtered = curFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p =>
+            curFilter === 'homme' ? p.brand === 'homme' : p.cat === curFilter
+        );
+        container.innerHTML = filtered.map(p => {
+            const isHomme = p.brand === 'homme';
+            const bg = isHomme ? 'background:#0e0b09;' : '';
+            const textColor = isHomme ? 'color:rgba(255,255,255,0.85);' : '';
+            const metaColor = isHomme ? 'color:rgba(255,255,255,0.35);' : '';
+            const brandTag = isHomme
+                ? '<span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-accent);font-weight:700;">INTELEGENTOFF</span>'
+                : '<span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-accent);font-weight:700;">Pearl by Tais</span>';
+            return '<div class="constructor-product" data-product-id="' + p.id + '" style="' + bg + '">' +
+                '<div class="constructor-product__img"><img src="' + p.img + '" alt="' + p.name + '" onerror="this.parentElement.style.background='' + (isHomme ? '#1a1714' : '#f0ebe4') + '';this.style.display='none';"></div>' +
+                '<div class="constructor-product__info">' + brandTag +
+                    '<div class="constructor-product__name" style="' + textColor + '">' + p.name + '</div>' +
+                    '<div class="constructor-product__meta" style="' + metaColor + '">' + p.size + '</div>' +
+                '</div>' +
+                '<div class="constructor-product__price" style="' + textColor + '">' + p.price + ' BYN</div>' +
+                '<div class="constructor-product__qty">' +
+                    '<button class="qty-minus" onclick="setQty('' + p.id + '',-1)" disabled>−</button>' +
+                    '<span class="qty-val">' + (boxQty[p.id] || 0) + '</span>' +
+                    '<button onclick="setQty('' + p.id + '',1)">+</button>' +
+                '</div>' +
+            '</div>';
+        }).join('');
+        // Restore qty display
+        filtered.forEach(p => {
+            if (boxQty[p.id] > 0) {
+                const row = document.querySelector('[data-product-id="' + p.id + '"]');
+                if (row) {
+                    row.querySelector('.qty-val').textContent = boxQty[p.id];
+                    row.querySelector('.qty-minus').disabled = false;
+                }
+            }
+        });
+        updatePanel();
+    }
+
+    // ── FAQ ──
+    function toggleFaq(btn) {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', !expanded);
+        btn.nextElementSibling.classList.toggle('is-open', !expanded);
+    }
+
+    // ── Init ──
+    renderConstructor();
+    </script>
+</body>
