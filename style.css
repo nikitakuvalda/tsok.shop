@@ -1866,6 +1866,16 @@ body { padding-top: var(--top-h); }
 }
 
 
+
+/* Homepage INTELEGENTOFF block: allow the full CTA content to define section height. */
+.brand-story--homme-home {
+    max-height: none !important;
+    overflow: visible !important;
+}
+.brand-story--homme-home .brand-story__content {
+    overflow: visible;
+}
+
 /* INTELEGENTOFF story title: keep long Russian word inside the text column */
 .homme-story-title {
     font-family: var(--font-brutal);
@@ -1968,6 +1978,29 @@ body { padding-top: var(--top-h); }
 }
 .brand-story--reverse { direction: rtl; }
 .brand-story--reverse > * { direction: ltr; }
+
+@media (max-width: 1024px) {
+    .brand-story--homme-home {
+        grid-template-columns: 1fr !important;
+        max-height: none !important;
+        overflow: visible;
+    }
+    .brand-story--homme-home .brand-story__content {
+        order: 1 !important;
+        border-right: 0 !important;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+        overflow: visible;
+    }
+    .brand-story--homme-home .brand-story__media {
+        order: 2 !important;
+        max-height: none;
+        overflow: visible;
+    }
+    .brand-story--homme-home .brand-story__media img {
+        max-height: 72vw;
+    }
+}
+
 @media (max-width: 1024px) {
     .brand-story { grid-template-columns: 1fr; max-height: none; }
     .brand-story__image { min-height: 55vw; max-height: 55vw; }
