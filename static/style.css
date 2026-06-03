@@ -1885,8 +1885,13 @@ body { padding-top: var(--top-h); }
     margin: 14px 0 28px;
     color: white;
     max-width: 100%;
-    overflow-wrap: anywhere;
-    word-break: normal;
+    overflow-wrap: normal;
+    word-break: keep-all;
+}
+
+
+.homme-story-title__nowrap {
+    white-space: nowrap;
 }
 
 /* ============================================================
@@ -2160,8 +2165,9 @@ section[style*="man-bg"] .brand-story__media { background: #111; }
     }
     /* Homme story title */
     .homme-story-title {
-        font-size: clamp(36px, 11vw, 56px) !important;
-        overflow-wrap: anywhere;
+        font-size: clamp(32px, 12vw, 52px) !important;
+        overflow-wrap: normal;
+        word-break: keep-all;
     }
 }
 
