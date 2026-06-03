@@ -9,34 +9,34 @@ class StaticSiteFlask(Flask):
     )
 
 
-app = StaticSiteFlask(__name__, static_folder="static", static_url_path="")
+application = StaticSiteFlask(__name__, static_folder="static", static_url_path="")
 
 
-@app.route("/")
-@app.route("/index.html")
+@application.route("/")
+@application.route("/index.html")
 def index():
     return render_template("index.html")
 
 
-@app.route("/catalog.html")
+@application.route("/catalog.html")
 def catalog():
     return render_template("catalog.html")
 
 
-@app.route("/catalog-homme.html")
+@application.route("/catalog-homme.html")
 def catalog_homme():
     return render_template("catalog-homme.html")
 
 
-@app.route("/product-tonic.html")
+@application.route("/product-tonic.html")
 def product_tonic():
     return render_template("product-tonic.html")
 
 
-@app.route("/subscription.html")
+@application.route("/subscription.html")
 def subscription():
     return render_template("subscription.html")
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    application.run(debug=True)
