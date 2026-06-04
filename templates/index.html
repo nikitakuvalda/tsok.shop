@@ -11,33 +11,7 @@
     <style>
         /* ─── Index page: no top padding, hero is fullscreen ─── */
         body.index-page { padding-top: 0 !important; }
-
-        /* ─── Header: transparent over hero, solid after scroll ─── */
-        .index-page .promo-bar {
-            background: rgba(0,0,0,0.55);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
-        .index-page .header-group {
-            background-color: transparent !important;
-            box-shadow: none !important;
-            backdrop-filter: none !important;
-            -webkit-backdrop-filter: none !important;
-        }
-        .index-page .header-group.is-solid {
-            background-color: rgba(10,8,7,0.96) !important;
-            backdrop-filter: blur(24px) !important;
-            -webkit-backdrop-filter: blur(24px) !important;
-            box-shadow: 0 1px 0 rgba(255,255,255,0.06) !important;
-        }
-        .index-page .site-top.is-solid .promo-bar { background: #000; backdrop-filter: none; }
-        .index-page .header .nav-link { color: rgba(255,255,255,0.78); }
-        .index-page .header .nav-link:hover { color: #fff; }
-        .index-page .header .btn-text { color: rgba(255,255,255,0.78); }
-        .index-page .header .icon-btn { color: rgba(255,255,255,0.78); }
-        .index-page .header .icon-btn:hover { color: #fff; }
-        .index-page .header .cart-count,
-        .index-page .header .fav-count { background: #c9956e; color: #fff; }
+        /* Header glass + dropdown + animations handled in style.css patch block */
 
         /* ─── HERO ─── */
         .split-hero {
@@ -321,7 +295,12 @@
     </div>
 
     <!-- ═══ HERO ═══ -->
-    <section class="split-hero">
+    <section class="split-hero" style="position:relative;">
+        <!-- Ambient blur orbs (decorative, pointer-events:none) -->
+        <div aria-hidden="true" style="position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;">
+            <div style="position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(201,149,110,0.22) 0%,transparent 70%);bottom:-120px;left:15%;filter:blur(60px);"></div>
+            <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,136,255,0.10) 0%,transparent 70%);top:-80px;right:20%;filter:blur(50px);"></div>
+        </div>
         <div class="split-hero__divider"></div>
 
         <a href="catalog.html" class="split-hero__side">
@@ -364,6 +343,7 @@
         </a>
     </section>
 
+    <!-- ── SCROLL HINT ── -->
     <div class="scroll-hint" id="scrollHint">
         <span class="scroll-hint__text">Скролл</span>
         <div class="scroll-hint__line"></div>
@@ -489,7 +469,7 @@
     </section>
 
     <!-- ═══ OUR STORY ═══ -->
-    <section id="our-story" class="section-gap" style="background:var(--color-off-white);border-top:1px solid var(--color-fem-border);">
+    <section id="our-story" class="section-gap" style="position:relative;overflow:hidden;" style="background:var(--color-off-white);border-top:1px solid var(--color-fem-border);">
         <div style="max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;" class="anim-fade-up">
             <div>
                 <span class="label">История бутика</span>
@@ -520,7 +500,11 @@
     </section>
 
     <!-- ═══ VISION STATEMENT ═══ -->
-    <div class="vision-statement anim-fade-up">
+    <div class="vision-statement anim-fade-up" style="position:relative;overflow:hidden;">
+        <!-- blur orb -->
+        <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;">
+            <div style="position:absolute;width:700px;height:400px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(201,149,110,0.10) 0%,transparent 65%);filter:blur(40px);"></div>
+        </div>
         <p class="vision-statement__text">
             Премиальная косметика — это не ценник.<br>
             Это <em>формула доверия</em> между брендом и кожей.
@@ -696,14 +680,33 @@
 
     <script src="script.js"></script>
     <script>
+        // ── 1. Index header: transparent → glass on scroll ──
         const hg   = document.getElementById('headerGroup');
         const hint = document.getElementById('scrollHint');
-        const vh   = () => window.innerHeight;
-        window.addEventListener('scroll', () => {
-            const y = window.scrollY;
-            hg.classList.toggle('is-solid', y > vh() * 0.55);
-            if (hint) hint.style.opacity = y > 100 ? '0' : '1';
-        }, { passive: true });
+
+        function updateHeader() {
+            const y  = window.scrollY;
+            const vh = window.innerHeight;
+            hg.classList.toggle('is-solid', y > vh * 0.40);
+            if (hint) hint.style.opacity = y > 80 ? '0' : '1';
+        }
+        window.addEventListener('scroll', updateHeader, { passive: true });
+        updateHeader(); // run on load
+
+        // ── 2. Intersection Observer for fade-up animations ──
+        // (graceful: works even if script.js already handles this)
+        if (!window._tsokObserverInit) {
+            window._tsokObserverInit = true;
+            const animObserver = new IntersectionObserver((entries) => {
+                entries.forEach(e => {
+                    if (e.isIntersecting) {
+                        e.target.classList.add('is-visible');
+                        animObserver.unobserve(e.target);
+                    }
+                });
+            }, { threshold: 0.12 });
+            document.querySelectorAll('.anim-fade-up').forEach(el => animObserver.observe(el));
+        }
     </script>
 </body>
 </html>

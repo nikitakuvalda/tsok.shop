@@ -150,7 +150,7 @@ body { padding-top: var(--top-h); }
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     box-shadow: 0 1px 0 rgba(0,0,0,0.06);
-    transition: background-color 0.4s ease, box-shadow 0.4s ease;
+    transition: background-color 0.45s ease, backdrop-filter 0.45s ease, box-shadow 0.45s ease;
 }
 .header-group.is-solid {
     background-color: rgba(248, 247, 244, 0.98);
@@ -232,32 +232,51 @@ body { padding-top: var(--top-h); }
 /* Dropdown */
 .nav-dropdown-wrap { position: relative; }
 .nav-dropdown-btn { cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+/* Invisible bridge: fills the gap between button and dropdown so cursor
+   doesn't leave the hover zone when moving from trigger to menu */
+.nav-dropdown-wrap::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 16px; /* matches top offset */
+    pointer-events: none;
+}
+.nav-dropdown-wrap:hover::after { pointer-events: auto; }
+
 .nav-dropdown-content {
-    position: absolute; top: calc(100% + 20px); left: 50%;
-    transform: translateX(-50%) translateY(8px);
+    position: absolute; top: calc(100% + 14px); left: 50%;
+    transform: translateX(-50%) translateY(6px);
     background: var(--color-off-white);
     border: 1px solid var(--color-fem-border);
-    min-width: 180px;
-    padding: 12px 0;
+    min-width: 200px;
+    padding: 8px 0;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    z-index: 10;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 200;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.10);
 }
 .theme-dark .nav-dropdown-content {
-    background: var(--color-dark-card);
-    border-color: var(--color-dark-border);
+    background: #1a1a1a;
+    border-color: rgba(255,255,255,0.1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.45);
 }
 .nav-dropdown-wrap:hover .nav-dropdown-content {
     opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0);
 }
 .nav-dropdown-content a {
-    display: block; padding: 10px 24px;
+    display: block; padding: 12px 24px;
     font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
-    transition: background 0.2s, color 0.2s;
+    transition: background 0.15s, color 0.15s;
+    color: var(--color-fem-text);
 }
 .nav-dropdown-content a:hover { background: rgba(0,0,0,0.04); color: var(--color-accent); }
-.theme-dark .nav-dropdown-content a:hover { background: rgba(255,255,255,0.04); }
+.theme-dark .nav-dropdown-content a { color: rgba(255,255,255,0.75); }
+.theme-dark .nav-dropdown-content a:hover { background: rgba(255,255,255,0.06); color: #fff; }
 
 /* Header icons */
 .icon-btn {
@@ -2087,13 +2106,8 @@ body { padding-top: var(--top-h); }
 }
 
 /* ============================================================
-   HEADER — чистый единый вид, всегда с фоном на catalog-страницах
+   HEADER — catalog/other pages: color correction only (bg handled by rule 18 above)
    ============================================================ */
-/* Catalog-specific: светлый хедер с первого рендера */
-body:not(.index-page) .header-group {
-    background-color: rgba(248,247,244,0.98) !important;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.07) !important;
-}
 body:not(.index-page) .header .nav-link { color: var(--color-fem-text); }
 body:not(.index-page) .header .icon-btn { color: var(--color-fem-text); }
 body:not(.index-page) .header .btn-text { color: var(--color-fem-text); }
@@ -2263,24 +2277,26 @@ section[style*="man-bg"] .brand-story__media { background: #111; }
 }
 
 /* 18. Header group — always has background (non-index pages) */
-.header-group {
+/* Non-index: always solid frosted glass */
+body:not(.index-page) .header-group {
     background-color: rgba(248,247,244,0.97) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     box-shadow: 0 1px 0 rgba(0,0,0,0.06) !important;
 }
-/* Index overrides this via .index-page class */
+/* Index: starts transparent, turns solid after scroll via JS .is-solid */
 .index-page .header-group {
     background-color: transparent !important;
     box-shadow: none !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
+    transition: background-color 0.45s ease, backdrop-filter 0.45s ease, box-shadow 0.45s ease !important;
 }
 .index-page .header-group.is-solid {
-    background-color: rgba(10,8,7,0.96) !important;
-    backdrop-filter: blur(24px) !important;
-    -webkit-backdrop-filter: blur(24px) !important;
-    box-shadow: 0 1px 0 rgba(255,255,255,0.06) !important;
+    background-color: rgba(8,6,5,0.90) !important;
+    backdrop-filter: saturate(180%) blur(28px) !important;
+    -webkit-backdrop-filter: saturate(180%) blur(28px) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.07) !important;
 }
 
 /* 19. Section spacing — air between all major sections */
@@ -2294,4 +2310,179 @@ section[style*="man-bg"] .brand-story__media { background: #111; }
 .catalog-sidebar {
     top: calc(var(--top-h) + 16px) !important;
     max-height: calc(100vh - var(--top-h) - 16px) !important;
+}
+
+
+/* ============================================================
+   TSOK — PATCH v2: HEADER GLASS + DROPDOWN FIX + CLEAN ANIMATIONS
+   ============================================================ */
+
+/* ── 1. INDEX-PAGE HEADER: прозрачный → стекло при скролле ── */
+/* Plomo bar на index всегда с тёмной подложкой */
+.index-page .promo-bar {
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+/* Хедер на index: прозрачный */
+.index-page .header-group {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transition: background-color 0.5s ease,
+                backdrop-filter 0.5s ease,
+                box-shadow 0.5s ease !important;
+}
+/* После скролла — плотное тёмное стекло */
+.index-page .header-group.is-solid {
+    background-color: rgba(8,5,4,0.88) !important;
+    backdrop-filter: saturate(160%) blur(32px) !important;
+    -webkit-backdrop-filter: saturate(160%) blur(32px) !important;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.08) !important;
+}
+/* Цвет текста в хедере на index (прозрачном) */
+.index-page .header .nav-link { color: rgba(255,255,255,0.82); }
+.index-page .header .nav-link:hover { color: #fff; }
+.index-page .header .btn-text { color: rgba(255,255,255,0.82); }
+.index-page .header .icon-btn { color: rgba(255,255,255,0.82); }
+.index-page .header .icon-btn:hover { color: #fff; }
+.index-page .header .cart-count,
+.index-page .header .fav-count { background: #c9956e; color: #fff; }
+/* Лого на index */
+.index-page .header__center a > span:first-child { color: #fff !important; }
+.index-page .header__center a > span:last-child  { color: rgba(255,255,255,0.38) !important; }
+
+/* ── 2. PROMO BAR — при is-solid тоже тёмная ── */
+.index-page .site-top.is-solid .promo-bar,
+.index-page .header-group.is-solid ~ .promo-bar { background: #000; }
+
+/* ── 3. DROPDOWN FIX — невидимый мост, никаких разрывов ── */
+/* Уже прописан выше в основных стилях; здесь — усиление z-index */
+.nav-dropdown-content { z-index: 9999 !important; }
+
+/* ── 4. АНИМАЦИИ — чище, без дёрганий ── */
+/* Убираем начальное opacity:0 из anim-fade-up до момента наблюдения */
+.anim-fade-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.65s cubic-bezier(0.25,1,0.5,1),
+                transform 0.65s cubic-bezier(0.25,1,0.5,1);
+}
+.anim-fade-up.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── 5. SPLIT HERO — убираем кривой flex-transition ── */
+/* flex-grow нельзя smoothly анимировать в Safari/Firefox; используем opacity overlay */
+.split-hero__side {
+    transition: none !important; /* убираем "дёрганье" flex */
+}
+.split-hero__side:hover { flex: 1.08; }
+
+/* Оверлей при hover — плавный */
+.split-hero__overlay {
+    transition: opacity 0.6s ease;
+}
+.split-hero__side:hover .split-hero__overlay {
+    opacity: 1.2; /* через ::after управляем ниже */
+}
+
+/* ── 6. ВОЗДУХ — дополнительный отступ между секциями ── */
+.marquee-section { margin: 0; }
+.box-promo { position: relative; overflow: hidden; }
+
+/* ── 7. СТЕКЛО-ДЕКОР — размытые круги на секциях ── */
+/* Добавляется через псевдо-элементы к контейнеру */
+.box-promo::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,149,110,0.12) 0%, transparent 70%);
+    top: -200px; right: -100px;
+    pointer-events: none;
+    z-index: 0;
+}
+.box-promo::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,136,255,0.07) 0%, transparent 70%);
+    bottom: -100px; left: 10%;
+    pointer-events: none;
+    z-index: 0;
+}
+.box-promo__inner { position: relative; z-index: 1; }
+
+/* Vision statement — лёгкое зерно */
+.vision-statement { position: relative; overflow: hidden; }
+.vision-statement::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+        radial-gradient(ellipse 60% 80% at 20% 50%, rgba(201,149,110,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 80% 50%, rgba(0,136,255,0.04) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* ── 8. ENTRY CTA — blur-фон под контентом ── */
+.entry-cta__side--fem {
+    background:
+        radial-gradient(ellipse 80% 60% at 30% 80%, rgba(201,149,110,0.18) 0%, transparent 60%),
+        var(--color-fem-card);
+}
+.entry-cta__side--homme {
+    background:
+        radial-gradient(ellipse 70% 60% at 70% 20%, rgba(0,136,255,0.08) 0%, transparent 60%),
+        var(--color-man-bg);
+}
+
+/* ── 9. BRAND STORY секции — слабый gradient ── */
+#brands { position: relative; overflow: hidden; }
+#brands::after {
+    content: '';
+    position: absolute; bottom: 0; right: 0;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,149,110,0.07) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* ── 10. SCROLL HINT — правим: fixed + не мешает кликам ── */
+.scroll-hint {
+    position: fixed !important;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 30;
+}
+
+/* ── 11. NAV DROPDOWN CHEVRON — плавный поворот ── */
+.nav-dropdown-btn svg {
+    transition: transform 0.25s ease;
+}
+.nav-dropdown-wrap:hover .nav-dropdown-btn svg {
+    transform: rotate(180deg);
+}
+
+/* ── 12. HEADER transparent text — logo ── */
+.index-page .header__center { position: relative; }
+
+
+/* ── Dropdown на index-page — всегда тёмный (т.к. хедер тёмный) ── */
+.index-page .nav-dropdown-content {
+    background: #111 !important;
+    border-color: rgba(255,255,255,0.10) !important;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.55) !important;
+}
+.index-page .nav-dropdown-content a {
+    color: rgba(255,255,255,0.78) !important;
+}
+.index-page .nav-dropdown-content a:hover {
+    background: rgba(255,255,255,0.06) !important;
+    color: #fff !important;
 }
