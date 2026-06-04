@@ -7,7 +7,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    
+    <!-- Подключение CSS через Flask -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="index-page">
 
@@ -91,7 +93,7 @@
     <!-- Женская сторона -->
     <a href="catalog.html" class="split-hero__side">
         <div class="split-hero__bg animate-breathe">
-            <img src="img/HeroFem.jpg" alt="Pearl by Tais"
+            <img src="{{ url_for('static', filename='img/HeroFem.jpg') }}" alt="Pearl by Tais"
                  onerror="this.outerHTML='<div class=\'split-hero__bg-fallback split-hero__bg-fallback--fem\'></div>'">
         </div>
         <div class="split-hero__overlay"></div>
@@ -99,7 +101,7 @@
             <div class="split-hero__content">
                 <span class="split-hero__eyebrow">для неё</span>
                 <div class="split-hero__brand">
-                    <img src="img/цок-цок.svg" alt="цок-цок" class="hero-svg-logo"
+                    <img src="{{ url_for('static', filename='img/цок-цок.svg') }}" alt="цок-цок" class="hero-svg-logo"
                          onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
                     <span style="display:none;font-family:var(--font-display);font-size:clamp(32px,4.5vw,64px);font-weight:400;line-height:0.9;color:white;">цок-цок</span>
                     <div class="split-hero__sub-brand">Pearl by Tais</div>
@@ -116,7 +118,7 @@
     <!-- Мужская сторона -->
     <a href="catalog-homme.html" class="split-hero__side">
         <div class="split-hero__bg animate-breathe">
-            <img src="img/HeroHomme.jpg" alt="INTELEGENTOFF"
+            <img src="{{ url_for('static', filename='img/HeroHomme.jpg') }}" alt="INTELEGENTOFF"
                  onerror="this.outerHTML='<div class=\'split-hero__bg-fallback split-hero__bg-fallback--homme\'></div>'">
         </div>
         <div class="split-hero__overlay"></div>
@@ -202,13 +204,13 @@
 
         <div class="box-promo__visual anim-scale-up">
             <div class="box-promo__image">
-                <img src="img/BoxBefore.jpg" alt="До TSOK BOX"
+                <img src="{{ url_for('static', filename='img/BoxBefore.jpg') }}" alt="До TSOK BOX"
                      onerror="this.parentElement.style.background='#1a1410';this.style.display='none';">
                 <div class="box-promo__badge">До</div>
             </div>
             <div class="box-promo__image">
-                <img src="img/BoxAfter.jpg" alt="После TSOK BOX"
-                     onerror="this.src='img/Pearl3.jpg'">
+                <img src="{{ url_for('static', filename='img/BoxAfter.jpg') }}" alt="После TSOK BOX"
+                     onerror="this.src='{{ url_for('static', filename='img/Pearl3.jpg') }}'">
                 <div class="box-promo__badge">После</div>
             </div>
             <div class="box-promo__stats">
@@ -238,7 +240,7 @@
 <section id="brands" class="section section--light section--bordered-top">
     <div class="container grid-2">
         <div class="media-box anim-scale-up">
-            <video src="img/tais.mp4" autoplay loop muted playsinline
+            <video src="{{ url_for('static', filename='img/tais.mp4') }}" autoplay loop muted playsinline
                    onerror="this.style.display='none'"></video>
         </div>
         <div class="content-box anim-fade-up">
@@ -285,7 +287,7 @@
         </div>
         <div class="dual-brand-cards anim-scale-up anim-delay-1">
             <div class="card-story card-story--fem">
-                <img src="img/цок-цок.svg" alt="цок-цок" class="card-story__svg"
+                <img src="{{ url_for('static', filename='img/цок-цок.svg') }}" alt="цок-цок" class="card-story__svg"
                      onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
                 <span style="display:none;font-family:var(--font-display);font-size:clamp(26px,3vw,42px);font-weight:400;">цок-цок</span>
                 <div class="card-story__label">Pearl by Tais — женский бренд</div>
@@ -332,7 +334,7 @@
             </a>
         </div>
         <div class="media-box anim-scale-up" style="background:#111;">
-            <img src="img/IntelegentСергей.png" alt="INTELEGENTOFF"
+            <img src="{{ url_for('static', filename='img/IntelegentСергей.png') }}" alt="INTELEGENTOFF"
                  onerror="this.parentElement.style.background='linear-gradient(150deg,#0d0d0d,#1c1c24)'">
         </div>
     </div>
@@ -344,7 +346,7 @@
 <section class="section section--bordered-top" id="founder">
     <div class="container founder-grid">
         <div class="founder-grid__img anim-scale-up">
-            <img src="img/Tais.jpg" alt="Таис Рыбакина"
+            <img src="{{ url_for('static', filename='img/Tais.jpg') }}" alt="Таис Рыбакина"
                  onerror="this.parentElement.style.background='linear-gradient(160deg,#ddd0c4,#b89484)'">
         </div>
         <div class="founder-grid__content anim-fade-up">
@@ -390,12 +392,12 @@
 <section class="entry-cta" id="enter">
 
     <a href="catalog.html" class="entry-cta__card">
-        <div class="entry-cta__bg" style="background-image:url('img/HeroFem.jpg');"></div>
+        <div class="entry-cta__bg" style="background-image:url('{{ url_for('static', filename='img/HeroFem.jpg') }}');"></div>
         <div class="entry-cta__overlay"></div>
         <div class="entry-cta__content">
             <span class="entry-cta__eyebrow">для неё</span>
             <div class="entry-cta__logo-group">
-                <img src="img/цок-цок.svg" alt="цок-цок" class="entry-cta__svg-logo"
+                <img src="{{ url_for('static', filename='img/цок-цок.svg') }}" alt="цок-цок" class="entry-cta__svg-logo"
                      onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
                 <span style="display:none;font-family:var(--font-display);font-size:clamp(28px,3vw,52px);font-weight:400;color:white;">цок-цок</span>
                 <div class="entry-cta__sub-logo">Pearl by Tais</div>
@@ -409,7 +411,7 @@
     </a>
 
     <a href="catalog-homme.html" class="entry-cta__card">
-        <div class="entry-cta__bg" style="background-image:url('img/HeroHomme.jpg');"></div>
+        <div class="entry-cta__bg" style="background-image:url('{{ url_for('static', filename='img/HeroHomme.jpg') }}');"></div>
         <div class="entry-cta__overlay entry-cta__overlay--dark"></div>
         <div class="entry-cta__content">
             <span class="entry-cta__eyebrow">для него</span>
@@ -532,7 +534,9 @@
 
 <div id="toastContainer" class="toast-container"></div>
 
-<script src="script.js"></script>
+<!-- Подключение JS через Flask -->
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const hg   = document.getElementById('headerGroup');

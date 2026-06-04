@@ -1,5 +1,5 @@
 /* ============================================================
-   TSOK.SHOP — GLOBAL STYLES v4 FINAL
+   TSOK.SHOP — GLOBAL STYLES v4 FINAL POLISHED
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap');
@@ -664,29 +664,34 @@ ul, ol { list-style: none; }
 .fact-card__lbl { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
 
 /* ============================================================
-   13. VISION STATEMENT
+   13. VISION STATEMENT (PERFECTLY CENTERED)
    ============================================================ */
 .vision-statement {
-    padding: 128px 0;
+    padding: 140px 0;
     background: var(--color-off-white);
     border-top: 1px solid var(--color-fem-border);
     border-bottom: 1px solid var(--color-fem-border);
     position: relative; overflow: hidden;
+    text-align: center;
 }
 .vision-blur-orb {
     position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-    width: 600px; height: 300px; border-radius: 50%;
-    background: radial-gradient(ellipse, rgba(201,149,110,0.08) 0%, transparent 70%);
+    width: 800px; height: 400px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(201,149,110,0.12) 0%, transparent 70%);
     pointer-events: none;
 }
 .vision-statement__text {
     font-family: var(--font-display);
-    font-size: clamp(26px, 3.8vw, 52px);
+    font-size: clamp(28px, 4vw, 56px);
     font-weight: 300; line-height: 1.35; color: var(--color-fem-text);
-    max-width: 860px; margin-bottom: 24px;
+    max-width: 900px;
+    margin: 0 auto 32px auto; /* PERFECT CENTERING */
 }
-.vision-statement__text em { font-style: italic; color: var(--color-accent); }
-.vision-statement__author { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-fem-muted); }
+.vision-statement__text em { font-style: italic; color: var(--color-gold); }
+.vision-statement__author { 
+    font-size: 13px; letter-spacing: 0.25em; 
+    text-transform: uppercase; color: var(--color-fem-muted); 
+}
 
 /* ============================================================
    14. FOUNDER
@@ -1075,4 +1080,3 @@ input[type=range]::-moz-range-thumb { width: 22px; height: 22px; border-radius: 
 .sidebar-price-range { display: flex; flex-direction: column; gap: 14px; }
 .sidebar-price-range input[type=range] { accent-color: var(--color-fem-text); background: var(--color-fem-border); }
 .sidebar-price-range__labels { display: flex; justify-content: space-between; font-size: 12px; color: var(--color-fem-muted); }
-
