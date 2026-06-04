@@ -4,286 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TSOK — Два бренда. Одна философия.</title>
+    
+    <!-- Подключение шрифтов -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+    
+    <!-- Подключение стилей -->
     <link rel="stylesheet" href="style.css">
-    <style>
-        /* ─── Index page: no top padding, hero is fullscreen ─── */
-        body.index-page { padding-top: 0 !important; }
-        /* Header glass + dropdown + animations handled in style.css patch block */
-
-        /* ─── HERO ─── */
-        .split-hero {
-            position: relative;
-            height: calc(100vh - var(--top-h));
-            min-height: 560px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            overflow: hidden;
-        }
-        .split-hero__divider {
-            position: absolute; top: 0; bottom: 0; left: 50%;
-            width: 1px; background: rgba(255,255,255,0.18); z-index: 10;
-        }
-        .split-hero__side {
-            position: relative; overflow: hidden;
-            display: flex; align-items: flex-end;
-            padding: 56px max(40px, 5vw);
-            text-decoration: none;
-            transition: flex 0.6s cubic-bezier(0.4,0,0.2,1);
-        }
-        .split-hero__side:hover { flex: 1.15; }
-        .split-hero__bg {
-            position: absolute; inset: 0;
-            transition: transform 0.9s cubic-bezier(0.4,0,0.2,1);
-        }
-        .split-hero__side:hover .split-hero__bg { transform: scale(1.05); }
-        .split-hero__bg img {
-            width: 100%; height: 100%;
-            object-fit: cover; object-position: center top;
-            display: block;
-        }
-        .split-hero__bg--fem-fallback  { background: linear-gradient(150deg,#d4c4b8,#7a5040); width:100%; height:100%; }
-        .split-hero__bg--homme-fallback { background: linear-gradient(150deg,#0d0d0d,#1c1c24); width:100%; height:100%; }
-        .split-hero__overlay {
-            position: absolute; inset: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.0) 55%);
-        }
-        .split-hero__content { position: relative; z-index: 2; color: #fff; }
-        .split-hero__eyebrow {
-            display: block; font-size: 10px; font-weight: 600;
-            letter-spacing: 0.22em; text-transform: uppercase;
-            opacity: 0.5; margin-bottom: 16px;
-        }
-        .split-hero__brand {
-            font-family: var(--font-display); font-weight: 400;
-            font-size: clamp(36px, 4.5vw, 68px);
-            line-height: 0.92; margin-bottom: 18px;
-        }
-        .split-hero__brand em { font-style: italic; font-weight: 300; }
-        .split-hero__brand--brutal {
-            font-family: var(--font-brutal);
-            font-size: clamp(40px, 5.5vw, 84px);
-            line-height: 0.85; letter-spacing: 0.04em;
-        }
-        .split-hero__desc {
-            font-size: 14px; font-weight: 300; line-height: 1.65;
-            opacity: 0.65; max-width: 300px; margin-bottom: 24px;
-        }
-        .split-hero__cta {
-            display: inline-flex; align-items: center; gap: 10px;
-            font-size: 11px; font-weight: 600; letter-spacing: 0.14em;
-            text-transform: uppercase;
-            border-bottom: 1px solid rgba(255,255,255,0.35);
-            padding-bottom: 3px;
-            transition: border-color 0.3s, gap 0.3s;
-        }
-        .split-hero__side:hover .split-hero__cta { border-color: #fff; gap: 16px; }
-        @media (max-width: 768px) {
-            .split-hero { grid-template-columns: 1fr; height: auto; }
-            .split-hero__side { min-height: 55vw; }
-            .split-hero__divider { display: none; }
-        }
-
-        /* ─── SECTION SPACING ─── */
-        .section-gap { padding: 96px var(--pad-x); }
-        .section-gap--sm { padding: 64px var(--pad-x); }
-        @media (max-width: 768px) {
-            .section-gap { padding: 64px var(--pad-x); }
-            .section-gap--sm { padding: 44px var(--pad-x); }
-        }
-
-        /* ─── BRAND STORY ─── */
-        .brand-story {
-            display: grid; grid-template-columns: 1fr 1fr;
-        }
-        .brand-story__media {
-            position: relative; overflow: hidden;
-            max-height: 80vh; /* KEY: never taller than 80% of viewport */
-            background: var(--color-fem-card);
-        }
-        .brand-story__media img,
-        .brand-story__media video {
-            width: 100%; height: 100%;
-            object-fit: contain;   /* preserve proportions, no crop */
-            object-position: center;
-            display: block;
-            max-height: 80vh;
-        }
-        .brand-story__content {
-            padding: max(64px,7vw) max(40px,6vw);
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        @media (max-width: 1024px) {
-            .brand-story { grid-template-columns: 1fr; }
-            .brand-story__media { max-height: 60vw; }
-            .brand-story__media img,
-            .brand-story__media video { max-height: 60vw; }
-        }
-        @media (max-width: 640px) {
-            .brand-story__media { max-height: 80vw; }
-        }
-
-        /* ─── BOX PROMO ─── */
-        .box-promo {
-            background: #0e0b09; color: white;
-            padding: 96px var(--pad-x);
-        }
-        .box-promo__inner {
-            max-width: 1300px; margin: 0 auto;
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 72px; align-items: start;
-        }
-        .box-promo__eyebrow {
-            display: inline-flex; align-items: center; gap: 12px;
-            font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
-            text-transform: uppercase; color: #c9956e; margin-bottom: 24px;
-        }
-        .box-promo__eyebrow::before { content:''; width:24px; height:1px; background:#c9956e; }
-        .box-promo__title {
-            font-family: var(--font-display);
-            font-size: clamp(40px,5vw,72px);
-            font-weight: 400; line-height: 0.92; color: white; margin-bottom: 20px;
-        }
-        .box-promo__title em { color: #c9956e; font-style: italic; }
-        .box-promo__subtitle {
-            font-size: 15px; font-weight: 300; line-height: 1.8;
-            color: rgba(255,255,255,0.48); margin-bottom: 40px;
-        }
-        .box-promo__utps { display: flex; flex-direction: column; }
-        .box-promo__utp {
-            display: flex; gap: 18px; padding: 18px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.07);
-        }
-        .box-promo__utp:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
-        .box-promo__utp-num {
-            font-family: var(--font-display); font-size: 13px;
-            color: #c9956e; opacity: 0.6; flex-shrink: 0; width: 22px; padding-top: 2px;
-        }
-        .box-promo__utp-text { font-size: 14px; font-weight: 300; line-height: 1.65; color: rgba(255,255,255,0.72); }
-        .box-promo__utp-text strong { color: white; font-weight: 500; display: block; margin-bottom: 1px; }
-        .box-promo__cta { margin-top: 40px; display: flex; gap: 14px; flex-wrap: wrap; }
-
-        /* Visual column */
-        .box-promo__visual {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .box-promo__img-wrap {
-            position: relative; overflow: hidden; border-radius: 2px;
-        }
-        .box-promo__img-wrap img {
-            width: 100%; display: block;
-            /* not cropped — natural proportion */
-        }
-        .box-promo__img-label {
-            position: absolute; bottom: 14px; left: 14px;
-            font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
-            color: rgba(255,255,255,0.55); background: rgba(0,0,0,0.45);
-            padding: 4px 10px; backdrop-filter: blur(6px);
-        }
-        .box-promo__stats {
-            grid-column: 1/-1;
-            display: grid; grid-template-columns: repeat(3,1fr);
-            gap: 1px; background: rgba(255,255,255,0.07);
-        }
-        .box-promo__stat {
-            background: #0e0b09; padding: 20px 14px; text-align: center;
-        }
-        .box-promo__stat-num {
-            font-family: var(--font-display); font-size: 26px;
-            color: #c9956e; line-height: 1;
-        }
-        .box-promo__stat-label {
-            font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
-            color: rgba(255,255,255,0.28); margin-top: 5px;
-        }
-        @media (max-width: 1100px) {
-            .box-promo__inner { grid-template-columns: 1fr; gap: 56px; }
-        }
-        @media (max-width: 640px) {
-            .box-promo__visual { grid-template-columns: 1fr 1fr; }
-        }
-
-        /* ─── SCROLL HINT ─── */
-        .scroll-hint {
-            position: fixed; bottom: 32px; left: 50%;
-            transform: translateX(-50%); z-index: 40;
-            transition: opacity 0.5s; pointer-events: none;
-        }
-        .scroll-hint__text {
-            display: block; text-align: center;
-            font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
-            color: rgba(255,255,255,0.4); margin-bottom: 6px;
-        }
-        .scroll-hint__line {
-            width: 1px; height: 40px; background: rgba(255,255,255,0.22);
-            margin: 0 auto;
-            animation: scrollPulse 1.8s ease-in-out infinite;
-        }
-        @keyframes scrollPulse {
-            0%,100% { transform: scaleY(0.5); transform-origin: top; opacity: 0.3; }
-            50%      { transform: scaleY(1);   opacity: 1; }
-        }
-
-        /* ─── STATS ROW ─── */
-        .stats-row {
-            display: grid; grid-template-columns: repeat(3,1fr);
-            gap: 1px; background: var(--color-fem-border);
-            max-width: 1300px; margin: 0 auto;
-        }
-        @media (max-width: 600px) { .stats-row { grid-template-columns: 1fr; } }
-    </style>
 </head>
 <body class="index-page">
 
-    <!-- ═══ SITE TOP (fixed) ═══ -->
+    <!-- ═══════════════════════════════════════════
+         ШАПКА (SITE TOP)
+         ═══════════════════════════════════════════ -->
     <div class="site-top" id="siteTop">
         <div class="promo-bar">
             Бесплатная доставка от 80 BYN &nbsp;·&nbsp;
             <a href="catalog.html">Pearl by Tais</a> &nbsp;·&nbsp;
             <a href="catalog-homme.html">INTELEGENTOFF</a>
         </div>
+
         <div class="header-group" id="headerGroup">
             <header class="header">
                 <div class="header__inner">
+                    <!-- Левая часть -->
                     <div class="header__left">
                         <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
                         </button>
+                        
                         <nav class="desktop-nav desktop-only">
                             <a href="index.html" class="nav-link">Главная</a>
                             <div class="nav-dropdown-wrap">
-                                <span class="nav-link nav-dropdown-btn">Бренды
+                                <span class="nav-link nav-dropdown-btn">
+                                    Бренды
                                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
                                 </span>
-                                <div class="nav-dropdown-content" style="background:#111;border-color:rgba(255,255,255,0.1);">
-                                    <a href="catalog.html" style="color:rgba(255,255,255,0.75);">✦ Pearl by Tais</a>
-                                    <a href="catalog-homme.html" style="color:rgba(255,255,255,0.75);">● INTELEGENTOFF</a>
-                                    <a href="subscription.html" style="color:#c9956e;">📦 TSOK BOX</a>
+                                <div class="nav-dropdown-content">
+                                    <a href="catalog.html">✦ Pearl by Tais</a>
+                                    <a href="catalog-homme.html">● INTELEGENTOFF</a>
+                                    <a href="subscription.html" class="text-gold">📦 TSOK BOX</a>
                                 </div>
                             </div>
-                            <a href="subscription.html" class="nav-link" style="color:#c9956e;">TSOK BOX ✦</a>
+                            <a href="subscription.html" class="nav-link text-gold">TSOK BOX ✦</a>
                             <a href="#our-story" class="nav-link">История</a>
                         </nav>
                     </div>
+                    
+                    <!-- Центр (Логотип) -->
                     <div class="header__center">
-                        <a href="index.html" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;line-height:1;">
-                            <span style="font-family:var(--font-display);font-size:clamp(18px,2vw,26px);font-weight:400;letter-spacing:0.3em;color:white;">TSOK</span>
-                            <span style="font-family:var(--font-display);font-size:11px;font-style:italic;letter-spacing:0.1em;color:rgba(255,255,255,0.4);margin-top:2px;">boutique</span>
+                        <a href="index.html" class="logo-main" aria-label="На главную">
+                            <span class="logo-main__title">TSOK</span>
+                            <span class="logo-main__subtitle">boutique</span>
                         </a>
                     </div>
+                    
+                    <!-- Правая часть -->
                     <div class="header__right">
                         <button class="icon-btn desktop-only" aria-label="Поиск">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                         </button>
-                        <button class="icon-btn desktop-only" id="loginBtn"><span class="btn-text">Войти</span></button>
-                        <button class="icon-btn" id="headerFavBtn" style="position:relative;" aria-label="Избранное">
+                        <button class="icon-btn desktop-only" id="loginBtn">
+                            <span class="btn-text">Войти</span>
+                        </button>
+                        <button class="icon-btn" id="headerFavBtn" aria-label="Избранное">
                             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                             <span class="fav-count">0</span>
                         </button>
-                        <button class="icon-btn" id="cartOpenBtn" style="position:relative;" aria-label="Корзина">
+                        <button class="icon-btn" id="cartOpenBtn" aria-label="Корзина">
                             <span class="desktop-only btn-text">Корзина</span>
                             <svg class="mobile-only" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6a2 2 0 0 1 4 0v2"/></svg>
                             <span class="cart-count">0</span>
@@ -294,26 +83,29 @@
         </div>
     </div>
 
-    <!-- ═══ HERO ═══ -->
-    <section class="split-hero" style="position:relative;">
-        <!-- Ambient blur orbs (decorative, pointer-events:none) -->
-        <div aria-hidden="true" style="position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden;">
-            <div style="position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(201,149,110,0.22) 0%,transparent 70%);bottom:-120px;left:15%;filter:blur(60px);"></div>
-            <div style="position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(0,136,255,0.10) 0%,transparent 70%);top:-80px;right:20%;filter:blur(50px);"></div>
+    <!-- ═══════════════════════════════════════════
+         ГЛАВНЫЙ ЭКРАН (Сплит: М / Ж)
+         ═══════════════════════════════════════════ -->
+    <section class="split-hero">
+        <!-- Блюр-сферы (декор) -->
+        <div class="hero-blur-orbs" aria-hidden="true">
+            <div class="hero-orb hero-orb--gold"></div>
+            <div class="hero-orb hero-orb--blue"></div>
         </div>
+        
         <div class="split-hero__divider"></div>
 
+        <!-- Женская сторона -->
         <a href="catalog.html" class="split-hero__side">
             <div class="split-hero__bg">
-                <img src="img/HeroFem.jpg" alt="Pearl by Tais"
-                     onerror="this.outerHTML='<div class=\'split-hero__bg--fem-fallback\'></div>'">
+                <img src="img/HeroFem.jpg" alt="Pearl by Tais" onerror="this.outerHTML='<div class=\'split-hero__bg-fallback split-hero__bg-fallback--fem\'></div>'">
             </div>
             <div class="split-hero__overlay"></div>
             <div class="split-hero__content">
                 <span class="split-hero__eyebrow">женская коллекция</span>
                 <div class="split-hero__brand">
                     цок<em>-цок</em>
-                    <div style="font-family:var(--font-display);font-style:italic;font-size:clamp(14px,1.4vw,20px);font-weight:300;letter-spacing:0.08em;margin-top:6px;opacity:0.75;">Pearl by Tais</div>
+                    <div class="split-hero__sub-brand">Pearl by Tais</div>
                 </div>
                 <p class="split-hero__desc">Интеллектуальный уход для женщин, которые ценят своё состояние.</p>
                 <span class="split-hero__cta">
@@ -323,16 +115,16 @@
             </div>
         </a>
 
+        <!-- Мужская сторона -->
         <a href="catalog-homme.html" class="split-hero__side">
             <div class="split-hero__bg">
-                <img src="img/HeroHomme.jpg" alt="INTELEGENTOFF"
-                     onerror="this.outerHTML='<div class=\'split-hero__bg--homme-fallback\'></div>'">
+                <img src="img/HeroHomme.jpg" alt="INTELEGENTOFF" onerror="this.outerHTML='<div class=\'split-hero__bg-fallback split-hero__bg-fallback--homme\'></div>'">
             </div>
             <div class="split-hero__overlay"></div>
             <div class="split-hero__content">
                 <span class="split-hero__eyebrow">мужская коллекция</span>
                 <div class="split-hero__brand split-hero__brand--brutal">
-                    INTEL<span style="color:var(--color-accent);">.</span>OFF
+                    INTEL<span class="text-accent">.</span>OFF
                 </div>
                 <p class="split-hero__desc">Брутальный уход без компромиссов. Только результат.</p>
                 <span class="split-hero__cta">
@@ -343,13 +135,15 @@
         </a>
     </section>
 
-    <!-- ── SCROLL HINT ── -->
+    <!-- ИНДИКАТОР СКРОЛЛА -->
     <div class="scroll-hint" id="scrollHint">
         <span class="scroll-hint__text">Скролл</span>
         <div class="scroll-hint__line"></div>
     </div>
 
-    <!-- ═══ MARQUEE ═══ -->
+    <!-- ═══════════════════════════════════════════
+         БЕГУЩАЯ СТРОКА (MARQUEE)
+         ═══════════════════════════════════════════ -->
     <div class="marquee-section">
         <div class="marquee-track">
             <div class="marquee-item">Pearl by Tais <span class="dot"></span></div>
@@ -363,104 +157,110 @@
         </div>
     </div>
 
-    <!-- ═══ TSOK BOX PROMO ═══ -->
+    <!-- ═══════════════════════════════════════════
+         ПРОМО ПОДПИСКИ (TSOK BOX)
+         ═══════════════════════════════════════════ -->
     <section class="box-promo">
-        <div class="box-promo__inner">
-            <div>
+        <div class="box-promo__inner container">
+            
+            <div class="box-promo__content">
                 <div class="box-promo__eyebrow">TSOK BOX — персональная подписка</div>
                 <h2 class="box-promo__title">
                     Уход под<br>дверь —<br><em>каждый месяц</em>
                 </h2>
                 <p class="box-promo__subtitle">Собираешь один раз, получаешь регулярно. Меняешь состав когда хочешь — без звонков и штрафов.</p>
+                
                 <div class="box-promo__utps">
                     <div class="box-promo__utp">
                         <span class="box-promo__utp-num">01</span>
-                        <div class="box-promo__utp-text"><strong>Не нужно идти в магазин</strong>Привозим всё что нужно прямо под дверь каждый месяц — сам выбираешь состав.</div>
+                        <div class="box-promo__utp-text"><strong>Не нужно идти в магазин</strong> Привозим всё что нужно прямо под дверь каждый месяц.</div>
                     </div>
                     <div class="box-promo__utp">
                         <span class="box-promo__utp-num">02</span>
-                        <div class="box-promo__utp-text"><strong>Только то, что хочешь ты</strong>За 3 дня до отправки придёт уведомление: замени что угодно или пропусти месяц.</div>
+                        <div class="box-promo__utp-text"><strong>Только то, что хочешь ты</strong> За 3 дня до отправки придёт уведомление: замени что угодно.</div>
                     </div>
                     <div class="box-promo__utp">
                         <span class="box-promo__utp-num">03</span>
-                        <div class="box-promo__utp-text"><strong>Не успела израсходовать?</strong>В личном кабинете — пропусти месяц или поменяй состав. Один клик.</div>
+                        <div class="box-promo__utp-text"><strong>Не успела израсходовать?</strong> В личном кабинете — пропусти месяц или поменяй состав.</div>
                     </div>
                     <div class="box-promo__utp">
                         <span class="box-promo__utp-num">04</span>
-                        <div class="box-promo__utp-text"><strong>Подарок внутри</strong>От 500 BYN — секретный подарок в каждой коробке. Забираешь в ЛК при получении.</div>
-                    </div>
-                    <div class="box-promo__utp">
-                        <span class="box-promo__utp-num">05</span>
-                        <div class="box-promo__utp-text"><strong>Эстетика вместо хаоса</strong>Флаконы одной стилистики вместо разнобойного мыла по всей ванне.</div>
+                        <div class="box-promo__utp-text"><strong>Подарок внутри</strong> От 500 BYN — секретный подарок в каждой коробке.</div>
                     </div>
                 </div>
+                
                 <div class="box-promo__cta">
-                    <a href="subscription.html" class="btn" style="background:#c9956e;border-color:#c9956e;color:white;">
+                    <a href="subscription.html" class="btn btn--gold">
                         Собрать свой бокс
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </a>
-                    <a href="subscription.html#how" class="btn btn--outline-dark" style="border-color:rgba(255,255,255,0.18);color:rgba(255,255,255,0.6);">Как работает</a>
+                    <a href="subscription.html#how" class="btn btn--outline-light">Как работает</a>
                 </div>
             </div>
 
             <div class="box-promo__visual">
                 <div class="box-promo__img-wrap">
-                    <img src="img/BoxBefore.jpg" alt="До TSOK BOX"
-                         onerror="this.parentElement.style.background='#1a1410';this.style.display='none';">
+                    <img src="img/BoxBefore.jpg" alt="До TSOK BOX" onerror="this.parentElement.style.background='#1a1410';this.style.display='none';">
                     <div class="box-promo__img-label">До</div>
                 </div>
                 <div class="box-promo__img-wrap">
-                    <img src="img/BoxAfter.jpg" alt="После TSOK BOX"
-                         onerror="this.src='img/Pearl3.jpg';">
+                    <img src="img/BoxAfter.jpg" alt="После TSOK BOX" onerror="this.src='img/Pearl3.jpg';">
                     <div class="box-promo__img-label">После</div>
                 </div>
+                
                 <div class="box-promo__stats">
                     <div class="box-promo__stat">
                         <div class="box-promo__stat-num">−15%</div>
                         <div class="box-promo__stat-label">на 3 месяца</div>
                     </div>
-                    <div class="box-promo__stat" style="border-left:1px solid rgba(255,255,255,0.07);border-right:1px solid rgba(255,255,255,0.07);">
+                    <div class="box-promo__stat bordered">
                         <div class="box-promo__stat-num">−25%</div>
                         <div class="box-promo__stat-label">на 12 месяцев</div>
                     </div>
                     <div class="box-promo__stat">
                         <div class="box-promo__stat-num">🎁</div>
-                        <div class="box-promo__stat-label">подарок от 500 BYN</div>
+                        <div class="box-promo__stat-label">от 500 BYN</div>
                     </div>
                 </div>
             </div>
+            
         </div>
     </section>
 
-    <!-- ═══ PEARL BY TAIS STORY ═══ -->
-    <section id="brands" style="background:var(--color-off-white);border-top:1px solid var(--color-fem-border);">
+    <!-- ═══════════════════════════════════════════
+         ИСТОРИЯ БРЕНДА PEARL
+         ═══════════════════════════════════════════ -->
+    <section id="brands" class="section--light section--bordered-top">
         <div class="brand-story">
             <div class="brand-story__media">
-                <video src="img/tais.mp4" autoplay loop muted playsinline
-                       onerror="this.style.display='none'"></video>
+                <video src="img/tais.mp4" autoplay loop muted playsinline onerror="this.style.display='none'"></video>
             </div>
-            <div class="brand-story__content anim-fade-up" style="border-left:1px solid var(--color-fem-border);">
+            <div class="brand-story__content anim-fade-up border-left-desk">
                 <span class="label">Pearl by Tais</span>
-                <h2 style="font-family:var(--font-display);font-size:clamp(32px,4vw,56px);font-weight:400;line-height:1.05;margin:14px 0 28px;">
+                <h2 class="section__title">
                     Красота как<br><em>состояние</em>
                 </h2>
-                <div class="quote-block" style="margin-bottom:24px;">
+                
+                <div class="quote-block">
                     <p>«Каждая женщина заслуживает открывать баночку и чувствовать себя богиней — не дожидаясь особого повода.»</p>
                 </div>
-                <p style="font-size:15px;font-weight:300;line-height:1.8;color:var(--color-fem-muted);margin-bottom:32px;">
+                
+                <p class="section__desc">
                     Все продукты Pearl by Tais — на натуральных гидролатах. Никаких агрессивных ПАВ, парабенов, разрушающих силиконов. pH 5.5 — физиологичный баланс.
                 </p>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--color-fem-border);margin-bottom:36px;">
-                    <div style="background:var(--color-fem-card);padding:24px;">
-                        <div style="font-family:var(--font-display);font-size:36px;color:var(--color-accent);line-height:1;margin-bottom:6px;">100%</div>
-                        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Натуральные гидролаты</div>
+                
+                <div class="fact-grid">
+                    <div class="fact-card">
+                        <div class="fact-card__val text-accent">100%</div>
+                        <div class="fact-card__lbl">Натуральные гидролаты</div>
                     </div>
-                    <div style="background:var(--color-fem-card);padding:24px;">
-                        <div style="font-family:var(--font-display);font-size:36px;color:var(--color-accent);line-height:1;margin-bottom:6px;">0%</div>
-                        <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;">Агрессивных ПАВ</div>
+                    <div class="fact-card">
+                        <div class="fact-card__val text-accent">0%</div>
+                        <div class="fact-card__lbl">Агрессивных ПАВ</div>
                     </div>
                 </div>
-                <a href="catalog.html" class="btn btn--dark">
+                
+                <a href="catalog.html" class="btn btn--dark mt-sm">
                     Смотреть коллекцию
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
@@ -468,129 +268,168 @@
         </div>
     </section>
 
-    <!-- ═══ OUR STORY ═══ -->
-    <section id="our-story" class="section-gap" style="position:relative;overflow:hidden;" style="background:var(--color-off-white);border-top:1px solid var(--color-fem-border);">
-        <div style="max-width:1300px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;" class="anim-fade-up">
-            <div>
+    <!-- ═══════════════════════════════════════════
+         ИСТОРИЯ БУТИКА (ДВА МИРА)
+         ═══════════════════════════════════════════ -->
+    <section id="our-story" class="section section--light section--bordered-top">
+        <div class="our-story-grid container anim-fade-up">
+            <div class="our-story-content">
                 <span class="label">История бутика</span>
-                <h2 class="section__title" style="margin:14px 0 28px;">Два мира.<br><em>Одна философия.</em></h2>
-                <div class="quote-block" style="margin-bottom:24px;">
+                <h2 class="section__title">Два мира.<br><em>Одна философия.</em></h2>
+                
+                <div class="quote-block">
                     <p>Мы создали TSOK как пространство, где красота перестаёт быть компромиссом.</p>
                 </div>
-                <p style="font-size:15px;font-weight:300;line-height:1.85;color:var(--color-fem-muted);margin-bottom:16px;">
+                
+                <p class="section__desc">
                     TSOK — это не просто магазин. Это манифест нового отношения к уходу за собой. Здесь живут два бренда с разными характерами, но единой ценностью: качество без уступок.
                 </p>
-                <p style="font-size:15px;font-weight:300;line-height:1.85;color:var(--color-fem-muted);">
-                    <strong style="font-weight:500;color:var(--color-fem-text);">Pearl by Tais</strong> — нежность и экспертиза.
-                    <strong style="font-weight:500;color:var(--color-fem-text);">INTELEGENTOFF</strong> — сила и интеллект.
+                <p class="section__desc">
+                    <strong class="text-dark">Pearl by Tais</strong> — нежность и экспертиза.<br>
+                    <strong class="text-dark">INTELEGENTOFF</strong> — сила и интеллект.
                 </p>
             </div>
-            <div style="display:flex;flex-direction:column;gap:1px;background:var(--color-fem-border);">
-                <div style="background:var(--color-fem-card);padding:44px;display:flex;flex-direction:column;justify-content:flex-end;min-height:180px;">
-                    <div style="font-family:var(--font-display);font-size:clamp(26px,2.8vw,40px);font-weight:400;margin-bottom:10px;">цок<em style="font-style:italic;">-цок</em></div>
-                    <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-fem-muted);">Pearl by Tais — женский бренд</div>
+
+            <div class="our-story-cards">
+                <div class="card-story-fem">
+                    <div class="card-story__title">цок<em>-цок</em></div>
+                    <div class="card-story__label">Pearl by Tais — женский бренд</div>
                 </div>
-                <div style="background:#0d0d0d;color:white;padding:44px;display:flex;flex-direction:column;justify-content:flex-end;min-height:180px;">
-                    <div style="font-family:var(--font-brutal);font-size:clamp(30px,3.5vw,52px);line-height:0.88;margin-bottom:10px;">INTEL<span style="color:var(--color-accent);">.</span>OFF</div>
-                    <div style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.3);">INTELEGENTOFF — мужской бренд</div>
+                <div class="card-story-homme">
+                    <div class="card-story__title">INTEL<span class="text-accent">.</span>OFF</div>
+                    <div class="card-story__label">INTELEGENTOFF — мужской бренд</div>
                 </div>
             </div>
         </div>
-        <style>@media(max-width:1024px){#our-story>div:first-of-type{grid-template-columns:1fr!important;gap:48px!important;}}</style>
     </section>
 
-    <!-- ═══ VISION STATEMENT ═══ -->
-    <div class="vision-statement anim-fade-up" style="position:relative;overflow:hidden;">
-        <!-- blur orb -->
-        <div aria-hidden="true" style="position:absolute;inset:0;pointer-events:none;">
-            <div style="position:absolute;width:700px;height:400px;left:50%;top:50%;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(ellipse,rgba(201,149,110,0.10) 0%,transparent 65%);filter:blur(40px);"></div>
+    <!-- ═══════════════════════════════════════════
+         МАНИФЕСТ (ЦИТАТА ПО ЦЕНТРУ)
+         ═══════════════════════════════════════════ -->
+    <section class="vision-statement anim-fade-up">
+        <div class="vision-blur-orb" aria-hidden="true"></div>
+        <div class="container">
+            <p class="vision-statement__text">
+                Премиальная косметика — это не ценник.<br>
+                Это <em>формула доверия</em> между брендом и кожей.
+            </p>
+            <div class="vision-statement__author">— Философия TSOK Boutique</div>
         </div>
-        <p class="vision-statement__text">
-            Премиальная косметика — это не ценник.<br>
-            Это <em>формула доверия</em> между брендом и кожей.
-        </p>
-        <div class="vision-statement__author">— Философия TSOK Boutique</div>
-    </div>
+    </section>
 
-    <!-- ═══ INTELEGENTOFF STORY ═══ -->
-    <section style="background:var(--color-man-bg);">
+    <!-- ═══════════════════════════════════════════
+         ИСТОРИЯ БРЕНДА INTELEGENTOFF
+         ═══════════════════════════════════════════ -->
+    <section class="section--dark">
         <div class="brand-story brand-story--homme-home">
-            <div class="brand-story__content anim-fade-up" style="order:1;border-right:1px solid rgba(255,255,255,0.06);">
+            <div class="brand-story__content anim-fade-up border-right-desk content-order-1">
                 <span class="label">INTELEGENTOFF</span>
                 <h2 class="homme-story-title">
-                    УХОД<br>БЕЗ<br><span class="homme-story-title__nowrap">КОМ<span style="color:var(--color-accent);">ПРО</span>МИСС</span>
+                    УХОД<br>БЕЗ<br><span class="text-nowrap">КОМ<span class="text-accent">ПРО</span>МИСС</span>
                 </h2>
-                <div class="quote-block" style="border-color:var(--color-accent);margin-bottom:24px;">
-                    <p style="color:rgba(255,255,255,0.75);">«Мужская кожа требует той же науки, той же концентрации, того же уважения.»</p>
+                
+                <div class="quote-block quote-block--accent">
+                    <p class="text-white">«Мужская кожа требует той же науки, той же концентрации, того же уважения.»</p>
                 </div>
-                <p style="font-size:15px;font-weight:300;line-height:1.8;color:rgba(255,255,255,0.48);margin-bottom:36px;">
+                
+                <p class="section__desc">
                     INTELEGENTOFF — для мужчин, которые понимают разницу между косметикой и уходом. Тёмная эстетика. Концентрированные формулы. Только результат.
                 </p>
-                <a href="catalog-homme.html" class="btn btn--accent">
+                
+                <a href="catalog-homme.html" class="btn btn--accent mt-sm">
                     Открыть INTELEGENTOFF
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
             </div>
-            <div class="brand-story__media" style="order:2;">
-                <img src="img/IntelegentSergay.png" alt="INTELEGENTOFF"
-                     onerror="this.parentElement.style.background='linear-gradient(150deg,#0d0d0d,#1c1c24)'">
+
+            <div class="brand-story__media content-order-2">
+                <img src="img/IntelegentSergay.png" alt="INTELEGENTOFF" onerror="this.parentElement.style.background='linear-gradient(150deg,#0d0d0d,#1c1c24)'">
             </div>
         </div>
     </section>
 
-    <!-- ═══ FOUNDER ═══ -->
-    <section style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--color-fem-border);" id="founder-fem">
-        <div class="brand-story__media" style="background:var(--color-fem-card);">
-            <img src="img/Tais.jpg" alt="Таис Рыбакина"
-                 onerror="this.parentElement.style.background='linear-gradient(160deg,#ddd0c4,#b89484)'">
-        </div>
-        <div style="padding:max(72px,7vw) max(44px,5vw);display:flex;flex-direction:column;justify-content:center;border-left:1px solid var(--color-fem-border);" class="anim-fade-up">
-            <span class="label">Основатель Pearl by Tais</span>
-            <h3 style="font-family:var(--font-display);font-size:clamp(32px,3.5vw,50px);font-weight:400;line-height:1.05;margin:14px 0 24px;">Таис<br><em>Рыбакина</em></h3>
-            <div class="quote-block" style="margin-bottom:22px;">
-                <p>«Я много лет работаю с женщинами как коуч ICF. Красота меняет состояние, энергию и отношение к себе.»</p>
+    <!-- ═══════════════════════════════════════════
+         ОСНОВАТЕЛЬ (ФАУНДЕР)
+         ═══════════════════════════════════════════ -->
+    <section class="section--bordered-top">
+        <div class="founder-grid">
+            <div class="founder-grid__img">
+                <img src="img/Tais.jpg" alt="Таис Рыбакина" onerror="this.parentElement.style.background='linear-gradient(160deg,#ddd0c4,#b89484)'">
             </div>
-            <p style="font-size:15px;font-weight:300;line-height:1.8;color:var(--color-fem-muted);margin-bottom:32px;">
-                Мне хотелось создать косметику с ощущением премиального качества, доступную каждой. Чтобы открыть баночку — и почувствовать себя богиней без особого повода.
-            </p>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                <a href="catalog.html" class="btn btn--dark">Коллекция Pearl</a>
-                <a href="subscription.html" class="btn btn--outline-dark">TSOK BOX</a>
+
+            <div class="founder-grid__content anim-fade-up">
+                <span class="label">Основатель Pearl by Tais</span>
+                <h3 class="section__title">Таис<br><em>Рыбакина</em></h3>
+                
+                <div class="quote-block">
+                    <p>«Я много лет работаю с женщинами как коуч ICF. Красота меняет состояние, энергию и отношение к себе.»</p>
+                </div>
+                
+                <p class="section__desc">
+                    Мне хотелось создать косметику с ощущением премиального качества, доступную каждой. Чтобы открыть баночку — и почувствовать себя богиней без особого повода.
+                </p>
+                
+                <div class="action-group mt-sm">
+                    <a href="catalog.html" class="btn btn--dark">Коллекция Pearl</a>
+                    <a href="subscription.html" class="btn btn--outline-dark">TSOK BOX</a>
+                </div>
             </div>
         </div>
-        <style>@media(max-width:1024px){#founder-fem{grid-template-columns:1fr!important;} #founder-fem>div:last-child{border-left:none!important;border-top:1px solid var(--color-fem-border);padding:56px var(--pad-x)!important;}}</style>
     </section>
 
-    <!-- ═══ STATS ═══ -->
-    <div class="section-gap--sm" style="background:var(--color-off-white);border-top:1px solid var(--color-fem-border);">
-        <div class="stats-row">
-            <div class="stat-box anim-fade-up"><span class="stat-box__number">5+</span><span class="stat-box__label">Лет создания формул</span></div>
-            <div class="stat-box anim-fade-up anim-delay-1"><span class="stat-box__number">12</span><span class="stat-box__label">Продуктов в коллекции</span></div>
-            <div class="stat-box anim-fade-up anim-delay-2"><span class="stat-box__number">2K+</span><span class="stat-box__label">Довольных клиентов</span></div>
+    <!-- ═══════════════════════════════════════════
+         БЛОК СО СТАТИСТИКОЙ
+         ═══════════════════════════════════════════ -->
+    <section class="section--light section--bordered-top section-pad-sm">
+        <div class="stats-row container">
+            <div class="stat-box anim-fade-up">
+                <span class="stat-box__number">5+</span>
+                <span class="stat-box__label">Лет создания формул</span>
+            </div>
+            <div class="stat-box anim-fade-up anim-delay-1">
+                <span class="stat-box__number">12</span>
+                <span class="stat-box__label">Продуктов в коллекции</span>
+            </div>
+            <div class="stat-box anim-fade-up anim-delay-2">
+                <span class="stat-box__number">2K+</span>
+                <span class="stat-box__label">Довольных клиентов</span>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <!-- ═══ ENTRY CTA ═══ -->
+    <!-- ═══════════════════════════════════════════
+         ФИНАЛЬНЫЙ ПЕРЕХОД (ENTRY CTA)
+         ═══════════════════════════════════════════ -->
     <section class="entry-cta" id="enter">
         <a href="catalog.html" class="entry-cta__side entry-cta__side--fem">
             <div class="entry-cta__content">
                 <span class="entry-cta__overline">для неё</span>
-                <div class="entry-cta__brand">цок<em>-цок</em>
-                    <div style="font-family:var(--font-display);font-size:clamp(13px,1.2vw,18px);font-style:italic;font-weight:300;margin-top:6px;opacity:0.65;">Pearl by Tais</div>
+                
+                <div class="entry-cta__brand">
+                    цок<em>-цок</em>
+                    <div class="entry-cta__sub">Pearl by Tais</div>
                 </div>
+                
                 <p class="entry-cta__text">Тоники, пенки и масла на натуральных гидролатах.</p>
-                <span class="btn btn--outline-light" style="display:inline-flex;width:auto;">
+                
+                <span class="btn btn--outline-light w-auto">
                     Женская коллекция
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
             </div>
         </a>
+
         <a href="catalog-homme.html" class="entry-cta__side entry-cta__side--homme">
             <div class="entry-cta__content">
                 <span class="entry-cta__overline">для него</span>
-                <div class="entry-cta__brand entry-cta__brand--brutal">INTEL<span class="accent">.</span><br>GENT<span class="accent">.</span><br>OFF</div>
+                
+                <div class="entry-cta__brand entry-cta__brand--brutal">
+                    INTEL<span class="text-accent">.</span><br>GENT<span class="text-accent">.</span><br>OFF
+                </div>
+                
                 <p class="entry-cta__text">Концентрированные формулы для мужской кожи.</p>
-                <span class="btn btn--accent" style="display:inline-flex;">
+                
+                <span class="btn btn--accent w-auto">
                     Мужская коллекция
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
@@ -598,103 +437,145 @@
         </a>
     </section>
 
-    <!-- ═══ FOOTER ═══ -->
+    <!-- ═══════════════════════════════════════════
+         ПОДВАЛ (FOOTER)
+         ═══════════════════════════════════════════ -->
     <footer class="footer">
-        <div class="footer__grid">
-            <div class="footer__logo-area">
-                <a href="index.html" class="footer__logo">TSOK<em style="font-style:italic;font-weight:300;font-size:0.65em;opacity:0.45;"> boutique</em></a>
-                <span class="footer__tagline">Два бренда. Одна философия.</span>
-                <div class="footer__brands">
-                    <a href="catalog.html" class="footer__brand-link">цок-цок / Pearl by Tais</a>
-                    <a href="catalog-homme.html" class="footer__brand-link">INTELEGENTOFF</a>
-                    <a href="subscription.html" class="footer__brand-link" style="color:#c9956e;">TSOK BOX ✦</a>
+        <div class="container">
+            <div class="footer__grid">
+                
+                <div class="footer__logo-area">
+                    <a href="index.html" class="footer__logo">TSOK<em> boutique</em></a>
+                    <span class="footer__tagline">Два бренда. Одна философия.</span>
+                    <div class="footer__brands">
+                        <a href="catalog.html" class="footer__brand-link">цок-цок / Pearl by Tais</a>
+                        <a href="catalog-homme.html" class="footer__brand-link">INTELEGENTOFF</a>
+                        <a href="subscription.html" class="footer__brand-link text-gold">TSOK BOX ✦</a>
+                    </div>
+                    <form class="subscribe-form" onsubmit="return false;">
+                        <input type="email" placeholder="Ваш email" required>
+                        <button type="submit" aria-label="Подписаться">→</button>
+                    </form>
                 </div>
-                <form class="subscribe-form" style="margin-top:22px;" onsubmit="return false;">
-                    <input type="email" placeholder="Ваш email">
-                    <button>→</button>
-                </form>
+
+                <div>
+                    <div class="footer__col-title">Pearl by Tais</div>
+                    <nav class="footer__nav">
+                        <a href="catalog.html">Все продукты</a>
+                        <a href="catalog.html?category=face">Уход за лицом</a>
+                        <a href="catalog.html?category=hair">Волосы</a>
+                        <a href="subscription.html">TSOK BOX</a>
+                    </nav>
+                </div>
+
+                <div>
+                    <div class="footer__col-title">INTELEGENTOFF</div>
+                    <nav class="footer__nav">
+                        <a href="catalog-homme.html">Все продукты</a>
+                        <a href="catalog-homme.html?category=face">Уход за лицом</a>
+                        <a href="catalog-homme.html?category=beard">Борода</a>
+                    </nav>
+                </div>
+
+                <div>
+                    <div class="footer__col-title">Бутик</div>
+                    <nav class="footer__nav">
+                        <a href="#our-story">О нас</a>
+                        <a href="#">Доставка</a>
+                        <a href="#">FAQ</a>
+                        <a href="#">Контакты</a>
+                    </nav>
+                </div>
+
             </div>
-            <div>
-                <div class="footer__col-title">Pearl by Tais</div>
-                <nav class="footer__nav">
-                    <a href="catalog.html">Все продукты</a>
-                    <a href="catalog.html?category=face">Уход за лицом</a>
-                    <a href="catalog.html?category=hair">Волосы</a>
-                    <a href="subscription.html">TSOK BOX</a>
-                </nav>
+
+            <div class="footer__bottom">
+                <span class="footer__copy">© 2026 TSOK Boutique</span>
+                <div class="footer__legal">
+                    <a href="#">Политика конфиденциальности</a>
+                    <a href="#">Публичная оферта</a>
+                </div>
             </div>
-            <div>
-                <div class="footer__col-title">INTELEGENTOFF</div>
-                <nav class="footer__nav">
-                    <a href="catalog-homme.html">Все продукты</a>
-                    <a href="catalog-homme.html?category=face">Уход за лицом</a>
-                    <a href="catalog-homme.html?category=beard">Борода</a>
-                </nav>
-            </div>
-            <div>
-                <div class="footer__col-title">Бутик</div>
-                <nav class="footer__nav">
-                    <a href="#our-story">О нас</a>
-                    <a href="#">Доставка</a>
-                    <a href="#">FAQ</a>
-                    <a href="#">Контакты</a>
-                </nav>
-            </div>
-        </div>
-        <div class="footer__bottom">
-            <span class="footer__copy">© 2025 TSOK Boutique</span>
-            <div class="footer__legal"><a href="#">Политика</a><a href="#">Оферта</a></div>
         </div>
     </footer>
 
-    <!-- ═══ OVERLAYS ═══ -->
+    <!-- ═══════════════════════════════════════════
+         МОДАЛЬНЫЕ ОКНА И ОВЕРЛЕИ
+         ═══════════════════════════════════════════ -->
+    
     <div class="global-overlay" id="globalOverlay"></div>
+    
     <div class="cart-drawer" id="cartDrawer">
-        <div class="cart-drawer__header"><h3>Корзина</h3><button class="close-btn" id="cartCloseBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-        <div class="cart-drawer__scroll"><div class="cart-drawer__body" id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div></div>
-        <div class="cart-drawer__footer"><div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div><a href="checkout.html" class="btn btn--dark">Оформить заказ</a></div>
+        <div class="cart-drawer__header">
+            <h3>Корзина</h3>
+            <button class="close-btn" id="cartCloseBtn" aria-label="Закрыть">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+        </div>
+        <div class="cart-drawer__scroll">
+            <div class="cart-drawer__body" id="cartItemsContainer">
+                <p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p>
+            </div>
+        </div>
+        <div class="cart-drawer__footer">
+            <div class="cart-subtotal">
+                <span>Итого</span>
+                <span id="cartTotalSum">0 BYN</span>
+            </div>
+            <a href="checkout.html" class="btn btn--dark w-100">Оформить заказ</a>
+        </div>
     </div>
+
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu__header">
-            <span style="font-family:var(--font-display);font-size:22px;letter-spacing:0.3em;font-weight:400;">TSOK</span>
-            <button class="close-btn" id="mobileMenuClose"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+            <span class="mobile-menu__logo-title">TSOK</span>
+            <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
         </div>
         <div class="mobile-menu__body">
             <nav class="mobile-nav">
                 <a href="index.html">Главная</a>
                 <a href="catalog.html">цок-цок / Pearl by Tais</a>
                 <a href="catalog-homme.html">INTELEGENTOFF</a>
-                <a href="subscription.html" style="color:#c9956e;font-weight:500;">✦ TSOK BOX — подписка</a>
+                <a href="subscription.html" class="text-gold" style="font-weight:500;">✦ TSOK BOX — подписка</a>
                 <a href="#our-story">История бутика</a>
             </nav>
         </div>
         <div class="mobile-menu__footer">
-            <div style="display:flex;flex-direction:column;gap:10px;">
-                <a href="catalog.html" class="btn btn--outline-dark">Женская коллекция</a>
-                <a href="catalog-homme.html" class="btn btn--dark">Мужская коллекция</a>
-                <a href="subscription.html" class="btn" style="background:#c9956e;border-color:#c9956e;color:white;">TSOK BOX ✦</a>
+            <div class="action-group-col">
+                <a href="catalog.html" class="btn btn--outline-dark w-100">Женская коллекция</a>
+                <a href="catalog-homme.html" class="btn btn--dark w-100">Мужская коллекция</a>
+                <a href="subscription.html" class="btn btn--gold w-100">TSOK BOX ✦</a>
             </div>
         </div>
     </div>
+
     <div id="toastContainer" class="toast-container"></div>
 
     <script src="script.js"></script>
     <script>
-        // ── 1. Index header: transparent → glass on scroll ──
-        const hg   = document.getElementById('headerGroup');
-        const hint = document.getElementById('scrollHint');
+        // ── Логика шапки: прозрачная -> матовое стекло ──
+        const headerGroup = document.getElementById('headerGroup');
+        const scrollHint  = document.getElementById('scrollHint');
 
         function updateHeader() {
             const y  = window.scrollY;
             const vh = window.innerHeight;
-            hg.classList.toggle('is-solid', y > vh * 0.40);
-            if (hint) hint.style.opacity = y > 80 ? '0' : '1';
+            
+            // Включаем "стекло", если проскроллили > 40% экрана
+            if (headerGroup) {
+                headerGroup.classList.toggle('is-solid', y > vh * 0.40);
+            }
+            // Скрываем подсказку скролла
+            if (scrollHint) {
+                scrollHint.style.opacity = y > 80 ? '0' : '1';
+            }
         }
         window.addEventListener('scroll', updateHeader, { passive: true });
-        updateHeader(); // run on load
+        updateHeader(); // запуск при загрузке
 
-        // ── 2. Intersection Observer for fade-up animations ──
-        // (graceful: works even if script.js already handles this)
+        // ── Intersection Observer для анимаций (fade-up) ──
         if (!window._tsokObserverInit) {
             window._tsokObserverInit = true;
             const animObserver = new IntersectionObserver((entries) => {
@@ -705,6 +586,7 @@
                     }
                 });
             }, { threshold: 0.12 });
+            
             document.querySelectorAll('.anim-fade-up').forEach(el => animObserver.observe(el));
         }
     </script>
