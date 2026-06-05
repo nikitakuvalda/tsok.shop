@@ -13,6 +13,7 @@ let favorites = JSON.parse(localStorage.getItem('tsok_favs') || '[]');
 function saveCart() {
     localStorage.setItem('tsok_cart', JSON.stringify(cart));
     updateCartUI();
+    renderCheckoutSummary();
 }
 function saveFavs() {
     localStorage.setItem('tsok_favs', JSON.stringify(favorites));
@@ -34,6 +35,7 @@ function removeFromCart(id) {
     cart = cart.filter(i => i.id !== id);
     saveCart();
     renderCartItems();
+    renderCheckoutSummary();
 }
 
 function updateQty(id, delta) {
@@ -42,6 +44,7 @@ function updateQty(id, delta) {
     item.qty = Math.max(1, item.qty + delta);
     saveCart();
     renderCartItems();
+    renderCheckoutSummary();
 }
 
 function toggleFavorite(id, name) {
@@ -124,6 +127,7 @@ function openCart() {
     document.getElementById('cartDrawer')?.classList.add('is-active');
     document.getElementById('globalOverlay')?.classList.add('is-active');
     renderCartItems();
+    renderCheckoutSummary();
 }
 function closeCart() {
     document.getElementById('cartDrawer')?.classList.remove('is-active');
@@ -429,6 +433,115 @@ function initProductGallery() {
     img.style.cursor = 'zoom-in';
 }
 
+
+/* ============================================================
+   CHECKOUT PAGE
+   ============================================================ */
+function cartSubtotal() {
+    return cart.reduce((sum, item) => sum + item.qty * item.price, 0);
+}
+
+function renderCheckoutSummary() {
+    const container = document.getElementById('checkoutSummaryItems');
+    const totalEl = document.getElementById('checkoutSummaryTotal');
+    const emptyEl = document.getElementById('checkoutEmptyMessage');
+    const submitBtn = document.getElementById('checkoutSubmitBtn');
+    if (!container && !totalEl && !submitBtn) return;
+
+    const total = cartSubtotal();
+    if (totalEl) totalEl.textContent = `${total.toFixed(0)} BYN`;
+    if (submitBtn) {
+        submitBtn.textContent = cart.length ? `Купить за ${total.toFixed(0)} BYN` : 'Купить';
+        submitBtn.disabled = cart.length === 0;
+    }
+    if (!container) return;
+
+    container.innerHTML = '';
+    if (!cart.length) {
+        if (emptyEl) emptyEl.style.display = '';
+        return;
+    }
+    if (emptyEl) emptyEl.style.display = 'none';
+    cart.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'checkout-summary-item';
+        el.innerHTML = `
+            <div class="checkout-summary-item__img">${item.img ? `<img src="${item.img}" alt="${item.name}">` : ''}</div>
+            <div>
+                <div class="checkout-summary-item__name">${item.name}</div>
+                <span class="checkout-summary-item__meta">${item.brand || ''}${item.size ? ' · ' + item.size : ''} · ${item.qty} шт.</span>
+            </div>
+            <div class="checkout-summary-item__price">${(item.price * item.qty).toFixed(0)} BYN</div>`;
+        container.appendChild(el);
+    });
+}
+
+function initCheckoutPage() {
+    const form = document.getElementById('checkoutForm');
+    if (!form) return;
+
+    const errorEl = document.getElementById('checkoutError');
+    const submitBtn = document.getElementById('checkoutSubmitBtn');
+    const editCartBtn = document.getElementById('checkoutEditCartBtn');
+    const successNotice = document.getElementById('paymentSuccessNotice');
+
+    if (successNotice) {
+        cart = [];
+        localStorage.removeItem('tsok_cart');
+        updateCartUI();
+    }
+
+    editCartBtn?.addEventListener('click', openCart);
+    renderCheckoutSummary();
+
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!cart.length) {
+            openCart();
+            return;
+        }
+        if (errorEl) errorEl.hidden = true;
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Создаём платёж…';
+        }
+
+        const payload = {
+            items: cart,
+            customer: {
+                fio: document.getElementById('customerFio')?.value.trim() || '',
+                phone: document.getElementById('customerPhone')?.value.trim() || '',
+                email: document.getElementById('customerEmail')?.value.trim() || '',
+            },
+            delivery: {
+                city: document.getElementById('deliveryCity')?.value.trim() || '',
+                zip: document.getElementById('deliveryZip')?.value.trim() || '',
+                address: document.getElementById('deliveryAddress')?.value.trim() || '',
+                comment: document.getElementById('deliveryComment')?.value.trim() || '',
+            },
+        };
+
+        try {
+            const response = await fetch('/api/yookassa/create-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || 'Не удалось создать платёж.');
+            if (!data.confirmation_url) throw new Error('ЮKassa не вернула ссылку на оплату.');
+            window.location.href = data.confirmation_url;
+        } catch (error) {
+            if (errorEl) {
+                errorEl.textContent = error.message || 'Ошибка оформления заказа.';
+                errorEl.hidden = false;
+            }
+            showToast(error.message || 'Ошибка оформления заказа');
+            renderCheckoutSummary();
+        }
+    });
+}
+
 /* ============================================================
    INIT
    ============================================================ */
@@ -461,11 +574,13 @@ document.addEventListener('DOMContentLoaded', () => {
     initSubscribeForms();
     initBrandSwitcher();
     initProductGallery();
+    initCheckoutPage();
 
     // Initial UI sync
     updateCartUI();
     updateFavUI();
     renderCartItems();
+    renderCheckoutSummary();
     /* ============================================================
    ДИНАМИЧЕСКАЯ СТРАНИЦА ТОВАРА
    ============================================================ */
