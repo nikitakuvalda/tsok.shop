@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .product-page-wrapper { margin-top: 0; }
 
@@ -418,7 +418,7 @@
     </div>
     <div id="toastContainer" class="toast-container"></div>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
     // ════════════════════════════════════════════
     //   ПОЛНАЯ БАЗА ДАННЫХ ПРОДУКТОВ Pearl by Tais
@@ -436,7 +436,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Сухая, нормальная',
             usage: 'Утро и вечер',
-            images: ['img/Pearl1.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl1.jpg") }}'],
             rating: 4.8,
             ratingCount: 32,
             badge: null,
@@ -466,7 +466,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Все типы',
             usage: 'Утро и вечер',
-            images: ['img/Pearl2.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl2.jpg") }}'],
             rating: 4.7,
             ratingCount: 28,
             badge: null,
@@ -496,7 +496,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Все типы',
             usage: 'Ежедневно',
-            images: ['img/Pearl3.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl3.jpg") }}'],
             rating: 4.9,
             ratingCount: 47,
             badge: 'Хит',
@@ -527,7 +527,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Чувствительная, реактивная',
             usage: 'Утро и вечер',
-            images: ['img/Pearl4.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl4.jpg") }}'],
             rating: 4.8,
             ratingCount: 39,
             badge: null,
@@ -557,7 +557,7 @@
             categoryName: 'Уход за волосами',
             skinType: 'Все типы волос',
             usage: 'Ежедневно',
-            images: ['img/Pearl5.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl5.jpg") }}'],
             rating: 4.8,
             ratingCount: 24,
             badge: null,
@@ -587,7 +587,7 @@
             categoryName: 'Уход за волосами',
             skinType: 'Сухие, повреждённые волосы',
             usage: 'По необходимости',
-            images: ['img/Pearl6.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl6.jpg") }}'],
             rating: 4.9,
             ratingCount: 18,
             badge: null,
@@ -617,7 +617,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Все типы',
             usage: 'Вечером',
-            images: ['img/Pearl7.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl7.jpg") }}'],
             rating: 4.7,
             ratingCount: 21,
             badge: null,
@@ -857,7 +857,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .product-page-wrapper { margin-top: 0; }
 
@@ -1270,7 +1270,7 @@
     </div>
     <div id="toastContainer" class="toast-container"></div>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
     // ════════════════════════════════════════════
     //   ПОЛНАЯ БАЗА ДАННЫХ ПРОДУКТОВ Pearl by Tais
@@ -1288,7 +1288,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Сухая, нормальная',
             usage: 'Утро и вечер',
-            images: ['img/Pearl1.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl1.jpg") }}'],
             rating: 4.8,
             ratingCount: 32,
             badge: null,
@@ -1318,7 +1318,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Все типы',
             usage: 'Утро и вечер',
-            images: ['img/Pearl2.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl2.jpg") }}'],
             rating: 4.7,
             ratingCount: 28,
             badge: null,
@@ -1348,7 +1348,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Все типы',
             usage: 'Ежедневно',
-            images: ['img/Pearl3.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl3.jpg") }}'],
             rating: 4.9,
             ratingCount: 47,
             badge: 'Хит',
@@ -1379,7 +1379,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Чувствительная, реактивная',
             usage: 'Утро и вечер',
-            images: ['img/Pearl4.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl4.jpg") }}'],
             rating: 4.8,
             ratingCount: 39,
             badge: null,
@@ -1409,7 +1409,7 @@
             categoryName: 'Уход за волосами',
             skinType: 'Все типы волос',
             usage: 'Ежедневно',
-            images: ['img/Pearl5.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl5.jpg") }}'],
             rating: 4.8,
             ratingCount: 24,
             badge: null,
@@ -1439,7 +1439,7 @@
             categoryName: 'Уход за волосами',
             skinType: 'Сухие, повреждённые волосы',
             usage: 'По необходимости',
-            images: ['img/Pearl6.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl6.jpg") }}'],
             rating: 4.9,
             ratingCount: 18,
             badge: null,
@@ -1469,7 +1469,7 @@
             categoryName: 'Уход за лицом',
             skinType: 'Все типы',
             usage: 'Вечером',
-            images: ['img/Pearl7.jpg'],
+            images: ['{{ url_for("static", filename="img/Pearl7.jpg") }}'],
             rating: 4.7,
             ratingCount: 21,
             badge: null,

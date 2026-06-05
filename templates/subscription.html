@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         :root {
             --sub-accent: #c9956e;
@@ -447,7 +447,7 @@
                     </div>
                     <div class="header__center">
                         <a href="catalog.html" aria-label="цок-цок Pearl by Tais">
-                            <img src="img/цок-цок.svg" alt="цок-цок" style="height:44px;width:auto;display:block;"
+                            <img src="{{ url_for('static', filename='img/цок-цок.svg') }}" alt="цок-цок" style="height:44px;width:auto;display:block;"
                                  onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
                             <svg viewBox="0 0 230 58" xmlns="http://www.w3.org/2000/svg" style="height:44px;width:auto;display:none;">
                                 <text x="115" y="31" font-family="'Cormorant Garamond',Georgia,serif" font-size="30" font-weight="400" letter-spacing="5" text-anchor="middle" fill="#2c2320">цок-цок</text>
@@ -518,17 +518,17 @@
                 <div class="preview-label">Пример бокса</div>
                 <div class="preview-products">
                     <div class="preview-product">
-                        <div class="preview-product__img"><img src="img/Pearl3.jpg" alt=""></div>
+                        <div class="preview-product__img"><img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" alt=""></div>
                         <span class="preview-product__name">Tonic Youth Restoring</span>
                         <span class="preview-product__price">93 ₽</span>
                     </div>
                     <div class="preview-product">
-                        <div class="preview-product__img"><img src="img/Pearl1.jpg" alt=""></div>
+                        <div class="preview-product__img"><img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" alt=""></div>
                         <span class="preview-product__name">Foam Mousse Moisture</span>
                         <span class="preview-product__price">96 ₽</span>
                     </div>
                     <div class="preview-product">
-                        <div class="preview-product__img"><img src="img/Pearl6.jpg" alt=""></div>
+                        <div class="preview-product__img"><img src="{{ url_for('static', filename='img/Pearl6.jpg') }}" alt=""></div>
                         <span class="preview-product__name">Velvet Oil Blend</span>
                         <span class="preview-product__price">69 ₽</span>
                     </div>
@@ -600,22 +600,22 @@
                     <p style="font-size:14px;font-weight:300;line-height:1.7;color:var(--color-fem-muted);margin-bottom:24px;">Полный утренний и вечерний уход: очищение, тонизирование, питание волос — всё на месяц.</p>
                     <div style="display:flex;flex-direction:column;gap:0;margin-bottom:24px;border-top:1px solid var(--color-fem-border);">
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
-                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="img/Pearl3.jpg" style="width:100%;height:100%;object-fit:cover;"></div>
+                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
                             <div style="flex:1;font-size:13px;">Tonic Youth Restoring <span style="color:var(--color-fem-muted);">150 мл</span></div>
                             <span style="font-size:13px;font-weight:500;">93 BYN</span>
                         </div>
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
-                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="img/Pearl1.jpg" style="width:100%;height:100%;object-fit:cover;"></div>
+                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
                             <div style="flex:1;font-size:13px;">Foam Mousse Moisture <span style="color:var(--color-fem-muted);">150 мл</span></div>
                             <span style="font-size:13px;font-weight:500;">96 BYN</span>
                         </div>
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
-                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="img/Pearl5.jpg" style="width:100%;height:100%;object-fit:cover;"></div>
+                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
                             <div style="flex:1;font-size:13px;">Hair Tonic Radiance <span style="color:var(--color-fem-muted);">200 мл</span></div>
                             <span style="font-size:13px;font-weight:500;">88 BYN</span>
                         </div>
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
-                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="img/Pearl7.jpg" style="width:100%;height:100%;object-fit:cover;"></div>
+                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl7.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
                             <div style="flex:1;font-size:13px;">Micellar Water <span style="color:var(--color-fem-muted);">200 мл</span></div>
                             <span style="font-size:13px;font-weight:500;">99 BYN</span>
                         </div>
@@ -995,7 +995,7 @@
     </div>
     <div id="toastContainer" class="toast-container"></div>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
     // ════════════════════════════════════════════
     //  ALL PRODUCTS (Pearl + INTELEGENTOFF)
