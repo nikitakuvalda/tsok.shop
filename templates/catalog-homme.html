@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         body { background: var(--color-man-bg); color: var(--color-man-text); }
 
@@ -456,7 +456,7 @@
                 <!-- PRODUCT 1: Пенка -->
                 <div class="product-card-homme" data-category="face">
                     <div class="product-card-homme__image-wrap">
-                        <img src="img/INTELEGENT Пенка.png" alt="Face Wash" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" alt="Face Wash" style="width: 100%; height: 100%; object-fit: cover;">
                         <button class="product-card-homme__bookmark js-bookmark" data-id="homme-01" data-name="Face Wash Black">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                         </button>
@@ -479,7 +479,7 @@
                 <!-- PRODUCT 2: Тоник -->
                 <div class="product-card-homme" data-category="face">
                     <div class="product-card-homme__image-wrap">
-                        <img src="img/INTELEGENT тоник.png" alt="Toner Control" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" alt="Toner Control" style="width: 100%; height: 100%; object-fit: cover;">
                         <div class="product-card-homme__badge">Хит</div>
                         <button class="product-card-homme__bookmark js-bookmark" data-id="homme-02" data-name="Toner Control">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
@@ -503,7 +503,7 @@
                 <!-- PRODUCT 3: Масло для бороды -->
                 <div class="product-card-homme" data-category="beard">
                     <div class="product-card-homme__image-wrap">
-                        <img src="img/INTELEGENT масло.png" alt="Beard Oil" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='img/INTELEGENT масло.png') }}" alt="Beard Oil" style="width: 100%; height: 100%; object-fit: cover;">
                         <button class="product-card-homme__bookmark js-bookmark" data-id="homme-03" data-name="Beard Oil">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                         </button>
@@ -526,7 +526,7 @@
                 <!-- PRODUCT 4: Воск для бороды -->
                 <div class="product-card-homme" data-category="beard">
                     <div class="product-card-homme__image-wrap">
-                        <img src="img/INTELEGENT Воск.png" alt="Beard Wax" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" alt="Beard Wax" style="width: 100%; height: 100%; object-fit: cover;">
                         <button class="product-card-homme__bookmark js-bookmark" data-id="homme-04" data-name="Beard Wax">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                         </button>
@@ -549,7 +549,7 @@
                 <!-- PRODUCT 5: Сыворотка (белый фон) -->
                 <div class="product-card-homme" data-category="face">
                     <div class="product-card-homme__image-wrap">
-                        <img src="img/prod-photo-1.jpg" alt="Serum" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='img/prod-photo-1.jpg') }}" alt="Serum" style="width: 100%; height: 100%; object-fit: cover;">
                         <button class="product-card-homme__bookmark js-bookmark" data-id="homme-05" data-name="Face Serum Black">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                         </button>
@@ -572,7 +572,7 @@
                 <!-- PRODUCT 6: Гель (белый фон) -->
                 <div class="product-card-homme" data-category="face">
                     <div class="product-card-homme__image-wrap">
-                        <img src="img/prod-photo-2.jpg" alt="After Shave" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img src="{{ url_for('static', filename='img/prod-photo-2.jpg') }}" alt="After Shave" style="width: 100%; height: 100%; object-fit: cover;">
                         <button class="product-card-homme__bookmark js-bookmark" data-id="homme-06" data-name="After Shave Balm">
                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                         </button>
@@ -699,7 +699,7 @@
     </div>
     <div id="toastContainer" class="toast-container"></div>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
         // Dark filter buttons
         document.querySelectorAll('.filter-btn-dark[data-filter]').forEach(btn => {

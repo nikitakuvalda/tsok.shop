@@ -18,7 +18,7 @@ class StaticSiteFlask(Flask):
     )
 
 
-application = StaticSiteFlask(__name__, static_folder="static", static_url_path="")
+application = StaticSiteFlask(__name__)
 
 YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID", "")
 YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")

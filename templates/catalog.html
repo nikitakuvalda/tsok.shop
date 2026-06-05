@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         /* ─── HERO ─── */
         .catalog-hero {
@@ -20,7 +20,7 @@
         .catalog-hero__bg {
             position: absolute; inset: 0; z-index: 0;
             background: linear-gradient(135deg, #ede3d8 0%, #d4c8bc 60%, #c0b4a8 100%);
-            /* Replace with: background-image: url('img/CatalogHero.jpg'); */
+            /* Replace with: background-image: url('{{ url_for("static", filename="img/CatalogHero.jpg") }}'); */
             /* Recommended photo: lifestyle shot of Pearl bottles on marble/linen surface */
             /* Size: 1920×1080px (16:9) or 1440×900px — horizontal, light/airy aesthetic */
             background-size: cover; background-position: center;
@@ -525,7 +525,7 @@
     -->
     <section class="catalog-hero">
         <div class="catalog-hero__bg">
-            <img src="img/CatalogHero.jpg" alt=""
+            <img src="{{ url_for('static', filename='img/CatalogHero.jpg') }}" alt=""
                  style="width:100%;height:100%;object-fit:cover;filter:brightness(0.88);"
                  onerror="this.style.display='none'">
         </div>
@@ -594,7 +594,7 @@
     <section class="featured-banner">
         <div class="featured-banner__image">
             <a href="product-tonic.html?id=pearl-03">
-                <img src="img/Pearl3.jpg" alt="Tonic Youth Restoring">
+                <img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" alt="Tonic Youth Restoring">
             </a>
         </div>
         <div class="featured-banner__content">
@@ -699,7 +699,7 @@
                 <!-- ① Foam Mousse Moisture -->
                 <div class="product-card" data-category="face" data-price="96">
                     <div class="product-card__image-wrap">
-                        <a href="product-tonic.html?id=pearl-01"><img src="img/Pearl1.jpg" alt="Foam Mousse Moisture"></a>
+                        <a href="product-tonic.html?id=pearl-01"><img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" alt="Foam Mousse Moisture"></a>
                         <button class="product-card__bookmark js-bookmark" data-id="pearl-01" data-name="Foam Mousse Moisture"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
                     </div>
                     <div class="product-card__info">
@@ -716,7 +716,7 @@
                 <!-- ② Face Tonic Toning -->
                 <div class="product-card" data-category="face" data-price="93">
                     <div class="product-card__image-wrap">
-                        <a href="product-tonic.html?id=pearl-02"><img src="img/Pearl2.jpg" alt="Face Tonic Toning"></a>
+                        <a href="product-tonic.html?id=pearl-02"><img src="{{ url_for('static', filename='img/Pearl2.jpg') }}" alt="Face Tonic Toning"></a>
                         <button class="product-card__bookmark js-bookmark" data-id="pearl-02" data-name="Face Tonic Toning"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
                     </div>
                     <div class="product-card__info">
@@ -733,7 +733,7 @@
                 <!-- ③ Tonic Youth Restoring — Хит -->
                 <div class="product-card" data-category="face" data-price="93">
                     <div class="product-card__image-wrap">
-                        <a href="product-tonic.html?id=pearl-03"><img src="img/Pearl3.jpg" alt="Tonic Youth Restoring"></a>
+                        <a href="product-tonic.html?id=pearl-03"><img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" alt="Tonic Youth Restoring"></a>
                         <div class="product-card__badge">Хит</div>
                         <button class="product-card__bookmark js-bookmark" data-id="pearl-03" data-name="Tonic Youth Restoring"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
                     </div>
@@ -751,7 +751,7 @@
                 <!-- ④ Foam Mousse Cleansing -->
                 <div class="product-card" data-category="face" data-price="96">
                     <div class="product-card__image-wrap">
-                        <a href="product-tonic.html?id=pearl-04"><img src="img/Pearl4.jpg" alt="Foam Mousse Cleansing"></a>
+                        <a href="product-tonic.html?id=pearl-04"><img src="{{ url_for('static', filename='img/Pearl4.jpg') }}" alt="Foam Mousse Cleansing"></a>
                         <button class="product-card__bookmark js-bookmark" data-id="pearl-04" data-name="Foam Mousse Cleansing"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
                     </div>
                     <div class="product-card__info">
@@ -768,7 +768,7 @@
                 <!-- ⑤ Hair Tonic Radiance -->
                 <div class="product-card" data-category="hair" data-price="88">
                     <div class="product-card__image-wrap">
-                        <a href="product-tonic.html?id=pearl-05"><img src="img/Pearl5.jpg" alt="Hair Tonic Radiance"></a>
+                        <a href="product-tonic.html?id=pearl-05"><img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" alt="Hair Tonic Radiance"></a>
                         <button class="product-card__bookmark js-bookmark" data-id="pearl-05" data-name="Hair Tonic Radiance"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
                     </div>
                     <div class="product-card__info">
@@ -785,7 +785,7 @@
                 <!-- ⑥ Velvet Oil Blend -->
                 <div class="product-card" data-category="hair" data-price="69">
                     <div class="product-card__image-wrap">
-                        <a href="product-tonic.html?id=pearl-06"><img src="img/Pearl6.jpg" alt="Velvet Oil Blend"></a>
+                        <a href="product-tonic.html?id=pearl-06"><img src="{{ url_for('static', filename='img/Pearl6.jpg') }}" alt="Velvet Oil Blend"></a>
                         <button class="product-card__bookmark js-bookmark" data-id="pearl-06" data-name="Velvet Oil Blend"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
                     </div>
                     <div class="product-card__info">
@@ -802,7 +802,7 @@
                 <!-- ⑦ Micellar Water Extract Mix -->
                 <div class="product-card" data-category="face" data-price="99">
                     <div class="product-card__image-wrap">
-                        <a href="product-tonic.html?id=pearl-07"><img src="img/Pearl7.jpg" alt="Micellar Water Extract Mix"></a>
+                        <a href="product-tonic.html?id=pearl-07"><img src="{{ url_for('static', filename='img/Pearl7.jpg') }}" alt="Micellar Water Extract Mix"></a>
                         <button class="product-card__bookmark js-bookmark" data-id="pearl-07" data-name="Micellar Water Extract Mix"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
                     </div>
                     <div class="product-card__info">
@@ -857,7 +857,7 @@
     <section class="set-banner">
         <div class="set-banner__image">
             <!-- Когда добавишь фото набора — раскомментируй:
-            <img src="img/PearlSet.jpg" alt="Набор Ритуал Жемчужины">
+            <img src="{{ url_for('static', filename='img/PearlSet.jpg') }}" alt="Набор Ритуал Жемчужины">
             -->
             <div class="set-banner__image-placeholder">
                 <!-- placeholder -->
@@ -909,7 +909,7 @@
     -->
     <section class="founder-section anim-fade-up">
         <div class="founder-section__image">
-            <img src="img/Tais.jpg" alt="Таис Рыбакина — основатель Pearl by Tais"
+            <img src="{{ url_for('static', filename='img/Tais.jpg') }}" alt="Таис Рыбакина — основатель Pearl by Tais"
                  onerror="this.parentElement.style.background='linear-gradient(160deg,#ddd0c4,#b89484)';">
         </div>
         <div class="founder-section__content">
@@ -1042,7 +1042,7 @@
 
     <div id="toastContainer" class="toast-container"></div>
 
-    <script src="script.js"></script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
     // ── Price range live update ──
     const priceRange = document.getElementById('priceRangeInput');
