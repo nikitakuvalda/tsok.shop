@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа — TSOK Boutique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="checkout-body">
+<div class="site-top" id="siteTop">
+    <div class="promo-bar"><span>Бесплатная доставка от 250 BYN · безопасная оплата через ЮKassa</span></div>
+    <div class="header-group" id="headerGroup">
+        <header class="header">
+            <div class="container header__inner">
+                <div class="header__left">
+                    <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                    </button>
+                    <a href="index.html" class="logo-main" aria-label="TSOK Boutique">
+                        <span class="logo-main__title">TSOK</span>
+                        <span class="logo-main__sub">Boutique</span>
+                    </a>
+                </div>
+                <nav class="main-nav desktop-only">
+                    <a href="index.html" class="nav-link">Главная</a>
+                    <a href="catalog.html" class="nav-link">Pearl by Tais</a>
+                    <a href="catalog-homme.html" class="nav-link">INTELEGENTOFF</a>
+                    <a href="subscription.html" class="nav-link">TSOK BOX</a>
+                </nav>
+                <div class="header__actions">
+                    <button class="icon-btn" id="cartOpenBtn" style="position:relative;" aria-label="Корзина">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
+                        <span class="cart-count">0</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+    </div>
+</div>
+
+<main class="checkout-page">
+    <div class="container checkout-layout">
+        <section class="checkout-panel checkout-form-panel">
+            {% if payment_success %}
+            <div class="checkout-success" id="paymentSuccessNotice">
+                <span class="label">Оплата</span>
+                <h1 class="section-title">Спасибо!<br><em>Платёж создан</em></h1>
+                <p>Если оплата прошла успешно, мы свяжемся с вами для подтверждения доставки. Корзина очищена в браузере.</p>
+            </div>
+            {% endif %}
+            <span class="label">Checkout</span>
+            <h1 class="section-title">Оформление<br><em>заказа</em></h1>
+            <p class="section-desc">Заполните контактные данные и адрес доставки. СДЭК пока не подключён — карта нужна для выбора точки доставки визуально.</p>
+
+            <form id="checkoutForm" class="checkout-form">
+                <div class="checkout-section">
+                    <h2>Получатель</h2>
+                    <label class="field-label" for="customerFio">ФИО</label>
+                    <input class="field-input" id="customerFio" name="fio" type="text" autocomplete="name" placeholder="Иванов Иван Иванович" required>
+                    <div class="field-grid">
+                        <div>
+                            <label class="field-label" for="customerPhone">Телефон</label>
+                            <input class="field-input" id="customerPhone" name="phone" type="tel" autocomplete="tel" placeholder="+7 999 000-00-00" required>
+                        </div>
+                        <div>
+                            <label class="field-label" for="customerEmail">Email</label>
+                            <input class="field-input" id="customerEmail" name="email" type="email" autocomplete="email" placeholder="mail@example.com" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="checkout-section">
+                    <h2>Доставка</h2>
+                    <div class="field-grid">
+                        <div>
+                            <label class="field-label" for="deliveryCity">Город</label>
+                            <input class="field-input" id="deliveryCity" name="city" type="text" autocomplete="address-level2" placeholder="Москва" required>
+                        </div>
+                        <div>
+                            <label class="field-label" for="deliveryZip">Индекс</label>
+                            <input class="field-input" id="deliveryZip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="101000">
+                        </div>
+                    </div>
+                    <label class="field-label" for="deliveryAddress">Адрес доставки</label>
+                    <input class="field-input" id="deliveryAddress" name="address" type="text" autocomplete="street-address" placeholder="улица, дом, квартира" required>
+                    <label class="field-label" for="deliveryComment">Комментарий</label>
+                    <textarea class="field-input field-textarea" id="deliveryComment" name="comment" placeholder="Подъезд, домофон, удобное время доставки"></textarea>
+                </div>
+
+                <div class="checkout-section">
+                    <h2>Карта доставки</h2>
+                    <div class="checkout-map" id="checkoutMap">
+                        <iframe title="Карта доставки" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.openstreetmap.org/export/embed.html?bbox=37.517%2C55.705%2C37.705%2C55.805&amp;layer=mapnik"></iframe>
+                        <div class="checkout-map__hint">СДЭК пока не подключён. Укажите адрес вручную, а карта останется ориентиром для доставки.</div>
+                    </div>
+                </div>
+
+                <button id="checkoutSubmitBtn" type="submit" class="btn btn--dark w-100 checkout-buy-btn">Купить</button>
+                <p class="checkout-policy">Нажимая «Купить», вы переходите на защищённую страницу оплаты ЮKassa.</p>
+                <p class="checkout-error" id="checkoutError" hidden></p>
+            </form>
+        </section>
+
+        <aside class="checkout-panel checkout-summary">
+            <div class="checkout-summary__sticky">
+                <span class="label">Ваш заказ</span>
+                <div id="checkoutSummaryItems" class="checkout-summary__items"></div>
+                <p class="cart-empty" id="checkoutEmptyMessage">Корзина пуста. Вернитесь в каталог и добавьте товары.</p>
+                <div class="checkout-summary__total">
+                    <span>Итого</span>
+                    <strong id="checkoutSummaryTotal">0 BYN</strong>
+                </div>
+                <button class="btn btn--outline-dark w-100" type="button" id="checkoutEditCartBtn">Редактировать корзину</button>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<div class="global-overlay" id="globalOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header">
+        <h3 class="cart-drawer__title">Корзина</h3>
+        <button class="close-btn" id="cartCloseBtn" aria-label="Закрыть">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <div class="cart-drawer__scroll">
+        <div id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div>
+    </div>
+    <div class="cart-drawer__footer">
+        <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div>
+        <a href="checkout.html" class="btn btn--dark w-100">Оформить заказ</a>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu__header">
+        <div class="logo-main"><span class="logo-main__title">TSOK</span><span class="logo-main__sub">Boutique</span></div>
+        <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть меню">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <div class="mobile-menu__body">
+        <nav class="mobile-nav">
+            <a href="index.html" class="mobile-nav__link">Главная</a>
+            <a href="catalog.html" class="mobile-nav__link">Pearl by Tais</a>
+            <a href="catalog-homme.html" class="mobile-nav__link">INTELEGENTOFF</a>
+            <a href="subscription.html" class="mobile-nav__link text-gold">TSOK BOX</a>
+        </nav>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% if yandex_maps_api_key %}
+<script src="https://api-maps.yandex.ru/2.1/?apikey={{ yandex_maps_api_key }}&lang=ru_RU"></script>
+{% endif %}
+</body>
+</html>
