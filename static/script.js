@@ -217,8 +217,11 @@ function initAccordions() {
    SCROLL-REVEAL ANIMATIONS
    ============================================================ */
 function initScrollReveal() {
+    const revealEls = document.querySelectorAll('.anim-fade-up, .anim-scale-up');
+    if (!revealEls.length) return;
+
     if (!('IntersectionObserver' in window)) {
-        document.querySelectorAll('.anim-fade-up').forEach(el => el.classList.add('is-visible'));
+        revealEls.forEach(el => el.classList.add('is-visible'));
         return;
     }
     const obs = new IntersectionObserver((entries) => {
@@ -229,7 +232,7 @@ function initScrollReveal() {
             }
         });
     }, { threshold: 0.12 });
-    document.querySelectorAll('.anim-fade-up').forEach(el => obs.observe(el));
+    revealEls.forEach(el => obs.observe(el));
 }
 
 /* ============================================================
