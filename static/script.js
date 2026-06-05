@@ -217,8 +217,11 @@ function initAccordions() {
    SCROLL-REVEAL ANIMATIONS
    ============================================================ */
 function initScrollReveal() {
+    const revealEls = document.querySelectorAll('.anim-fade-up, .anim-scale-up');
+    if (!revealEls.length) return;
+
     if (!('IntersectionObserver' in window)) {
-        document.querySelectorAll('.anim-fade-up').forEach(el => el.classList.add('is-visible'));
+        revealEls.forEach(el => el.classList.add('is-visible'));
         return;
     }
     const obs = new IntersectionObserver((entries) => {
@@ -229,7 +232,7 @@ function initScrollReveal() {
             }
         });
     }, { threshold: 0.12 });
-    document.querySelectorAll('.anim-fade-up').forEach(el => obs.observe(el));
+    revealEls.forEach(el => obs.observe(el));
 }
 
 /* ============================================================
@@ -434,6 +437,60 @@ function initProductGallery() {
 }
 
 
+
+/* ============================================================
+   CHECKOUT PVZ POINTS
+   ============================================================ */
+const pvzProviders = {
+    cdek: { label: 'СДЭК', markerClass: 'checkout-pvz-marker--cdek' },
+    yandex: { label: 'Яндекс Маркет', markerClass: 'checkout-pvz-marker--yandex' },
+    post: { label: 'Почта России', markerClass: 'checkout-pvz-marker--post' }
+};
+
+const pvzPointPositions = {
+    cdek: [[21, 23], [28, 31], [35, 26], [42, 35], [48, 24], [55, 32], [62, 27], [70, 36], [24, 45], [31, 55], [39, 48], [46, 58], [53, 46], [61, 55], [68, 48], [76, 58], [29, 70], [43, 74], [58, 69], [72, 72]],
+    yandex: [[19, 29], [27, 39], [34, 33], [41, 43], [49, 36], [57, 42], [65, 34], [73, 44], [22, 53], [30, 63], [38, 57], [47, 66], [55, 58], [63, 65], [71, 56], [79, 64], [26, 76], [40, 80], [56, 75], [70, 79]],
+    post: [[23, 20], [31, 29], [39, 22], [46, 31], [54, 25], [63, 33], [71, 26], [78, 35], [20, 43], [29, 50], [37, 46], [45, 54], [54, 49], [62, 57], [70, 51], [78, 60], [25, 67], [39, 72], [55, 68], [73, 74]]
+};
+
+function renderPvzPoints(provider) {
+    const layer = document.getElementById('checkoutPvzLayer');
+    const hint = document.getElementById('checkoutMapHint');
+    const providerInput = document.getElementById('deliveryPvzProvider');
+    if (!layer || !pvzProviders[provider]) return;
+
+    layer.replaceChildren();
+    pvzPointPositions[provider].forEach(([left, top], index) => {
+        const marker = document.createElement('button');
+        marker.type = 'button';
+        marker.className = `checkout-pvz-marker ${pvzProviders[provider].markerClass}`;
+        marker.style.left = `${left}%`;
+        marker.style.top = `${top}%`;
+        marker.dataset.number = String(index + 1);
+        marker.ariaLabel = `${pvzProviders[provider].label}, ПВЗ ${index + 1}`;
+        marker.title = marker.ariaLabel;
+        layer.appendChild(marker);
+    });
+
+    if (hint) hint.textContent = `Показаны 20 точек ПВЗ ${pvzProviders[provider].label}. При смене службы старые точки убираются.`;
+    if (providerInput) providerInput.value = provider;
+}
+
+function initPvzSelector() {
+    const buttons = document.querySelectorAll('[data-pvz-provider]');
+    if (!buttons.length) return;
+
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            buttons.forEach(item => item.classList.toggle('is-active', item === btn));
+            renderPvzPoints(btn.dataset.pvzProvider);
+        });
+    });
+
+    const activeProvider = document.querySelector('[data-pvz-provider].is-active')?.dataset.pvzProvider || buttons[0].dataset.pvzProvider;
+    renderPvzPoints(activeProvider);
+}
+
 /* ============================================================
    CHECKOUT PAGE
    ============================================================ */
@@ -507,7 +564,7 @@ function initCheckoutPage() {
         }
 
         const payload = {
-            items: cart,
+            items: cart.map(item => ({ id: item.id, qty: item.qty })),
             customer: {
                 fio: document.getElementById('customerFio')?.value.trim() || '',
                 phone: document.getElementById('customerPhone')?.value.trim() || '',
@@ -518,6 +575,7 @@ function initCheckoutPage() {
                 zip: document.getElementById('deliveryZip')?.value.trim() || '',
                 address: document.getElementById('deliveryAddress')?.value.trim() || '',
                 comment: document.getElementById('deliveryComment')?.value.trim() || '',
+                pvz_provider: document.getElementById('deliveryPvzProvider')?.value || '',
             },
         };
 
@@ -575,6 +633,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initBrandSwitcher();
     initProductGallery();
     initCheckoutPage();
+    initPvzSelector();
 
     // Initial UI sync
     updateCartUI();

@@ -427,49 +427,7 @@
 <body>
 
     <!-- ═════ SITE TOP ═════ -->
-    <div class="site-top" id="siteTop">
-        <div class="promo-bar">
-            TSOK BOX — Ваша персональная коробочка ухода &nbsp;·&nbsp; <a href="#constructor">Собрать свой бокс →</a>
-        </div>
-        <div class="header-group" id="headerGroup">
-            <header class="header">
-                <div class="header__inner">
-                    <div class="header__left">
-                        <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                        </button>
-                        <nav class="desktop-nav desktop-only">
-                            <a href="index.html" class="nav-link">Главная</a>
-                            <a href="catalog.html" class="nav-link">Каталог</a>
-                            <a href="subscription.html" class="nav-link" style="color:var(--color-accent);font-weight:500;">TSOK BOX ✦</a>
-                            <a href="index.html#our-story" class="nav-link">О нас</a>
-                        </nav>
-                    </div>
-                    <div class="header__center">
-                        <a href="catalog.html" aria-label="цок-цок Pearl by Tais">
-                            <img src="{{ url_for('static', filename='img/цок-цок.svg') }}" alt="цок-цок" style="height:44px;width:auto;display:block;"
-                                 onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-                            <svg viewBox="0 0 230 58" xmlns="http://www.w3.org/2000/svg" style="height:44px;width:auto;display:none;">
-                                <text x="115" y="31" font-family="'Cormorant Garamond',Georgia,serif" font-size="30" font-weight="400" letter-spacing="5" text-anchor="middle" fill="#2c2320">цок-цок</text>
-                                <text x="115" y="51" font-family="'Cormorant Garamond',Georgia,serif" font-size="13" font-style="italic" letter-spacing="2" text-anchor="middle" fill="#8a7a72">Pearl by Tais</text>
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="header__right">
-                        <button class="icon-btn" id="headerFavBtn" style="position:relative;" aria-label="Избранное">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                            <span class="fav-count">0</span>
-                        </button>
-                        <button class="icon-btn" id="cartOpenBtn" style="position:relative;" aria-label="Корзина">
-                            <span class="desktop-only btn-text">Корзина</span>
-                            <svg class="mobile-only" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6a2 2 0 0 1 4 0v2"/></svg>
-                            <span class="cart-count">0</span>
-                        </button>
-                    </div>
-                </div>
-            </header>
-        </div>
-    </div>
+    {% include "_header.html" %}
 
     <!-- ═════ HERO ═════ -->
     <section class="sub-hero">

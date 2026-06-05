@@ -10,36 +10,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body class="checkout-body">
-<div class="site-top" id="siteTop">
-    <div class="promo-bar"><span>Бесплатная доставка от 250 BYN · безопасная оплата через ЮKassa</span></div>
-    <div class="header-group" id="headerGroup">
-        <header class="header">
-            <div class="container header__inner">
-                <div class="header__left">
-                    <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                    </button>
-                    <a href="index.html" class="logo-main" aria-label="TSOK Boutique">
-                        <span class="logo-main__title">TSOK</span>
-                        <span class="logo-main__sub">Boutique</span>
-                    </a>
-                </div>
-                <nav class="main-nav desktop-only">
-                    <a href="index.html" class="nav-link">Главная</a>
-                    <a href="catalog.html" class="nav-link">Pearl by Tais</a>
-                    <a href="catalog-homme.html" class="nav-link">INTELEGENTOFF</a>
-                    <a href="subscription.html" class="nav-link">TSOK BOX</a>
-                </nav>
-                <div class="header__actions">
-                    <button class="icon-btn" id="cartOpenBtn" style="position:relative;" aria-label="Корзина">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 7h12l-1 13H7L6 7Z"/><path d="M9 7a3 3 0 0 1 6 0"/></svg>
-                        <span class="cart-count">0</span>
-                    </button>
-                </div>
-            </div>
-        </header>
-    </div>
-</div>
+{% include "_header.html" %}
 
 <main class="checkout-page">
     <div class="container checkout-layout">
@@ -92,10 +63,17 @@
 
                 <div class="checkout-section">
                     <h2>Карта доставки</h2>
+                    <div class="checkout-pvz-switcher" role="group" aria-label="Выбор службы ПВЗ">
+                        <button class="checkout-pvz-switcher__btn is-active" type="button" data-pvz-provider="cdek">СДЭК</button>
+                        <button class="checkout-pvz-switcher__btn" type="button" data-pvz-provider="yandex">Яндекс Маркет</button>
+                        <button class="checkout-pvz-switcher__btn" type="button" data-pvz-provider="post">Почта России</button>
+                    </div>
                     <div class="checkout-map" id="checkoutMap">
                         <iframe title="Карта доставки" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.openstreetmap.org/export/embed.html?bbox=37.517%2C55.705%2C37.705%2C55.805&amp;layer=mapnik"></iframe>
-                        <div class="checkout-map__hint">СДЭК пока не подключён. Укажите адрес вручную, а карта останется ориентиром для доставки.</div>
+                        <div class="checkout-pvz-layer" id="checkoutPvzLayer" aria-live="polite"></div>
+                        <div class="checkout-map__hint" id="checkoutMapHint">Показаны 20 точек ПВЗ СДЭК. Выберите службу доставки кнопками выше.</div>
                     </div>
+                    <input type="hidden" id="deliveryPvzProvider" name="pvz_provider" value="cdek">
                 </div>
 
                 <button id="checkoutSubmitBtn" type="submit" class="btn btn--dark w-100 checkout-buy-btn">Купить</button>
