@@ -9,6 +9,8 @@ from decimal import Decimal, InvalidOperation
 
 from flask import Flask, jsonify, render_template, request, url_for
 
+from db import get_products_by_ids, init_products_table
+
 
 class StaticSiteFlask(Flask):
     jinja_options = Flask.jinja_options.copy()
@@ -27,22 +29,6 @@ YOOKASSA_API_URL = os.getenv("YOOKASSA_API_URL", "https://api.yookassa.ru/v3/pay
 YOOKASSA_RETURN_URL = os.getenv("YOOKASSA_RETURN_URL", "")
 YANDEX_MAPS_API_KEY = os.getenv("YANDEX_MAPS_API_KEY", "")
 
-PRODUCTS = {
-    "pearl-01": {"name": "Foam Mousse Moisture", "price": Decimal("96"), "size": "150 мл", "brand": "Pearl by Tais"},
-    "pearl-02": {"name": "Face Tonic Toning", "price": Decimal("93"), "size": "150 мл", "brand": "Pearl by Tais"},
-    "pearl-03": {"name": "Tonic Youth Restoring", "price": Decimal("93"), "size": "150 мл", "brand": "Pearl by Tais"},
-    "pearl-04": {"name": "Foam Mousse Cleansing", "price": Decimal("96"), "size": "150 мл", "brand": "Pearl by Tais"},
-    "pearl-05": {"name": "Hair Tonic Radiance", "price": Decimal("88"), "size": "200 мл", "brand": "Pearl by Tais"},
-    "pearl-06": {"name": "Velvet Oil Blend", "price": Decimal("69"), "size": "60 мл", "brand": "Pearl by Tais"},
-    "pearl-07": {"name": "Micellar Water Extract Mix", "price": Decimal("99"), "size": "200 мл", "brand": "Pearl by Tais"},
-    "homme-01": {"name": "Face Wash Black", "price": Decimal("78"), "size": "200 мл", "brand": "INTELEGENTOFF"},
-    "homme-02": {"name": "Toner Control", "price": Decimal("89"), "size": "150 мл", "brand": "INTELEGENTOFF"},
-    "homme-03": {"name": "Beard Oil", "price": Decimal("96"), "size": "50 мл", "brand": "INTELEGENTOFF"},
-    "homme-04": {"name": "Beard Wax", "price": Decimal("82"), "size": "50 мл", "brand": "INTELEGENTOFF"},
-    "homme-05": {"name": "Face Serum Black", "price": Decimal("134"), "size": "30 мл", "brand": "INTELEGENTOFF"},
-    "homme-06": {"name": "After Shave Balm", "price": Decimal("82"), "size": "100 мл", "brand": "INTELEGENTOFF"},
-    "homme-kit-01": {"name": "INTELEGENTOFF Starter Kit", "price": Decimal("254"), "size": "Набор 3 продукта", "brand": "INTELEGENTOFF"},
-}
 
 
 def _format_amount(amount):
@@ -54,13 +40,14 @@ def _normalize_checkout_payload(payload):
     if not isinstance(items, list) or not items:
         raise ValueError("Корзина пуста.")
 
+    raw_items = [item for item in items if isinstance(item, dict)]
+    product_ids = [str(item.get("id") or "").strip() for item in raw_items]
+    products = get_products_by_ids([product_id for product_id in product_ids if product_id])
+
     normalized_items = []
     total = Decimal("0")
-    for raw_item in items:
-        if not isinstance(raw_item, dict):
-            continue
-        product_id = str(raw_item.get("id") or "").strip()
-        product = PRODUCTS.get(product_id)
+    for raw_item, product_id in zip(raw_items, product_ids):
+        product = products.get(product_id)
         if not product:
             raise ValueError(f"Товар {product_id or 'без ID'} не найден.")
         try:
@@ -68,9 +55,10 @@ def _normalize_checkout_payload(payload):
         except (TypeError, ValueError):
             qty = 1
         qty = max(1, min(qty, 99))
-        line_total = product["price"] * qty
+        price = Decimal(str(product["price"]))
+        line_total = price * qty
         total += line_total
-        normalized_items.append({"id": product_id, "qty": qty, **product, "line_total": line_total})
+        normalized_items.append({"id": product_id, "qty": qty, **product, "price": price, "line_total": line_total})
 
     if total <= 0:
         raise ValueError("Некорректная сумма заказа.")
@@ -112,6 +100,7 @@ def _create_yookassa_payment(items, total, customer, delivery):
         "delivery_city": str(delivery.get("city", ""))[:120],
         "delivery_address": str(delivery.get("address", ""))[:255],
         "delivery_comment": str(delivery.get("comment", ""))[:255],
+        "delivery_pvz_provider": str(delivery.get("pvz_provider", ""))[:32],
     }
     payload = {
         "amount": {"value": _format_amount(total), "currency": YOOKASSA_CURRENCY},
@@ -162,6 +151,13 @@ def _create_yookassa_payment(items, total, customer, delivery):
         except json.JSONDecodeError:
             message = error_body or str(error)
         raise RuntimeError(f"Ошибка ЮKassa: {message}") from error
+
+
+@application.cli.command("init-db")
+def init_db_command():
+    """Create and seed PostgreSQL tables."""
+    init_products_table()
+    print("PostgreSQL products table is ready.")
 
 
 @application.route("/")

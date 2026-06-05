@@ -447,72 +447,7 @@
 <body>
 
     <!-- ═══════════════════════════════════════ SITE TOP ═══ -->
-    <div class="site-top" id="siteTop">
-        <div class="promo-bar">
-            Бесплатная доставка от 80 BYN &nbsp;·&nbsp; <a href="product-tonic.html?id=pearl-03">Хит: Tonic Youth Restoring →</a>
-        </div>
-        <div class="header-group" id="headerGroup">
-            <header class="header">
-                <div class="header__inner">
-
-                    <!-- LEFT: nav -->
-                    <div class="header__left">
-                        <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                        </button>
-                        <nav class="desktop-nav desktop-only">
-                            <a href="index.html" class="nav-link">Главная</a>
-                            <div class="nav-dropdown-wrap">
-                                <span class="nav-link nav-dropdown-btn">
-                                    Категории
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                                </span>
-                                <div class="nav-dropdown-content">
-                                    <a href="catalog.html?category=face">✦ Уход за лицом</a>
-                                    <a href="catalog.html?category=hair">✦ Волосы</a>
-                                    <a href="catalog.html?category=body">✦ Тело</a>
-                                    <a href="catalog.html">Весь каталог</a>
-                                </div>
-                            </div>
-                            <a href="catalog.html" class="nav-link" style="color:var(--color-accent);font-weight:500;">Каталог</a>
-                            <a href="subscription.html" class="nav-link" style="color:#c9956e;font-weight:500;">TSOK BOX ✦</a>
-                            <a href="index.html#our-story" class="nav-link">О нас</a>
-                            <div class="brand-switcher">
-                                <button class="brand-switcher__btn is-active">цок-цок</button>
-                                <button class="brand-switcher__btn" data-href="catalog-homme.html">HOMME</button>
-                            </div>
-                        </nav>
-                    </div>
-
-                    <!-- CENTER: Logo -->
-                    <div class="header__center">
-                        <a href="catalog.html" aria-label="цок-цок Pearl by Tais" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;line-height:1;">
-                            <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(18px,1.8vw,24px);font-weight:400;letter-spacing:0.22em;color:var(--color-fem-text);">цок-цок</span>
-                            <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:11px;font-style:italic;letter-spacing:0.12em;color:var(--color-fem-muted);margin-top:2px;">Pearl by Tais</span>
-                        </a>
-                    </div>
-
-                    <!-- RIGHT: icons -->
-                    <div class="header__right">
-                        <button class="icon-btn desktop-only" aria-label="Поиск" id="searchBtn">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        </button>
-                        <button class="icon-btn desktop-only" id="loginBtn"><span class="btn-text">Войти</span></button>
-                        <button class="icon-btn" id="headerFavBtn" style="position:relative;" aria-label="Избранное">
-                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                            <span class="fav-count">0</span>
-                        </button>
-                        <button class="icon-btn" id="cartOpenBtn" style="position:relative;" aria-label="Корзина">
-                            <span class="desktop-only btn-text">Корзина</span>
-                            <svg class="mobile-only" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6a2 2 0 0 1 4 0v2"/></svg>
-                            <span class="cart-count">0</span>
-                        </button>
-                    </div>
-
-                </div>
-            </header>
-        </div>
-    </div><!-- .site-top -->
+    {% include "_header.html" %}
 
 
     <!-- ═══════════════════════════════════════ HERO ═══ -->

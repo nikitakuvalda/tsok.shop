@@ -16,69 +16,7 @@
 <!-- ═══════════════════════════════════════════
      ШАПКА (SITE TOP - APPLE GLASSMORPHISM)
      ═══════════════════════════════════════════ -->
-<div class="site-top" id="siteTop">
-
-    <div class="promo-bar">
-        Бесплатная доставка от 80 BYN &nbsp;·&nbsp;
-        <a href="catalog.html">Pearl by Tais</a> &nbsp;·&nbsp;
-        <a href="catalog-homme.html">INTELEGENTOFF</a>
-    </div>
-
-    <div class="header-group" id="headerGroup">
-        <header class="header container-header">
-            <div class="header__inner">
-
-                <div class="header__left">
-                    <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                    </button>
-                    <nav class="desktop-nav desktop-only">
-                        <a href="index.html" class="nav-link">Главная</a>
-                        <div class="nav-dropdown-wrap">
-                            <span class="nav-link nav-dropdown-btn">
-                                Бренды
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                            </span>
-                            <div class="nav-dropdown-content">
-                                <a href="catalog.html">✦ Pearl by Tais</a>
-                                <a href="catalog-homme.html">● INTELEGENTOFF</a>
-                                <a href="subscription.html" class="text-gold">TSOK BOX</a>
-                            </div>
-                        </div>
-                        <a href="subscription.html" class="nav-link text-gold">TSOK BOX</a>
-                        <a href="#our-story" class="nav-link">История</a>
-                    </nav>
-                </div>
-
-                <div class="header__center">
-                    <a href="index.html" class="logo-main" aria-label="TSOK Boutique">
-                        <span class="logo-main__title">TSOK</span>
-                        <span class="logo-main__subtitle">boutique</span>
-                    </a>
-                </div>
-
-                <div class="header__right">
-                    <button class="icon-btn desktop-only" aria-label="Поиск">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    </button>
-                    <button class="icon-btn desktop-only" id="loginBtn">
-                        <span class="btn-text">Войти</span>
-                    </button>
-                    <button class="icon-btn" id="headerFavBtn" aria-label="Избранное">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        <span class="fav-count"></span>
-                    </button>
-                    <button class="icon-btn" id="cartOpenBtn" aria-label="Корзина">
-                        <span class="desktop-only btn-text">Корзина</span>
-                        <svg class="mobile-only" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6a2 2 0 0 1 4 0v2"/></svg>
-                        <span class="cart-count"></span>
-                    </button>
-                </div>
-
-            </div>
-        </header>
-    </div>
-</div>
+{% include "_header.html" %}
 
 <!-- ═══════════════════════════════════════════
      HERO — СПЛИТ ЭКРАН
@@ -333,7 +271,7 @@
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
         </div>
-        <div class="media-box anim-scale-up" style="background:#111;">
+        <div class="media-box media-box--sergey anim-scale-up" style="background:#111;">
             <img src="{{ url_for('static', filename='img/IntelegentSergay.png') }}" alt="INTELEGENTOFF"
                  onerror="this.parentElement.style.background='linear-gradient(150deg,#0d0d0d,#1c1c24)'">
         </div>

@@ -157,66 +157,7 @@
     <!-- ═══════════════════════════════════════════
          SITE TOP — FIXED: promo bar + header
          ═══════════════════════════════════════════ -->
-    <div class="site-top" id="siteTop">
-
-        <!-- PROMO BAR -->
-        <div class="promo-bar">
-            Бесплатная доставка от 80 BYN &nbsp;·&nbsp; <a href="catalog.html">Смотреть всю коллекцию Pearl by Tais</a>
-        </div>
-
-        <!-- HEADER -->
-        <div class="header-group" id="headerGroup">
-            <header class="header" id="header">
-                <div class="header__inner">
-                    <div class="header__left">
-                        <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                        </button>
-                        <nav class="desktop-nav desktop-only">
-                            <a href="index.html" class="nav-link">Главная</a>
-                            <div class="nav-dropdown-wrap">
-                                <span class="nav-link nav-dropdown-btn" style="cursor:pointer;">
-                                    Категории <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                                </span>
-                                <div class="nav-dropdown-content">
-                                    <a href="catalog.html?category=face">Уход за лицом</a>
-                                    <a href="catalog.html?category=body">Тело</a>
-                                    <a href="catalog.html?category=hair">Волосы</a>
-                                    <a href="catalog.html">Все продукты</a>
-                                </div>
-                            </div>
-                            <a href="catalog.html" class="nav-link">Каталог</a>
-                            <a href="subscription.html" class="nav-link" style="color:#c9956e;">TSOK BOX ✦</a>
-                            <a href="index.html#our-story" class="nav-link">О нас</a>
-                        </nav>
-                    </div>
-                    <!-- SVG LOGO -->
-                                        <div class="header__center">
-                        <a href="catalog.html" aria-label="цок-цок Pearl by Tais" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;line-height:1;">
-                            <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(18px,1.8vw,24px);font-weight:400;letter-spacing:0.22em;color:var(--color-fem-text);">цок-цок</span>
-                            <span style="font-family:'Cormorant Garamond',Georgia,serif;font-size:11px;font-style:italic;letter-spacing:0.12em;color:var(--color-fem-muted);margin-top:2px;">Pearl by Tais</span>
-                        </a>
-                    </div>
-                    <div class="header__right">
-                        <button class="icon-btn desktop-only" aria-label="Поиск">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        </button>
-                        <button class="icon-btn desktop-only" id="loginBtn"><span class="btn-text">Войти</span></button>
-                        <button class="icon-btn" id="headerFavBtn" style="position:relative;" aria-label="Избранное">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                            <span class="fav-count">0</span>
-                        </button>
-                        <button class="icon-btn" id="cartOpenBtn" style="position:relative;" aria-label="Корзина">
-                            <span class="desktop-only btn-text">Корзина</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6C8 4.9 8.9 4 10 4h4c1.1 0 2 .9 2 2v2"/></svg>
-                            <span class="cart-count">0</span>
-                        </button>
-                    </div>
-                </div>
-            </header>
-        </div>
-
-    </div><!-- .site-top -->
+    {% include "_header.html" %}
 
     <!-- STICKY BAR -->
     <div class="product-sticky-bar" id="productStickyBar">
@@ -1007,68 +948,7 @@
     <!-- ═══════════════════════════════════════════
          SITE TOP — FIXED: promo bar + header
          ═══════════════════════════════════════════ -->
-    <div class="site-top" id="siteTop">
-
-        <!-- PROMO BAR -->
-        <div class="promo-bar">
-            Бесплатная доставка от 80 BYN &nbsp;·&nbsp; <a href="catalog.html">Смотреть всю коллекцию Pearl by Tais</a>
-        </div>
-
-        <!-- HEADER -->
-        <div class="header-group" id="headerGroup">
-            <header class="header" id="header">
-                <div class="header__inner">
-                    <div class="header__left">
-                        <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                        </button>
-                        <nav class="desktop-nav desktop-only">
-                            <a href="index.html" class="nav-link">Главная</a>
-                            <div class="nav-dropdown-wrap">
-                                <span class="nav-link nav-dropdown-btn" style="cursor:pointer;">
-                                    Категории <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                                </span>
-                                <div class="nav-dropdown-content">
-                                    <a href="catalog.html?category=face">Уход за лицом</a>
-                                    <a href="catalog.html?category=body">Тело</a>
-                                    <a href="catalog.html?category=hair">Волосы</a>
-                                    <a href="catalog.html">Все продукты</a>
-                                </div>
-                            </div>
-                            <a href="catalog.html" class="nav-link">Каталог</a>
-                            <a href="subscription.html" class="nav-link" style="color:#c9956e;">TSOK BOX ✦</a>
-                            <a href="index.html#our-story" class="nav-link">О нас</a>
-                        </nav>
-                    </div>
-                    <!-- SVG LOGO -->
-                    <div class="header__center">
-                        <a href="catalog.html" aria-label="цок-цок Pearl by Tais">
-                            <svg viewBox="0 0 220 60" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:44px;width:auto;">
-                                <text x="110" y="30" font-family="'Cormorant Garamond', Georgia, serif" font-size="28" font-weight="400" letter-spacing="6" text-anchor="middle" fill="#2c2320">цок-цок</text>
-                                <text x="110" y="52" font-family="'Cormorant Garamond', Georgia, serif" font-size="13" font-style="italic" letter-spacing="2" text-anchor="middle" fill="#6b5e56">Pearl by Tais</text>
-                            </svg>
-                        </a>
-                    </div>
-                    <div class="header__right">
-                        <button class="icon-btn desktop-only" aria-label="Поиск">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                        </button>
-                        <button class="icon-btn desktop-only" id="loginBtn"><span class="btn-text">Войти</span></button>
-                        <button class="icon-btn" id="headerFavBtn" style="position:relative;" aria-label="Избранное">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                            <span class="fav-count">0</span>
-                        </button>
-                        <button class="icon-btn" id="cartOpenBtn" style="position:relative;" aria-label="Корзина">
-                            <span class="desktop-only btn-text">Корзина</span>
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6C8 4.9 8.9 4 10 4h4c1.1 0 2 .9 2 2v2"/></svg>
-                            <span class="cart-count">0</span>
-                        </button>
-                    </div>
-                </div>
-            </header>
-        </div>
-
-    </div><!-- .site-top -->
+    {% include "_header.html" %}
 
     <!-- STICKY BAR -->
     <div class="product-sticky-bar" id="productStickyBar">

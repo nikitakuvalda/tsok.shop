@@ -284,66 +284,7 @@
 </head>
 <body>
 
-    <!-- PROMO BAR -->
-    <div class="promo-bar">
-        INTELEGENTOFF — Брутальный уход без компромиссов &nbsp;·&nbsp; <a href="#">Новинка: Face Serum Black</a>
-    </div>
-
-    <!-- HEADER -->
-    <div class="header-group" id="headerGroup" style="background:rgba(13,13,13,0.95);backdrop-filter:blur(20px);box-shadow:0 1px 0 rgba(255,255,255,0.05);">
-        <header class="header" id="header" style="color:var(--color-white);">
-            <div class="header__inner">
-                <div class="header__left">
-                    <button class="icon-btn mobile-only" id="burgerBtn" style="color:white;">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                    </button>
-                    <nav class="desktop-nav desktop-only" style="color:rgba(255,255,255,0.75);">
-                        <a href="index.html" class="nav-link" style="color:inherit;">Главная</a>
-                        <div class="nav-dropdown-wrap">
-                            <span class="nav-link nav-dropdown-btn" style="cursor:pointer;color:inherit;">
-                                Категории <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                            </span>
-                            <div class="nav-dropdown-content">
-                                <a href="catalog-homme.html?category=face">Уход за лицом</a>
-                                <a href="catalog-homme.html?category=body">Тело</a>
-                                <a href="catalog-homme.html?category=beard">Борода</a>
-                                <a href="catalog-homme.html">Все продукты</a>
-                            </div>
-                        </div>
-                        <a href="catalog-homme.html" class="nav-link" style="color:var(--color-accent);">Каталог</a>
-                        <a href="index.html#our-story" class="nav-link" style="color:inherit;">О нас</a>
-                        <div class="brand-switcher desktop-only" style="border-color:rgba(255,255,255,0.12);">
-                            <button class="brand-switcher__btn" data-href="catalog.html" style="color:rgba(255,255,255,0.4);">FEMME</button>
-                            <button class="brand-switcher__btn is-active" style="background:white;color:black;">HOMME</button>
-                        </div>
-                    </nav>
-                </div>
-                <div class="header__center">
-                    <a href="catalog-homme.html" style="font-family:var(--font-brutal);font-size:clamp(20px,2.5vw,32px);letter-spacing:0.2em;color:var(--color-white);text-decoration:none;display:flex;flex-direction:column;align-items:center;line-height:1;">
-                        INTELEGENTOFF
-                        <span style="font-family:var(--font-body);font-size:10px;letter-spacing:0.15em;opacity:0.3;margin-top:5px;font-weight:400;text-transform:uppercase;">men's collection</span>
-                    </a>
-                </div>
-                <div class="header__right" style="color:rgba(255,255,255,0.75);">
-                    <button class="icon-btn" aria-label="Поиск" style="color:inherit;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    </button>
-                    <button class="icon-btn desktop-only" id="loginBtn" style="color:inherit;">
-                        <span class="btn-text">Войти</span>
-                    </button>
-                    <button class="icon-btn" id="headerFavBtn" style="color:inherit;position:relative;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        <span class="fav-count">0</span>
-                    </button>
-                    <button class="icon-btn" id="cartOpenBtn" style="color:inherit;position:relative;">
-                        <span class="desktop-only btn-text">Корзина</span>
-                        <svg class="mobile-only" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6C8 4.9 8.9 4 10 4h4c1.1 0 2 .9 2 2v2"/></svg>
-                        <span class="cart-count">0</span>
-                    </button>
-                </div>
-            </div>
-        </header>
-    </div>
+    {% include "_header.html" %}
 
     <!-- CATALOG HERO -->
     <div class="homme-catalog-hero">
