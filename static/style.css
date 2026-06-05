@@ -307,21 +307,43 @@ ul, ol { list-style: none; }
 .header__inner * { color: #ffffff !important; }
 
 .container-header {
-    max-width: calc(1400px + 2 * var(--pad-x));
-    margin: 0 auto;
-    padding: 0 var(--pad-x);
+    width: 100%;
+    max-width: none;
+    padding: 0;
 }
 
 .header__inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    align-items: center;
-    column-gap: clamp(18px, 3vw, 44px);
+    position: relative;
     height: var(--header-h);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.header__left, .header__right { min-width: 0; display: flex; align-items: center; }
-.header__right { justify-content: flex-end; gap: clamp(16px, 2vw, 28px); }
-.header__center { justify-self: center; }
+
+.header__left {
+    position: absolute;
+    left: var(--pad-x);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+}
+
+.header__center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header__right {
+    position: absolute;
+    right: var(--pad-x);
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: clamp(16px, 2vw, 28px);
+}
 
 /* Logo */
 .logo-main {
