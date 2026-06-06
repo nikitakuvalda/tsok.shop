@@ -439,41 +439,216 @@ function initProductGallery() {
 
 
 /* ============================================================
-   CHECKOUT PVZ POINTS
+   CHECKOUT PVZ POINTS — YANDEX MAPS
    ============================================================ */
 const pvzProviders = {
-    cdek: { label: 'СДЭК', markerClass: 'checkout-pvz-marker--cdek' },
-    yandex: { label: 'Яндекс Маркет', markerClass: 'checkout-pvz-marker--yandex' },
-    post: { label: 'Почта России', markerClass: 'checkout-pvz-marker--post' }
+    cdek: {
+        label: 'СДЭК',
+        searchQuery: 'СДЭК пункт выдачи заказов',
+        preset: 'islands#greenDotIcon',
+    },
+    yandex: {
+        label: 'Яндекс Маркет',
+        searchQuery: 'Яндекс Маркет пункт выдачи заказов',
+        preset: 'islands#yellowDotIcon',
+    },
+    post: {
+        label: 'Почта России',
+        searchQuery: 'Почта России отделение',
+        preset: 'islands#blueDotIcon',
+    },
 };
 
-const pvzPointPositions = {
-    cdek: [[21, 23], [28, 31], [35, 26], [42, 35], [48, 24], [55, 32], [62, 27], [70, 36], [24, 45], [31, 55], [39, 48], [46, 58], [53, 46], [61, 55], [68, 48], [76, 58], [29, 70], [43, 74], [58, 69], [72, 72]],
-    yandex: [[19, 29], [27, 39], [34, 33], [41, 43], [49, 36], [57, 42], [65, 34], [73, 44], [22, 53], [30, 63], [38, 57], [47, 66], [55, 58], [63, 65], [71, 56], [79, 64], [26, 76], [40, 80], [56, 75], [70, 79]],
-    post: [[23, 20], [31, 29], [39, 22], [46, 31], [54, 25], [63, 33], [71, 26], [78, 35], [20, 43], [29, 50], [37, 46], [45, 54], [54, 49], [62, 57], [70, 51], [78, 60], [25, 67], [39, 72], [55, 68], [73, 74]]
+const pvzMapState = {
+    map: null,
+    collection: null,
+    searchControl: null,
+    activeProvider: 'cdek',
+    activeRequestId: 0,
 };
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function setPvzHint(message) {
+    const hint = document.getElementById('checkoutMapHint');
+    if (hint) hint.textContent = message;
+}
+
+function getPvzCity() {
+    return document.getElementById('deliveryCity')?.value.trim() || 'Москва';
+}
+
+function saveSelectedPvz(provider, name = '', address = '', coords = []) {
+    const providerInput = document.getElementById('deliveryPvzProvider');
+    const nameInput = document.getElementById('deliveryPvzName');
+    const addressInput = document.getElementById('deliveryPvzAddress');
+    const coordsInput = document.getElementById('deliveryPvzCoordinates');
+    const deliveryAddressInput = document.getElementById('deliveryAddress');
+
+    if (providerInput) providerInput.value = provider;
+    if (nameInput) nameInput.value = name;
+    if (addressInput) addressInput.value = address;
+    if (coordsInput) coordsInput.value = Array.isArray(coords) && coords.length === 2 ? coords.join(',') : '';
+    if (address && deliveryAddressInput) deliveryAddressInput.value = address;
+}
+
+function getGeoObjectText(geoObject, fallback = '') {
+    const geocoderMeta = geoObject.properties.get('metaDataProperty.GeocoderMetaData') || {};
+    return geoObject.properties.get('name')
+        || geocoderMeta.name
+        || geocoderMeta.text
+        || fallback;
+}
+
+function getGeoObjectAddress(geoObject) {
+    if (typeof geoObject.getAddressLine === 'function') return geoObject.getAddressLine();
+    const geocoderMeta = geoObject.properties.get('metaDataProperty.GeocoderMetaData') || {};
+    return geocoderMeta.text || geoObject.properties.get('description') || '';
+}
+
+function showPvzError(provider) {
+    const providerLabel = pvzProviders[provider]?.label || 'выбранной службы';
+    setPvzHint(`Не удалось загрузить ПВЗ ${providerLabel}. Проверьте ключ Yandex Maps API или попробуйте изменить город.`);
+}
+
+function runYandexOrganizationSearch(query) {
+    return new Promise((resolve, reject) => {
+        const searchControl = pvzMapState.searchControl;
+        if (!searchControl) {
+            reject(new Error('SearchControl is not initialized'));
+            return;
+        }
+
+        const onLoad = () => {
+            searchControl.events.remove('load', onLoad);
+            const count = Math.min(searchControl.getResultsCount(), 20);
+            const resultPromises = [];
+            for (let index = 0; index < count; index += 1) {
+                resultPromises.push(searchControl.getResult(index));
+            }
+            Promise.all(resultPromises).then(resolve).catch(reject);
+        };
+
+        searchControl.events.add('load', onLoad);
+        searchControl.search(query);
+    });
+}
 
 function renderPvzPoints(provider) {
-    const layer = document.getElementById('checkoutPvzLayer');
-    const hint = document.getElementById('checkoutMapHint');
-    const providerInput = document.getElementById('deliveryPvzProvider');
-    if (!layer || !pvzProviders[provider]) return;
+    if (!pvzProviders[provider]) return;
 
-    layer.replaceChildren();
-    pvzPointPositions[provider].forEach(([left, top], index) => {
-        const marker = document.createElement('button');
-        marker.type = 'button';
-        marker.className = `checkout-pvz-marker ${pvzProviders[provider].markerClass}`;
-        marker.style.left = `${left}%`;
-        marker.style.top = `${top}%`;
-        marker.dataset.number = String(index + 1);
-        marker.ariaLabel = `${pvzProviders[provider].label}, ПВЗ ${index + 1}`;
-        marker.title = marker.ariaLabel;
-        layer.appendChild(marker);
+    pvzMapState.activeProvider = provider;
+    saveSelectedPvz(provider);
+
+    if (!pvzMapState.map || !pvzMapState.collection || !pvzMapState.searchControl || !window.ymaps) {
+        setPvzHint('Карта Яндекса загружается. Точки ПВЗ появятся автоматически после инициализации API.');
+        return;
+    }
+
+    const requestId = ++pvzMapState.activeRequestId;
+    const city = getPvzCity();
+    const providerData = pvzProviders[provider];
+    pvzMapState.collection.removeAll();
+    setPvzHint(`Ищем 20 точек ПВЗ ${providerData.label} в городе ${city} через API Яндекс Карт…`);
+
+    ymaps.geocode(city, { results: 1 })
+        .then((cityResult) => {
+            if (requestId !== pvzMapState.activeRequestId) return null;
+            const cityObject = cityResult.geoObjects.get(0);
+            const bounds = cityObject?.properties.get('boundedBy');
+            const center = cityObject?.geometry.getCoordinates();
+
+            if (bounds) {
+                return pvzMapState.map.setBounds(bounds, { checkZoomRange: true, zoomMargin: 36 });
+            }
+            if (center) {
+                pvzMapState.map.setCenter(center, 11, { checkZoomRange: true });
+            }
+            return null;
+        })
+        .then(() => {
+            if (requestId !== pvzMapState.activeRequestId) return null;
+            return runYandexOrganizationSearch(`${providerData.searchQuery}, ${city}`);
+        })
+        .then((geoObjects) => {
+            if (!geoObjects || requestId !== pvzMapState.activeRequestId) return;
+
+            const points = geoObjects.map((geoObject) => {
+                const coords = geoObject.geometry.getCoordinates();
+                if (!Array.isArray(coords) || coords.length !== 2) return null;
+                return {
+                    coords,
+                    name: getGeoObjectText(geoObject, `${providerData.label} ПВЗ`),
+                    address: getGeoObjectAddress(geoObject),
+                };
+            }).filter(Boolean).slice(0, 20);
+
+            points.forEach((point, index) => {
+                const placemark = new ymaps.Placemark(point.coords, {
+                    iconCaption: String(index + 1),
+                    balloonContentHeader: escapeHtml(point.name),
+                    balloonContentBody: escapeHtml(point.address),
+                    hintContent: escapeHtml(`${providerData.label}: ${point.address || point.name}`),
+                }, {
+                    preset: providerData.preset,
+                    openBalloonOnClick: true,
+                });
+
+                placemark.events.add('click', () => {
+                    saveSelectedPvz(provider, point.name, point.address, point.coords);
+                    setPvzHint(`Выбран ПВЗ ${providerData.label}: ${point.address || point.name}.`);
+                });
+
+                pvzMapState.collection.add(placemark);
+            });
+
+            if (points.length) {
+                pvzMapState.map.setBounds(pvzMapState.collection.getBounds(), { checkZoomRange: true, zoomMargin: 42 });
+                setPvzHint(`Показано ${points.length} точек ПВЗ ${providerData.label} для города ${city}. Нажмите на метку, чтобы выбрать пункт.`);
+            } else {
+                setPvzHint(`API Яндекс Карт не нашёл ПВЗ ${providerData.label} в городе ${city}. Попробуйте изменить город.`);
+            }
+        })
+        .catch(() => showPvzError(provider));
+}
+
+function initYandexPvzMap() {
+    const mapContainer = document.getElementById('checkoutYandexMap');
+    if (!mapContainer) return;
+
+    if (!window.ymaps) {
+        setPvzHint('Для загрузки карты укажите YANDEX_MAPS_API_KEY: сейчас API Яндекс Карт не подключён.');
+        return;
+    }
+
+    ymaps.ready(() => {
+        pvzMapState.map = new ymaps.Map(mapContainer, {
+            center: [55.755864, 37.617698],
+            zoom: 11,
+            controls: ['zoomControl', 'geolocationControl', 'fullscreenControl'],
+        });
+        pvzMapState.collection = new ymaps.GeoObjectCollection();
+        pvzMapState.searchControl = new ymaps.control.SearchControl({
+            options: {
+                provider: 'yandex#search',
+                noPlacemark: true,
+                noPopup: true,
+                noCentering: true,
+                results: 20,
+                size: 'small',
+            },
+        });
+        pvzMapState.map.geoObjects.add(pvzMapState.collection);
+        pvzMapState.map.controls.add(pvzMapState.searchControl);
+        renderPvzPoints(pvzMapState.activeProvider);
     });
-
-    if (hint) hint.textContent = `Показаны 20 точек ПВЗ ${pvzProviders[provider].label}. При смене службы старые точки убираются.`;
-    if (providerInput) providerInput.value = provider;
 }
 
 function initPvzSelector() {
@@ -487,8 +662,16 @@ function initPvzSelector() {
         });
     });
 
+    const cityInput = document.getElementById('deliveryCity');
+    let cityTimer;
+    cityInput?.addEventListener('input', () => {
+        clearTimeout(cityTimer);
+        cityTimer = setTimeout(() => renderPvzPoints(pvzMapState.activeProvider), 700);
+    });
+
     const activeProvider = document.querySelector('[data-pvz-provider].is-active')?.dataset.pvzProvider || buttons[0].dataset.pvzProvider;
-    renderPvzPoints(activeProvider);
+    pvzMapState.activeProvider = activeProvider;
+    initYandexPvzMap();
 }
 
 /* ============================================================
@@ -576,6 +759,9 @@ function initCheckoutPage() {
                 address: document.getElementById('deliveryAddress')?.value.trim() || '',
                 comment: document.getElementById('deliveryComment')?.value.trim() || '',
                 pvz_provider: document.getElementById('deliveryPvzProvider')?.value || '',
+                pvz_name: document.getElementById('deliveryPvzName')?.value || '',
+                pvz_address: document.getElementById('deliveryPvzAddress')?.value || '',
+                pvz_coordinates: document.getElementById('deliveryPvzCoordinates')?.value || '',
             },
         };
 

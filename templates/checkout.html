@@ -24,7 +24,7 @@
             {% endif %}
             <span class="label">Checkout</span>
             <h1 class="section-title">Оформление<br><em>заказа</em></h1>
-            <p class="section-desc">Заполните контактные данные и адрес доставки. СДЭК пока не подключён — карта нужна для выбора точки доставки визуально.</p>
+            <p class="section-desc">Заполните контактные данные и адрес доставки. Выберите службу доставки и пункт выдачи на карте Яндекса — точки подгружаются по выбранному городу через API.</p>
 
             <form id="checkoutForm" class="checkout-form">
                 <div class="checkout-section">
@@ -69,11 +69,13 @@
                         <button class="checkout-pvz-switcher__btn" type="button" data-pvz-provider="post">Почта России</button>
                     </div>
                     <div class="checkout-map" id="checkoutMap">
-                        <iframe title="Карта доставки" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://www.openstreetmap.org/export/embed.html?bbox=37.517%2C55.705%2C37.705%2C55.805&amp;layer=mapnik"></iframe>
-                        <div class="checkout-pvz-layer" id="checkoutPvzLayer" aria-live="polite"></div>
-                        <div class="checkout-map__hint" id="checkoutMapHint">Показаны 20 точек ПВЗ СДЭК. Выберите службу доставки кнопками выше.</div>
+                        <div class="checkout-yandex-map" id="checkoutYandexMap" role="application" aria-label="Карта пунктов выдачи"></div>
+                        <div class="checkout-map__hint" id="checkoutMapHint">Карта Яндекса загружается. Выберите службу доставки кнопками выше.</div>
                     </div>
                     <input type="hidden" id="deliveryPvzProvider" name="pvz_provider" value="cdek">
+                    <input type="hidden" id="deliveryPvzName" name="pvz_name" value="">
+                    <input type="hidden" id="deliveryPvzAddress" name="pvz_address" value="">
+                    <input type="hidden" id="deliveryPvzCoordinates" name="pvz_coordinates" value="">
                 </div>
 
                 <button id="checkoutSubmitBtn" type="submit" class="btn btn--dark w-100 checkout-buy-btn">Купить</button>
@@ -131,9 +133,9 @@
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='script.js') }}"></script>
 {% if yandex_maps_api_key %}
 <script src="https://api-maps.yandex.ru/2.1/?apikey={{ yandex_maps_api_key }}&lang=ru_RU"></script>
 {% endif %}
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
