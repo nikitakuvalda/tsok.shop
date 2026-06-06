@@ -167,26 +167,31 @@ def init_db_command():
 
 
 @application.route("/")
+@application.route("/index")
 @application.route("/index.html")
 def index():
     return render_template("index.html")
 
 
+@application.route("/catalog")
 @application.route("/catalog.html")
 def catalog():
     return render_template("catalog.html")
 
 
+@application.route("/catalog-homme")
 @application.route("/catalog-homme.html")
 def catalog_homme():
     return render_template("catalog-homme.html")
 
 
+@application.route("/product-tonic")
 @application.route("/product-tonic.html")
 def product_tonic():
     return render_template("product-tonic.html")
 
 
+@application.route("/subscription")
 @application.route("/subscription.html")
 def subscription():
     return render_template("subscription.html")
