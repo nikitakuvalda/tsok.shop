@@ -462,7 +462,6 @@ const pvzProviders = {
 const pvzMapState = {
     map: null,
     collection: null,
-    searchControl: null,
     activeProvider: 'cdek',
     activeRequestId: 0,
 };
@@ -481,9 +480,6 @@ function setPvzHint(message) {
     if (hint) hint.textContent = message;
 }
 
-function getPvzCity() {
-    return document.getElementById('deliveryCity')?.value.trim() || 'Москва';
-}
 
 function saveSelectedPvz(provider, name = '', address = '', coords = []) {
     const providerInput = document.getElementById('deliveryPvzProvider');
@@ -515,30 +511,45 @@ function getGeoObjectAddress(geoObject) {
 
 function showPvzError(provider) {
     const providerLabel = pvzProviders[provider]?.label || 'выбранной службы';
-    setPvzHint(`Не удалось загрузить ПВЗ ${providerLabel}. Проверьте ключ Yandex Maps API или попробуйте изменить город.`);
+    setPvzHint(`Не удалось загрузить ПВЗ ${providerLabel}. Проверьте ключ Yandex Maps API или передвиньте карту.`);
 }
 
-function runYandexOrganizationSearch(query) {
-    return new Promise((resolve, reject) => {
-        const searchControl = pvzMapState.searchControl;
-        if (!searchControl) {
-            reject(new Error('SearchControl is not initialized'));
-            return;
+function isPointInsideBounds(coords, bounds) {
+    if (!Array.isArray(coords) || coords.length !== 2 || !Array.isArray(bounds) || bounds.length !== 2) return false;
+
+    const [lat, lon] = coords;
+    const latMin = Math.min(bounds[0][0], bounds[1][0]);
+    const latMax = Math.max(bounds[0][0], bounds[1][0]);
+    const lonMin = Math.min(bounds[0][1], bounds[1][1]);
+    const lonMax = Math.max(bounds[0][1], bounds[1][1]);
+
+    return lat >= latMin && lat <= latMax && lon >= lonMin && lon <= lonMax;
+}
+
+async function runYandexOrganizationSearch(query, bounds) {
+    const objects = [];
+    const pageSize = 20;
+
+    for (let skip = 0; skip < 60 && objects.length < 20; skip += pageSize) {
+        const searchResult = await ymaps.search(query, {
+            boundedBy: bounds,
+            strictBounds: true,
+            results: pageSize,
+            skip,
+        });
+        const geoObjects = searchResult.geoObjects;
+        const count = geoObjects.getLength();
+
+        if (!count) break;
+
+        for (let index = 0; index < count && objects.length < 20; index += 1) {
+            const geoObject = geoObjects.get(index);
+            const coords = geoObject?.geometry?.getCoordinates?.();
+            if (isPointInsideBounds(coords, bounds)) objects.push(geoObject);
         }
+    }
 
-        const onLoad = () => {
-            searchControl.events.remove('load', onLoad);
-            const count = Math.min(searchControl.getResultsCount(), 20);
-            const resultPromises = [];
-            for (let index = 0; index < count; index += 1) {
-                resultPromises.push(searchControl.getResult(index));
-            }
-            Promise.all(resultPromises).then(resolve).catch(reject);
-        };
-
-        searchControl.events.add('load', onLoad);
-        searchControl.search(query);
-    });
+    return objects;
 }
 
 function renderPvzPoints(provider) {
@@ -547,36 +558,18 @@ function renderPvzPoints(provider) {
     pvzMapState.activeProvider = provider;
     saveSelectedPvz(provider);
 
-    if (!pvzMapState.map || !pvzMapState.collection || !pvzMapState.searchControl || !window.ymaps) {
+    if (!pvzMapState.map || !pvzMapState.collection || !window.ymaps) {
         setPvzHint('Карта Яндекса загружается. Точки ПВЗ появятся автоматически после инициализации API.');
         return;
     }
 
     const requestId = ++pvzMapState.activeRequestId;
-    const city = getPvzCity();
     const providerData = pvzProviders[provider];
+    const bounds = pvzMapState.map.getBounds();
     pvzMapState.collection.removeAll();
-    setPvzHint(`Ищем 20 точек ПВЗ ${providerData.label} в городе ${city} через API Яндекс Карт…`);
+    setPvzHint(`Ищем 20 точек ПВЗ ${providerData.label} в текущей области карты через API Яндекс Карт…`);
 
-    ymaps.geocode(city, { results: 1 })
-        .then((cityResult) => {
-            if (requestId !== pvzMapState.activeRequestId) return null;
-            const cityObject = cityResult.geoObjects.get(0);
-            const bounds = cityObject?.properties.get('boundedBy');
-            const center = cityObject?.geometry.getCoordinates();
-
-            if (bounds) {
-                return pvzMapState.map.setBounds(bounds, { checkZoomRange: true, zoomMargin: 36 });
-            }
-            if (center) {
-                pvzMapState.map.setCenter(center, 11, { checkZoomRange: true });
-            }
-            return null;
-        })
-        .then(() => {
-            if (requestId !== pvzMapState.activeRequestId) return null;
-            return runYandexOrganizationSearch(`${providerData.searchQuery}, ${city}`);
-        })
+    runYandexOrganizationSearch(providerData.searchQuery, bounds)
         .then((geoObjects) => {
             if (!geoObjects || requestId !== pvzMapState.activeRequestId) return;
 
@@ -610,10 +603,9 @@ function renderPvzPoints(provider) {
             });
 
             if (points.length) {
-                pvzMapState.map.setBounds(pvzMapState.collection.getBounds(), { checkZoomRange: true, zoomMargin: 42 });
-                setPvzHint(`Показано ${points.length} точек ПВЗ ${providerData.label} для города ${city}. Нажмите на метку, чтобы выбрать пункт.`);
+                setPvzHint(`Показано ${points.length} из 20 точек ПВЗ ${providerData.label} в текущей области карты. Нажмите на метку, чтобы выбрать пункт.`);
             } else {
-                setPvzHint(`API Яндекс Карт не нашёл ПВЗ ${providerData.label} в городе ${city}. Попробуйте изменить город.`);
+                setPvzHint(`API Яндекс Карт не нашёл ПВЗ ${providerData.label} в текущей области карты. Передвиньте карту или измените масштаб.`);
             }
         })
         .catch(() => showPvzError(provider));
@@ -635,18 +627,7 @@ function initYandexPvzMap() {
             controls: ['zoomControl', 'geolocationControl', 'fullscreenControl'],
         });
         pvzMapState.collection = new ymaps.GeoObjectCollection();
-        pvzMapState.searchControl = new ymaps.control.SearchControl({
-            options: {
-                provider: 'yandex#search',
-                noPlacemark: true,
-                noPopup: true,
-                noCentering: true,
-                results: 20,
-                size: 'small',
-            },
-        });
         pvzMapState.map.geoObjects.add(pvzMapState.collection);
-        pvzMapState.map.controls.add(pvzMapState.searchControl);
         renderPvzPoints(pvzMapState.activeProvider);
     });
 }
@@ -660,13 +641,6 @@ function initPvzSelector() {
             buttons.forEach(item => item.classList.toggle('is-active', item === btn));
             renderPvzPoints(btn.dataset.pvzProvider);
         });
-    });
-
-    const cityInput = document.getElementById('deliveryCity');
-    let cityTimer;
-    cityInput?.addEventListener('input', () => {
-        clearTimeout(cityTimer);
-        cityTimer = setTimeout(() => renderPvzPoints(pvzMapState.activeProvider), 700);
     });
 
     const activeProvider = document.querySelector('[data-pvz-provider].is-active')?.dataset.pvzProvider || buttons[0].dataset.pvzProvider;

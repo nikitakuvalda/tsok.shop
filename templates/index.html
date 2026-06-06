@@ -29,7 +29,7 @@
     <div class="split-hero__divider"></div>
 
     <!-- Женская сторона -->
-    <a href="catalog.html" class="split-hero__side">
+    <a href="catalog" class="split-hero__side">
         <div class="split-hero__bg animate-breathe">
             <img src="{{ url_for('static', filename='img/HeroFem.jpg') }}" alt="Pearl by Tais"
                  onerror="this.outerHTML='<div class=\'split-hero__bg-fallback split-hero__bg-fallback--fem\'></div>'">
@@ -54,7 +54,7 @@
     </a>
 
     <!-- Мужская сторона -->
-    <a href="catalog-homme.html" class="split-hero__side">
+    <a href="catalog-homme" class="split-hero__side">
         <div class="split-hero__bg animate-breathe">
             <img src="{{ url_for('static', filename='img/HeroHomme.jpg') }}" alt="INTELEGENTOFF"
                  onerror="this.outerHTML='<div class=\'split-hero__bg-fallback split-hero__bg-fallback--homme\'></div>'">
@@ -132,11 +132,11 @@
             </div>
 
             <div class="action-group mt-large">
-                <a href="subscription.html" class="btn btn--gold">
+                <a href="subscription" class="btn btn--gold">
                     Собрать свой бокс
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
-                <a href="subscription.html#how" class="btn btn--outline-light">Как работает</a>
+                <a href="subscription#how" class="btn btn--outline-light">Как работает</a>
             </div>
         </div>
 
@@ -198,7 +198,7 @@
                     <div class="fact-card__lbl">Агрессивных ПАВ</div>
                 </div>
             </div>
-            <a href="catalog.html" class="btn btn--dark mt-sm">
+            <a href="catalog" class="btn btn--dark mt-sm">
                 Смотреть коллекцию
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -266,7 +266,7 @@
                 <p style="color:rgba(255,255,255,0.85);">«Мужская кожа требует той же науки, той же концентрации, того же уважения.»</p>
             </div>
             <p class="section-desc" style="color:rgba(255,255,255,0.5);">INTELEGENTOFF — для мужчин, которые понимают разницу между косметикой и уходом. Тёмная эстетика. Концентрированные формулы. Только результат.</p>
-            <a href="catalog-homme.html" class="btn btn--accent mt-sm">
+            <a href="catalog-homme" class="btn btn--accent mt-sm">
                 Открыть INTELEGENTOFF
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -295,8 +295,8 @@
             </div>
             <p class="section-desc">Мне хотелось создать косметику с ощущением премиального качества, доступную каждой. Чтобы открыть баночку — и почувствовать себя богиней без особого повода.</p>
             <div class="action-group mt-sm">
-                <a href="catalog.html" class="btn btn--dark">Коллекция Pearl</a>
-                <a href="subscription.html" class="btn btn--outline-dark">TSOK BOX</a>
+                <a href="catalog" class="btn btn--dark">Коллекция Pearl</a>
+                <a href="subscription" class="btn btn--outline-dark">TSOK BOX</a>
             </div>
         </div>
     </div>
@@ -329,7 +329,7 @@
      ═══════════════════════════════════════════ -->
 <section class="entry-cta" id="enter">
 
-    <a href="catalog.html" class="entry-cta__card">
+    <a href="catalog" class="entry-cta__card">
         <div class="entry-cta__bg" style="background-image:url('{{ url_for("static", filename="img/HeroFem.jpg") }}');"></div>
         <div class="entry-cta__overlay"></div>
         <div class="entry-cta__content">
@@ -348,7 +348,7 @@
         </div>
     </a>
 
-    <a href="catalog-homme.html" class="entry-cta__card">
+    <a href="catalog-homme" class="entry-cta__card">
         <div class="entry-cta__bg" style="background-image:url('{{ url_for("static", filename="img/HeroHomme.jpg") }}');"></div>
         <div class="entry-cta__overlay entry-cta__overlay--dark"></div>
         <div class="entry-cta__content">
@@ -373,12 +373,12 @@
     <div class="container">
         <div class="footer__grid">
             <div>
-                <a href="index.html" class="footer__logo">TSOK<span class="footer__logo-sub">boutique</span></a>
+                <a href="index" class="footer__logo">TSOK<span class="footer__logo-sub">boutique</span></a>
                 <span class="footer__tagline">Два бренда. Одна философия.</span>
                 <div class="footer__brand-links">
-                    <a href="catalog.html" class="footer__link">цок-цок / Pearl by Tais</a>
-                    <a href="catalog-homme.html" class="footer__link">INTELEGENTOFF</a>
-                    <a href="subscription.html" class="footer__link text-gold">TSOK BOX</a>
+                    <a href="catalog" class="footer__link">цок-цок / Pearl by Tais</a>
+                    <a href="catalog-homme" class="footer__link">INTELEGENTOFF</a>
+                    <a href="subscription" class="footer__link text-gold">TSOK BOX</a>
                 </div>
                 <form class="subscribe-form mt-md" onsubmit="return false;">
                     <input type="email" placeholder="Ваш email" required>
@@ -390,18 +390,18 @@
             <div>
                 <div class="footer__col-title">Pearl by Tais</div>
                 <nav class="footer__nav">
-                    <a href="catalog.html">Все продукты</a>
-                    <a href="catalog.html?category=face">Уход за лицом</a>
-                    <a href="catalog.html?category=hair">Волосы</a>
-                    <a href="subscription.html">TSOK BOX</a>
+                    <a href="catalog">Все продукты</a>
+                    <a href="catalog?category=face">Уход за лицом</a>
+                    <a href="catalog?category=hair">Волосы</a>
+                    <a href="subscription">TSOK BOX</a>
                 </nav>
             </div>
             <div>
                 <div class="footer__col-title">INTELEGENTOFF</div>
                 <nav class="footer__nav">
-                    <a href="catalog-homme.html">Все продукты</a>
-                    <a href="catalog-homme.html?category=face">Лицо</a>
-                    <a href="catalog-homme.html?category=beard">Борода</a>
+                    <a href="catalog-homme">Все продукты</a>
+                    <a href="catalog-homme?category=face">Лицо</a>
+                    <a href="catalog-homme?category=beard">Борода</a>
                 </nav>
             </div>
             <div>
@@ -441,7 +441,7 @@
     </div>
     <div class="cart-drawer__footer">
         <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div>
-        <a href="checkout.html" class="btn btn--dark w-100">Оформить заказ</a>
+        <a href="checkout" class="btn btn--dark w-100">Оформить заказ</a>
     </div>
 </div>
 
@@ -454,18 +454,18 @@
     </div>
     <div class="mobile-menu__body">
         <nav class="mobile-nav">
-            <a href="index.html" class="mobile-nav__link">Главная</a>
-            <a href="catalog.html" class="mobile-nav__link">Pearl by Tais</a>
-            <a href="catalog-homme.html" class="mobile-nav__link">INTELEGENTOFF</a>
-            <a href="subscription.html" class="mobile-nav__link text-gold">TSOK BOX</a>
+            <a href="index" class="mobile-nav__link">Главная</a>
+            <a href="catalog" class="mobile-nav__link">Pearl by Tais</a>
+            <a href="catalog-homme" class="mobile-nav__link">INTELEGENTOFF</a>
+            <a href="subscription" class="mobile-nav__link text-gold">TSOK BOX</a>
             <a href="#our-story" class="mobile-nav__link">О бутике</a>
         </nav>
     </div>
     <div class="mobile-menu__footer">
         <div class="action-group-col">
-            <a href="catalog.html" class="btn btn--outline-dark w-100">Женская коллекция</a>
-            <a href="catalog-homme.html" class="btn btn--dark w-100">Мужская коллекция</a>
-            <a href="subscription.html" class="btn btn--gold w-100">TSOK BOX</a>
+            <a href="catalog" class="btn btn--outline-dark w-100">Женская коллекция</a>
+            <a href="catalog-homme" class="btn btn--dark w-100">Мужская коллекция</a>
+            <a href="subscription" class="btn btn--gold w-100">TSOK BOX</a>
         </div>
     </div>
 </div>
