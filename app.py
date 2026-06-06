@@ -1,14 +1,11 @@
-import base64
-import json
 import os
-import dotenv
 import time
 import uuid
-import urllib.error
-import urllib.request
 from decimal import Decimal, InvalidOperation
 
+import dotenv
 from flask import Flask, jsonify, render_template, request, url_for
+from yookassa import Configuration, Payment
 
 from db import get_products_by_ids, init_products_table
 
@@ -23,12 +20,11 @@ class StaticSiteFlask(Flask):
 
 application = StaticSiteFlask(__name__)
 
-dotenv.load_dotenv(override = True)
+dotenv.load_dotenv(override=True)
 
 YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID", "")
 YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")
 YOOKASSA_CURRENCY = os.getenv("YOOKASSA_CURRENCY", "RUB")
-YOOKASSA_API_URL = os.getenv("YOOKASSA_API_URL", "https://api.yookassa.ru/v3/payments")
 YOOKASSA_RETURN_URL = os.getenv("YOOKASSA_RETURN_URL", "")
 YANDEX_MAPS_API_KEY = os.getenv("YANDEX_MAPS_API_KEY", "14326938-97d2-483c-81c8-ada364bef9ed")
 
@@ -88,6 +84,12 @@ def _absolute_return_url():
     return url_for("payment_success", _external=True)
 
 
+def _payment_field(payment, field_name):
+    if isinstance(payment, dict):
+        return payment.get(field_name)
+    return getattr(payment, field_name, None)
+
+
 def _create_yookassa_payment(items, total, customer, delivery):
     if not YOOKASSA_SHOP_ID or not YOOKASSA_SECRET_KEY:
         raise RuntimeError("Не настроены YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY.")
@@ -133,30 +135,16 @@ def _create_yookassa_payment(items, total, customer, delivery):
                 for item in items
             ],
         }
-    auth = base64.b64encode(f"{YOOKASSA_SHOP_ID}:{YOOKASSA_SECRET_KEY}".encode("utf-8")).decode("ascii")
-    req = urllib.request.Request(
-        YOOKASSA_API_URL,
-        data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),
-        headers={
-            "Authorization": f"Basic {auth}",
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "Idempotence-Key": str(uuid.uuid4()),
-        },
-        method="POST",
-    )
+    Configuration.account_id = YOOKASSA_SHOP_ID
+    Configuration.secret_key = YOOKASSA_SECRET_KEY
+
     try:
-        with urllib.request.urlopen(req, timeout=20) as response:
-            body = response.read().decode("utf-8")
-            return json.loads(body), order_number
-    except urllib.error.HTTPError as error:
-        error_body = error.read().decode("utf-8", errors="replace") if error.fp else ""
-        try:
-            parsed = json.loads(error_body)
-            message = parsed.get("description") or parsed.get("error") or error_body
-        except json.JSONDecodeError:
-            message = error_body or str(error)
+        payment = Payment.create(payload, str(uuid.uuid4()))
+    except Exception as error:
+        message = getattr(error, "message", None) or getattr(error, "description", None) or str(error)
         raise RuntimeError(f"Ошибка ЮKassa: {message}") from error
+
+    return payment, order_number
 
 
 @application.cli.command("init-db")
@@ -219,11 +207,11 @@ def create_yookassa_payment():
     except Exception as error:
         return jsonify({"error": str(error)}), 502
 
-    confirmation = payment.get("confirmation") or {}
-    confirmation_url = confirmation.get("confirmation_url")
+    confirmation = _payment_field(payment, "confirmation")
+    confirmation_url = _payment_field(confirmation, "confirmation_url")
     if not confirmation_url:
         return jsonify({"error": "ЮKassa не вернула ссылку на оплату."}), 502
-    return jsonify({"confirmation_url": confirmation_url, "payment_id": payment.get("id"), "order_number": order_number})
+    return jsonify({"confirmation_url": confirmation_url, "payment_id": _payment_field(payment, "id"), "order_number": order_number})
 
 
 if __name__ == "__main__":
