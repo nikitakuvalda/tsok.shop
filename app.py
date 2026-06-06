@@ -101,6 +101,9 @@ def _create_yookassa_payment(items, total, customer, delivery):
         "delivery_address": str(delivery.get("address", ""))[:255],
         "delivery_comment": str(delivery.get("comment", ""))[:255],
         "delivery_pvz_provider": str(delivery.get("pvz_provider", ""))[:32],
+        "delivery_pvz_name": str(delivery.get("pvz_name", ""))[:160],
+        "delivery_pvz_address": str(delivery.get("pvz_address", ""))[:255],
+        "delivery_pvz_coordinates": str(delivery.get("pvz_coordinates", ""))[:64],
     }
     payload = {
         "amount": {"value": _format_amount(total), "currency": YOOKASSA_CURRENCY},
