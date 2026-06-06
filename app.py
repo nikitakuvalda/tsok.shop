@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import dotenv
 import time
 import uuid
 import urllib.error
@@ -22,12 +23,14 @@ class StaticSiteFlask(Flask):
 
 application = StaticSiteFlask(__name__)
 
+dotenv.load_dotenv(override = True)
+
 YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID", "")
 YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")
 YOOKASSA_CURRENCY = os.getenv("YOOKASSA_CURRENCY", "RUB")
 YOOKASSA_API_URL = os.getenv("YOOKASSA_API_URL", "https://api.yookassa.ru/v3/payments")
 YOOKASSA_RETURN_URL = os.getenv("YOOKASSA_RETURN_URL", "")
-YANDEX_MAPS_API_KEY = os.getenv("YANDEX_MAPS_API_KEY", "")
+YANDEX_MAPS_API_KEY = os.getenv("YANDEX_MAPS_API_KEY", "14326938-97d2-483c-81c8-ada364bef9ed")
 
 
 
