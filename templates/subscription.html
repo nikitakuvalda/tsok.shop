@@ -109,7 +109,7 @@
         .preview-progress__fill {
             position: absolute; left:0; top:0; height:100%;
             background: linear-gradient(90deg, var(--sub-accent), var(--sub-gold));
-            border-radius: 2px; width: 63%; transition: width 0.5s ease;
+            border-radius: 2px; width: 80%; transition: width 0.5s ease;
         }
         .preview-progress__labels {
             display: flex; justify-content: space-between;
@@ -166,7 +166,7 @@
             background: var(--color-fem-card);
         }
         .constructor-layout {
-            display: grid; grid-template-columns: 1fr 380px;
+            display: grid; grid-template-columns: 1fr 400px;
             gap: 48px; align-items: start;
             margin-top: 64px;
         }
@@ -287,12 +287,12 @@
         /* Subscribe toggle */
         .sub-toggle { margin-bottom: 20px; }
         .sub-toggle__options {
-            display: grid; grid-template-columns: 1fr 1fr;
+            display: grid; grid-template-columns: 1fr 1fr 1fr;
             border: 1px solid var(--color-fem-border); gap: 0;
         }
         .sub-toggle__option {
-            padding: 14px 12px; text-align: center; cursor: pointer;
-            font-size: 11px; font-weight: 500; letter-spacing: 0.1em;
+            padding: 14px 10px; text-align: center; cursor: pointer;
+            font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
             text-transform: uppercase; transition: all 0.22s;
             color: var(--color-fem-muted);
             border-right: 1px solid var(--color-fem-border);
@@ -416,9 +416,9 @@
 
         /* ─── INTERACTIVE DEMO ─── */
         .demo-min-warn {
-            font-size: 12px; color: #c9956e; text-align: center;
-            padding: 10px; background: rgba(201,149,110,0.08);
-            border: 1px solid rgba(201,149,110,0.2);
+            font-size: 12px; font-weight: 500; color: #fff; text-align: center;
+            padding: 12px; background: #c0392b;
+            border-radius: 2px;
             margin-bottom: 16px; display: none;
         }
         .demo-min-warn.is-visible { display: block; }
@@ -440,10 +440,10 @@
             <div class="sub-hero__text">
                 <div class="sub-hero__eyebrow">Персональная подписка</div>
                 <h1 class="sub-hero__title">
-                    TSOK<br><em>BOX</em>
+                    Собери свою<br><em style="color:var(--sub-accent);">идеальную рутину</em>
                 </h1>
                 <p class="sub-hero__desc">
-                    Собери свою рутину ухода — и получай её каждые 30 дней. Меняй состав когда хочешь, пропускай месяц без штрафов, отменяй в один клик.
+                    А мы позаботимся об остальном. Больше никаких забытых покупок и пустых банок. Премиальный уход с доставкой прямо в руки. Бесплатно курьером от 3-х продуктов.
                 </p>
                 <div class="sub-hero__perks">
                     <div class="sub-hero__perk">
@@ -452,15 +452,15 @@
                     </div>
                     <div class="sub-hero__perk">
                         <div class="sub-hero__perk-icon">🚚</div>
-                        <span>Бесплатная доставка от 4 000 ₽</span>
+                        <span>Бесплатная доставка курьером от 3 товаров</span>
                     </div>
                     <div class="sub-hero__perk">
                         <div class="sub-hero__perk-icon">🎁</div>
-                        <span>Secret Gift в коробке от 5 000 ₽</span>
+                        <span>VIP подарки на твой выбор в боксах от 5 товаров</span>
                     </div>
                     <div class="sub-hero__perk">
                         <div class="sub-hero__perk-icon">⚡</div>
-                        <span>Автосписание раз в 30 дней — без лишних действий</span>
+                        <span>Меняй состав или пропускай месяц без штрафов</span>
                     </div>
                 </div>
                 <div class="sub-hero__cta">
@@ -478,29 +478,34 @@
                     <div class="preview-product">
                         <div class="preview-product__img"><img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" alt=""></div>
                         <span class="preview-product__name">Tonic Youth Restoring</span>
-                        <span class="preview-product__price">93 ₽</span>
+                        <span class="preview-product__price">79 BYN</span>
                     </div>
                     <div class="preview-product">
                         <div class="preview-product__img"><img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" alt=""></div>
                         <span class="preview-product__name">Foam Mousse Moisture</span>
-                        <span class="preview-product__price">96 ₽</span>
+                        <span class="preview-product__price">81 BYN</span>
                     </div>
                     <div class="preview-product">
                         <div class="preview-product__img"><img src="{{ url_for('static', filename='img/Pearl6.jpg') }}" alt=""></div>
                         <span class="preview-product__name">Velvet Oil Blend</span>
-                        <span class="preview-product__price">69 ₽</span>
+                        <span class="preview-product__price">58 BYN</span>
+                    </div>
+                    <div class="preview-product" style="border-color:#c9956e; background:rgba(201,149,110,0.1);">
+                        <div class="preview-product__img" style="background:transparent; font-size:24px; display:flex; align-items:center; justify-content:center;">🎁</div>
+                        <span class="preview-product__name" style="color:#c9956e;">Секретный подарок</span>
+                        <span class="preview-product__price" style="color:#c9956e;">Бесплатно</span>
                     </div>
                 </div>
                 <div class="preview-progress">
                     <div class="preview-progress__bar"><div class="preview-progress__fill"></div></div>
                     <div class="preview-progress__labels">
-                        <span>258 ₽ из 400 ₽</span>
-                        <span>🚚 ещё 142 ₽ до доставки</span>
+                        <span>4 из 5 товаров</span>
+                        <span>🚚 Доставка: Бесплатно</span>
                     </div>
                 </div>
                 <div class="preview-total">
-                    <span class="preview-total__label">Итого / мес</span>
-                    <span class="preview-total__price">258 ₽</span>
+                    <span class="preview-total__label">Итого / мес (-15%)</span>
+                    <span class="preview-total__price">218 BYN</span>
                 </div>
             </div>
         </div>
@@ -517,25 +522,56 @@
                 <div class="how-step">
                     <div class="how-step__num">01</div>
                     <div class="how-step__title">Собери рутину</div>
-                    <p class="how-step__desc">Выбери продукты которые хочешь получать каждый месяц. Минимальный порог — 4 000 ₽ для активации подписки.</p>
+                    <p class="how-step__desc">Добавь 3 и более товаров, чтобы активировать подписку и открыть доступ к бесплатной доставке.</p>
                 </div>
                 <div class="how-step">
                     <div class="how-step__num">02</div>
-                    <div class="how-step__title">Оформи подписку</div>
-                    <p class="how-step__desc">Выбери «Подписаться» при оформлении. Привязывается карта, первое списание — сразу. Далее раз в 30 дней.</p>
+                    <div class="how-step__title">Выбери формат</div>
+                    <p class="how-step__desc">Оплачивай каждый месяц со скидкой 15% или зафиксируй цену на год со скидкой 20% через Долями.</p>
                 </div>
                 <div class="how-step">
                     <div class="how-step__num">03</div>
                     <div class="how-step__title">Меняй состав</div>
-                    <p class="how-step__desc">В личном кабинете в любой момент убери что закончилось нескоро, добавь что хочется попробовать. Сумма пересчитается автоматически.</p>
+                    <p class="how-step__desc">В личном кабинете в любой момент меняй состав бокса. Сумма следующего списания пересчитается автоматически.</p>
                 </div>
                 <div class="how-step">
                     <div class="how-step__num">04</div>
-                    <div class="how-step__title">Получай и радуйся</div>
-                    <p class="how-step__desc">За 3 дня до отправки приходит уведомление в email и Telegram. Можно пропустить месяц или поменять состав — без штрафов.</p>
+                    <div class="how-step__title">Получай бонусы</div>
+                    <p class="how-step__desc">Больше товаров = больше перков. Сюрпризы, бесплатная доставка и право выбора полноразмерного VIP-подарка.</p>
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- ═════ COMPARISON ═════ -->
+    <section style="padding:var(--section-y) var(--pad-x);background:var(--color-fem-text);color:white;" id="comparison">
+        <div style="max-width:1000px;margin:0 auto;text-align:center;">
+            <span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.35);">Сравнение</span>
+            <h2 style="font-family:var(--font-display);font-size:clamp(40px,5vw,72px);font-weight:400;line-height:0.95;color:white;margin:16px 0 48px;">
+                Почему подписка<br><em style="color:#c9956e;">выгоднее разовой покупки?</em>
+            </h2>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);text-align:left;">
+                <div style="background:#1c1714;padding:40px;">
+                    <h3 style="font-size:18px;font-weight:500;margin-bottom:24px;">Разовая покупка</h3>
+                    <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:16px;color:rgba(255,255,255,0.6);font-size:14px;font-weight:300;">
+                        <li><span style="color:#e74c3c;margin-right:8px;font-weight:bold;">✕</span> Базовая цена без скидки</li>
+                        <li><span style="color:#e74c3c;margin-right:8px;font-weight:bold;">✕</span> Платная доставка курьером</li>
+                        <li><span style="color:#e74c3c;margin-right:8px;font-weight:bold;">✕</span> Вы сами следите за остатками</li>
+                    </ul>
+                </div>
+                <div style="background:#2c2320;padding:40px;position:relative;overflow:hidden;">
+                    <div style="position:absolute;top:0;right:0;background:#c9956e;color:white;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:6px 16px;">TSOK BOX</div>
+                    <h3 style="font-size:18px;font-weight:500;margin-bottom:24px;color:white;">Подписка</h3>
+                    <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:16px;color:white;font-size:14px;font-weight:300;">
+                        <li><span style="color:#2ecc71;margin-right:8px;font-weight:bold;">✓</span> Выгода до 20% на каждый продукт</li>
+                        <li><span style="color:#2ecc71;margin-right:8px;font-weight:bold;">✓</span> Бесплатная доставка курьером (от 3х шт)</li>
+                        <li><span style="color:#2ecc71;margin-right:8px;font-weight:bold;">✓</span> Сюрпризы и VIP-подарки в каждом боксе</li>
+                        <li><span style="color:#2ecc71;margin-right:8px;font-weight:bold;">✓</span> Гибкая настройка: пропуск и замена в 1 клик</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <style>@media(max-width:768px){#comparison>div>div:last-child{grid-template-columns:1fr!important;}}</style>
     </section>
 
     <!-- ═════ PRE-BUILT BOXES ═════ -->
@@ -544,7 +580,7 @@
             <div class="anim-fade-up" style="text-align:center;margin-bottom:64px;">
                 <span class="label">Собрали за вас</span>
                 <h2 class="section__title" style="margin-top:12px;">Готовые боксы<br><em>на месяц</em></h2>
-                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7;">Взяли самое нужное для полного ритуала. Добавь в подписку одним кликом — или собери свой.</p>
+                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7;">Взяли самое нужное для полного ритуала. Добавь в подписку одним кликом — или собери свой в конструкторе.</p>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--color-fem-border);">
 
@@ -555,32 +591,27 @@
                         <span style="background:var(--color-fem-text);color:white;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;">ХИТ</span>
                     </div>
                     <h3 style="font-family:var(--font-display);font-size:clamp(28px,3vw,42px);font-weight:400;line-height:1.05;margin-bottom:14px;">Ритуал<br><em>Жемчужины</em></h3>
-                    <p style="font-size:14px;font-weight:300;line-height:1.7;color:var(--color-fem-muted);margin-bottom:24px;">Полный утренний и вечерний уход: очищение, тонизирование, питание волос — всё на месяц.</p>
+                    <p style="font-size:14px;font-weight:300;line-height:1.7;color:var(--color-fem-muted);margin-bottom:24px;">Полный утренний и вечерний уход: очищение, тонизирование, питание волос — 4 продукта на месяц.</p>
                     <div style="display:flex;flex-direction:column;gap:0;margin-bottom:24px;border-top:1px solid var(--color-fem-border);">
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
                             <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
                             <div style="flex:1;font-size:13px;">Tonic Youth Restoring <span style="color:var(--color-fem-muted);">150 мл</span></div>
-                            <span style="font-size:13px;font-weight:500;">93 BYN</span>
                         </div>
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
                             <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
                             <div style="flex:1;font-size:13px;">Foam Mousse Moisture <span style="color:var(--color-fem-muted);">150 мл</span></div>
-                            <span style="font-size:13px;font-weight:500;">96 BYN</span>
                         </div>
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
                             <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
                             <div style="flex:1;font-size:13px;">Hair Tonic Radiance <span style="color:var(--color-fem-muted);">200 мл</span></div>
-                            <span style="font-size:13px;font-weight:500;">88 BYN</span>
                         </div>
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
                             <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl7.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
                             <div style="flex:1;font-size:13px;">Micellar Water <span style="color:var(--color-fem-muted);">200 мл</span></div>
-                            <span style="font-size:13px;font-weight:500;">99 BYN</span>
                         </div>
                     </div>
-                    <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:24px;padding-top:16px;border-top:1px solid var(--color-fem-border);">
-                        <span style="font-family:var(--font-display);font-size:36px;font-weight:400;">376 BYN</span>
-                        <span style="font-size:13px;color:var(--color-fem-muted);">/ месяц</span>
+                    <div style="margin-bottom:24px;padding-top:16px;border-top:1px solid var(--color-fem-border);">
+                        <span style="font-size:13px; font-weight:600; color:#2ecc71;">✓ Бесплатная доставка + Подарок разблокированы</span>
                     </div>
                     <button class="btn btn--dark" style="width:100%;" onclick="loadReadyBox('pearl')">
                         Выбрать этот бокс
@@ -596,27 +627,23 @@
                         <span style="background:var(--color-accent);color:white;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;">МУЖСКОЙ</span>
                     </div>
                     <h3 style="font-family:var(--font-brutal);font-size:clamp(28px,3vw,48px);line-height:0.88;margin-bottom:14px;color:white;letter-spacing:0.03em;">INTEL<span style="color:var(--color-accent);">.</span>BOX</h3>
-                    <p style="font-size:14px;font-weight:300;line-height:1.7;color:rgba(255,255,255,0.45);margin-bottom:24px;">Мужской ритуал: очищение, увлажнение, защита. Концентрированные формулы на месяц.</p>
+                    <p style="font-size:14px;font-weight:300;line-height:1.7;color:rgba(255,255,255,0.45);margin-bottom:24px;">Мужской ритуал: очищение, увлажнение, защита. 3 концентрированные формулы на месяц.</p>
                     <div style="display:flex;flex-direction:column;margin-bottom:24px;border-top:1px solid rgba(255,255,255,0.08);">
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
                             <div style="width:40px;height:50px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.25);">фото</div>
                             <div style="flex:1;font-size:13px;color:rgba(255,255,255,0.8);">Face Wash Intense <span style="color:rgba(255,255,255,0.3);">150 мл</span></div>
-                            <span style="font-size:13px;font-weight:500;color:white;">110 BYN</span>
                         </div>
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
                             <div style="width:40px;height:50px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.25);">фото</div>
                             <div style="flex:1;font-size:13px;color:rgba(255,255,255,0.8);">Moisturizer Power <span style="color:rgba(255,255,255,0.3);">50 мл</span></div>
-                            <span style="font-size:13px;font-weight:500;color:white;">145 BYN</span>
                         </div>
                         <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
                             <div style="width:40px;height:50px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.25);">фото</div>
                             <div style="flex:1;font-size:13px;color:rgba(255,255,255,0.8);">Beard Oil Brutal <span style="color:rgba(255,255,255,0.3);">30 мл</span></div>
-                            <span style="font-size:13px;font-weight:500;color:white;">120 BYN</span>
                         </div>
                     </div>
-                    <div style="display:flex;align-items:baseline;gap:16px;margin-bottom:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);">
-                        <span style="font-family:var(--font-display);font-size:36px;font-weight:400;color:white;">375 BYN</span>
-                        <span style="font-size:13px;color:rgba(255,255,255,0.35);">/ месяц</span>
+                    <div style="margin-bottom:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);">
+                        <span style="font-size:13px; font-weight:600; color:#2ecc71;">✓ Бесплатная доставка курьером разблокирована</span>
                     </div>
                     <button class="btn btn--accent" style="width:100%;" onclick="loadReadyBox('homme')">
                         Выбрать этот бокс
@@ -628,73 +655,22 @@
         <style>@media(max-width:768px){#ready-boxes>div>div:nth-child(2){grid-template-columns:1fr!important;}}</style>
     </section>
 
-    <!-- ═════ DURATION SLIDER ═════ -->
-    <section style="padding:var(--section-y) var(--pad-x);background:var(--color-fem-text);color:white;" id="duration">
-        <div style="max-width:860px;margin:0 auto;text-align:center;">
-            <span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.35);">Выбери срок</span>
-            <h2 style="font-family:var(--font-display);font-size:clamp(40px,5vw,72px);font-weight:400;line-height:0.95;color:white;margin:16px 0 10px;">
-                Чем дольше —<br><em style="color:#c9956e;">тем выгоднее</em>
-            </h2>
-            <p style="font-size:15px;font-weight:300;color:rgba(255,255,255,0.4);margin-bottom:56px;max-width:400px;margin-left:auto;margin-right:auto;">3 месяца — хит продаж. 12 месяцев — нереально выгодно.</p>
-
-            <!-- Slider -->
-            <div style="margin-bottom:48px;">
-                <style>
-                    #durationSlider{width:100%;-webkit-appearance:none;height:3px;background:rgba(255,255,255,0.12);outline:none;cursor:pointer;border-radius:2px;}
-                    #durationSlider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#c9956e;cursor:pointer;box-shadow:0 0 0 4px rgba(201,149,110,0.2);}
-                    #durationSlider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:#c9956e;cursor:pointer;border:none;}
-                </style>
-                <input type="range" id="durationSlider" min="1" max="12" value="3">
-                <div style="display:flex;justify-content:space-between;margin-top:14px;">
-                    <span style="font-size:11px;color:rgba(255,255,255,0.3);cursor:pointer;" onclick="setDur(1)">1 мес</span>
-                    <span style="font-size:11px;cursor:pointer;font-weight:600;color:#c9956e;" onclick="setDur(3)">3 мес ✦</span>
-                    <span style="font-size:11px;color:rgba(255,255,255,0.3);cursor:pointer;" onclick="setDur(6)">6 мес</span>
-                    <span style="font-size:11px;color:rgba(255,255,255,0.3);cursor:pointer;" onclick="setDur(12)">12 мес 🔥</span>
-                </div>
-            </div>
-
-            <!-- Result grid -->
-            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.06);margin-bottom:28px;">
-                <div style="background:#1c1714;padding:28px 16px;">
-                    <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Срок</div>
-                    <div style="font-family:var(--font-display);font-size:38px;color:white;line-height:1;" id="durMonths">3 мес</div>
-                </div>
-                <div style="background:#1c1714;padding:28px 16px;border-left:1px solid rgba(255,255,255,0.06);border-right:1px solid rgba(255,255,255,0.06);">
-                    <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Скидка</div>
-                    <div style="font-family:var(--font-display);font-size:38px;color:#c9956e;line-height:1;" id="durDiscount">−15%</div>
-                </div>
-                <div style="background:#1c1714;padding:28px 16px;">
-                    <div style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:10px;">Экономия</div>
-                    <div style="font-family:var(--font-display);font-size:38px;color:white;line-height:1;" id="durSaving">~169 ₽</div>
-                </div>
-            </div>
-
-            <!-- Badge -->
-            <div id="durBadge" style="display:inline-block;background:#c9956e;color:white;padding:10px 28px;font-size:11px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;margin-bottom:32px;">
-                ✦ Хит продаж — 3 месяца
-            </div>
-            <br>
-            <a href="#constructor" class="btn" style="background:#c9956e;border-color:#c9956e;color:white;">
-                Собрать свой бокс
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-        </div>
-    </section>
-
     <!-- ═════ CONSTRUCTOR ═════ -->
     <section class="constructor-section" id="constructor">
         <div style="max-width:1400px;margin:0 auto;">
             <div class="anim-fade-up">
-                <span class="label">Собери свой</span>
+                <span class="label">Умная сборка</span>
                 <h2 class="section__title" style="margin-top:12px;">Конструктор<br><em>бокса</em></h2>
-                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:520px;line-height:1.7;">Добавляй продукты плюсиком. Бесплатная доставка от 400 BYN. Чем больше — тем больше бонусов.</p>
+                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:520px;line-height:1.7;">Больше товаров — больше привилегий. От 3-х товаров доставка курьером за наш счет, от 5 — вы забираете премиум-подарок.</p>
             </div>
+            
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin:32px 0 0;" id="boxFilters">
                 <button onclick="filterBox('all')" id="boxFilterAll" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--color-fem-text);background:var(--color-fem-text);color:white;cursor:pointer;transition:all 0.22s;">Все</button>
                 <button onclick="filterBox('face')" id="boxFilterFace" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--color-fem-border);background:transparent;color:var(--color-fem-muted);cursor:pointer;transition:all 0.22s;">Лицо Pearl</button>
                 <button onclick="filterBox('hair')" id="boxFilterHair" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--color-fem-border);background:transparent;color:var(--color-fem-muted);cursor:pointer;transition:all 0.22s;">Волосы Pearl</button>
                 <button onclick="filterBox('homme')" id="boxFilterHomme" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.15);background:#0e0b09;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.22s;">INTELEGENTOFF</button>
             </div>
+
             <div class="constructor-layout" style="margin-top:32px;">
                 <div>
                     <div class="constructor-products" id="constructorProducts"></div>
@@ -703,7 +679,7 @@
                     <div class="progress-section">
                         <div class="progress-header">
                             <span class="progress-label">Твой бокс</span>
-                            <span class="progress-amount"><span id="progressAmount">0</span> BYN</span>
+                            <span class="progress-amount"><span id="progressAmount">0</span> / 5 товаров</span>
                         </div>
                         <div class="progress-bar-wrap">
                             <div class="progress-bar-fill" id="progressFill"></div>
@@ -712,42 +688,66 @@
                             <div class="progress-milestone" id="milestone1">
                                 <div class="progress-milestone__icon">🚚</div>
                                 <div class="progress-milestone__text">
-                                    <div class="progress-milestone__title">Бесплатная доставка СДЭК</div>
-                                    <div class="progress-milestone__sub">Открывается от 400 BYN</div>
+                                    <div class="progress-milestone__title">Бесплатная доставка курьером</div>
+                                    <div class="progress-milestone__sub">Открывается от 3 товаров</div>
                                 </div>
                                 <div class="progress-milestone__check">✓</div>
                             </div>
                             <div class="progress-milestone" id="milestone2">
                                 <div class="progress-milestone__icon">🎁</div>
                                 <div class="progress-milestone__text">
-                                    <div class="progress-milestone__title">Secret Gift в коробке</div>
-                                    <div class="progress-milestone__sub">Открывается от 500 BYN</div>
+                                    <div class="progress-milestone__title">Сюрприз-подарок внутри</div>
+                                    <div class="progress-milestone__sub">Открывается от 4 товаров</div>
+                                </div>
+                                <div class="progress-milestone__check">✓</div>
+                            </div>
+                            <div class="progress-milestone" id="milestone3">
+                                <div class="progress-milestone__icon">👑</div>
+                                <div class="progress-milestone__text">
+                                    <div class="progress-milestone__title">VIP-подарок на твой выбор</div>
+                                    <div class="progress-milestone__sub">Открывается от 5 товаров</div>
                                 </div>
                                 <div class="progress-milestone__check">✓</div>
                             </div>
                         </div>
+
+                        <!-- VIP Gift Selector -->
+                        <div id="vipGiftSelection" style="display:none; margin-top: 16px; padding: 16px; border: 1px solid #c9956e; background: rgba(201,149,110,0.05);">
+                            <label style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--color-fem-text); margin-bottom: 8px; display: block;">👑 Выберите ваш VIP-подарок:</label>
+                            <select id="vipGiftSelect" style="width: 100%; padding: 10px; border: 1px solid var(--color-fem-border); background: var(--color-off-white); font-size: 13px; outline: none; cursor: pointer;">
+                                <option value="tonic">Tonic Youth Restoring (Полноразмерный) — Бесплатно</option>
+                                <option value="mousse">Foam Mousse Moisture (Полноразмерный) — Бесплатно</option>
+                                <option value="oil">Velvet Oil Blend (Полноразмерный) — Бесплатно</option>
+                            </select>
+                            <p style="font-size: 10px; color: var(--color-fem-muted); margin-top: 8px; line-height: 1.4;">Этот подарок будет добавляться в каждую коробку, пока в ней 5 и более товаров.</p>
+                        </div>
                     </div>
+                    
                     <div class="sub-toggle">
                         <div class="sub-toggle__options">
-                            <div class="sub-toggle__option" id="toggleOnce" onclick="setMode('once')">Купить 1 раз</div>
-                            <div class="sub-toggle__option is-active" id="toggleSub" onclick="setMode('sub')">Подписка ✦</div>
+                            <div class="sub-toggle__option" id="toggleOnce" onclick="setMode('once')">Разовая<br><span style="font-size:9px; opacity:0.6; text-transform:none;">Базовая цена</span></div>
+                            <div class="sub-toggle__option is-active" id="toggleSub" onclick="setMode('sub')">Подписка ✦<br><span style="font-size:9px; color:#c9956e; text-transform:none;">−15% в месяц</span></div>
+                            <div class="sub-toggle__option" id="toggleSplit" onclick="setMode('split')">Долями<br><span style="font-size:9px; color:#c9956e; text-transform:none;">Год (−20%)</span></div>
                         </div>
-                        <div class="sub-toggle__discount" id="subDiscount">Подписчики получают бонусы каждый месяц</div>
+                        <div class="sub-toggle__discount" id="subDiscount">Скидка 15% каждый месяц + управление в ЛК</div>
                     </div>
+
                     <div class="panel-totals">
                         <div class="panel-line"><span>Товаров в боксе:</span><strong id="itemCount">0</strong></div>
-                        <div class="panel-line"><span>Доставка:</span><strong id="deliveryLine">рассчитывается</strong></div>
+                        <div class="panel-line"><span>Доставка:</span><strong id="deliveryLine" style="color:#c9956e;">Платная</strong></div>
                         <div class="panel-line--total">
                             <span class="label">Итого</span>
-                            <span class="price"><span id="totalPrice">0</span> BYN</span>
+                            <span class="price" id="totalPrice">0 BYN</span>
                         </div>
                     </div>
-                    <div class="demo-min-warn" id="minWarn">Добавь ещё товаров — минимум 400 BYN для подписки</div>
+
+                    <div class="demo-min-warn" id="minWarn">Добавьте еще товаров для оформления подписки (минимум 3)</div>
+                    
                     <button class="btn btn--dark" style="width:100%;background:#c9956e;border-color:#c9956e;" id="checkoutBtn" onclick="handleCheckout()">
                         Оформить бокс
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                     </button>
-                    <p style="font-size:11px;text-align:center;color:var(--color-fem-muted);margin-top:12px;">Отмена — одним кликом, без звонков</p>
+                    <p style="font-size:11px;text-align:center;color:var(--color-fem-muted);margin-top:12px;">Отмена — одним кликом, без звонков и штрафов</p>
                 </div>
             </div>
         </div>
@@ -771,7 +771,7 @@
                 <div class="cabinet-card">
                     <div class="cabinet-card__icon">✏️</div>
                     <h3 class="cabinet-card__title">Изменить состав</h3>
-                    <p class="cabinet-card__desc">Убери пенку, добавь шампунь — система мгновенно пересчитает сумму следующего автосписания. Изменения вступают в силу до даты сборки.</p>
+                    <p class="cabinet-card__desc">Убери пенку, добавь шампунь — система мгновенно пересчитает сумму следующего списания. Бокс не может быть меньше 3 продуктов.</p>
                     <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;" onclick="alert('Доступно после оформления подписки')">Изменить бокс</button>
                 </div>
                 <div class="cabinet-card">
@@ -784,7 +784,7 @@
                     <div class="cabinet-card__icon">🔓</div>
                     <h3 class="cabinet-card__title">Отменить подписку</h3>
                     <p class="cabinet-card__desc">Кнопка на видном месте — потому что мы верим: если отмену легко найти, ты меньше боишься подписываться. Отмена без звонков и ожиданий.</p>
-                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;border-color:rgba(44,35,32,0.2);" onclick="alert('Доступно после оформления подписки')">Отменить</button>
+                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;border-color:rgba(44,35,32,0.2);" onclick="mockCancelSub()">Отменить</button>
                 </div>
             </div>
         </div>
@@ -873,24 +873,17 @@
                 </div>
                 <div class="faq-item">
                     <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
-                        Когда я могу изменить состав бокса?
+                        Как работает оплата "Долями"?
                         <span class="faq-btn__icon">+</span>
                     </button>
-                    <div class="faq-answer"><div class="faq-answer__inner">В любое время до даты сборки. За 3 дня до отправки придёт уведомление с прямой ссылкой на редактирование. После сборки изменения вступят в силу для следующего месяца.</div></div>
+                    <div class="faq-answer"><div class="faq-answer__inner">При выборе "Долями" (Яндекс.Сплит / Тинькофф Долями) вы фиксируете цену бокса на год вперед с максимальной скидкой (-20%). Сумма за год разбивается на комфортные равные платежи, которые вы платите банку каждый месяц, а бокс получаете регулярно. Выгодно и удобно.</div></div>
                 </div>
                 <div class="faq-item">
                     <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
-                        Как работает Secret Gift?
+                        Как работает VIP Gift?
                         <span class="faq-btn__icon">+</span>
                     </button>
-                    <div class="faq-answer"><div class="faq-answer__inner">При сумме бокса от 5 000 ₽ в коробку кладётся сюрприз — это может быть пробник новинки, мини-продукт или эксклюзивный аксессуар. Состав меняется каждый месяц и не анонсируется заранее.</div></div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
-                        Каким способом происходит оплата?
-                        <span class="faq-btn__icon">+</span>
-                    </button>
-                    <div class="faq-answer"><div class="faq-answer__inner">Привязывается карта (Visa, MasterCard, МИР). Списание происходит автоматически раз в 30 дней через ЮKassa или CloudPayments. Данные карты хранятся в зашифрованном виде на стороне платёжного провайдера.</div></div>
+                    <div class="faq-answer"><div class="faq-answer__inner">Если в вашем боксе 5 или более продуктов, в личном кабинете открывается поле выбора полноразмерного VIP-подарка. Вы сами решаете, какой продукт мы положим вам абсолютно бесплатно! Если вы не выбрали его до даты списания, мы положим рандомный продукт.</div></div>
                 </div>
             </div>
         </div>
@@ -923,7 +916,7 @@
             <div><div class="footer__col-title">Помощь</div><nav class="footer__nav"><a href="#">FAQ</a><a href="#">Доставка</a><a href="#">Контакты</a></nav></div>
         </div>
         <div class="footer__bottom">
-            <span class="footer__copy">© 2025 TSOK Boutique</span>
+            <span class="footer__copy">© 2026 TSOK Boutique</span>
             <div class="footer__legal"><a href="#">Политика конфиденциальности</a><a href="#">Оферта</a></div>
         </div>
     </footer>
@@ -954,9 +947,10 @@
     <div id="toastContainer" class="toast-container"></div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
     <script>
     // ════════════════════════════════════════════
-    //  ALL PRODUCTS (Pearl + INTELEGENTOFF)
+    //  JS: КОНСТРУКТОР БОКСА И РАСЧЕТ ПОДПИСОК
     // ════════════════════════════════════════════
     const PRODUCTS = [
         { id:'pearl-01', name:'Foam Mousse Moisture',      size:'150 мл', price:96,  img:'img/Pearl1.jpg', cat:'face',  brand:'pearl' },
@@ -971,50 +965,13 @@
         { id:'homme-03', name:'Beard Oil Brutal',          size:'30 мл',  price:120, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
     ];
 
-    // ── State ──
-    let boxQty  = {};
-    let mode    = 'sub';
+    // ── Состояние ──
+    let boxQty = {};
+    let mode = 'sub'; // 'once', 'sub', 'split'
     let curFilter = 'all';
-    const MIN_SUB = 400;
-    const GIFT_TH = 500;
+    const MIN_ITEMS = 3;
 
-    // ── Duration slider ──
-    const DUR_DISCOUNTS = {
-        1:0, 2:5, 3:15, 4:15, 5:18, 6:20, 7:20, 8:22, 9:22, 10:23, 11:23, 12:25
-    };
-    const DUR_BADGES = {
-        1:'Без скидки',
-        2:'Небольшая выгода',
-        3:'✦ Хит продаж — 3 месяца',
-        6:'Отличный выбор — полгода',
-        12:'🔥 Максимальная выгода — год'
-    };
-    let curDuration = 3;
-
-    function setDur(n) {
-        curDuration = n;
-        const sl = document.getElementById('durationSlider');
-        if (sl) sl.value = n;
-        const pct = DUR_DISCOUNTS[n] || 0;
-        const baseTotal = 376; // example monthly total
-        const saving = Math.round(baseTotal * n * pct / 100);
-        document.getElementById('durMonths').textContent = n + ' мес';
-        document.getElementById('durDiscount').textContent = pct ? '−' + pct + '%' : '0%';
-        document.getElementById('durSaving').textContent = saving ? '~' + saving + ' BYN' : '—';
-        const badge = document.getElementById('durBadge');
-        if (badge) {
-            const label = DUR_BADGES[n] || (n + ' месяцев подписки');
-            badge.textContent = label;
-            badge.style.background = n === 12 ? '#b8862a' : n === 3 ? '#c9956e' : '#6b5e56';
-        }
-    }
-    const durSlider = document.getElementById('durationSlider');
-    if (durSlider) {
-        durSlider.addEventListener('input', () => setDur(+durSlider.value));
-        setDur(3);
-    }
-
-    // ── Filter ──
+    // ── Фильтр ──
     function filterBox(cat) {
         curFilter = cat;
         ['all','face','hair','homme'].forEach(c => {
@@ -1034,7 +991,7 @@
         renderConstructor();
     }
 
-    // ── Load ready box ──
+    // ── Готовые боксы ──
     function loadReadyBox(type) {
         boxQty = {};
         if (type === 'pearl') {
@@ -1050,38 +1007,84 @@
         filterBox('all');
         updatePanel();
         document.getElementById('constructor').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setTimeout(() => showToast('Бокс добавлен — можешь изменить состав ниже', 'success'), 600);
+        setTimeout(() => showToast('Бокс добавлен — можешь изменить состав ниже', 'heart'), 600);
     }
 
-    // ── Helpers ──
-    function getTotal() {
-        return PRODUCTS.reduce((s, p) => s + p.price * (boxQty[p.id] || 0), 0);
-    }
+    // ── Математика ──
     function getCount() {
         return Object.values(boxQty).reduce((s, q) => s + q, 0);
     }
+    
+    function getBaseTotal() {
+        return PRODUCTS.reduce((sum, p) => sum + p.price * (boxQty[p.id] || 0), 0);
+    }
+
+    function getTotal() {
+        return PRODUCTS.reduce((sum, p) => {
+            let itemPrice = p.price;
+            if (mode === 'sub') itemPrice = Math.round(p.price * 0.85); // -15%
+            if (mode === 'split') itemPrice = Math.round(p.price * 0.80); // -20%
+            return sum + itemPrice * (boxQty[p.id] || 0);
+        }, 0);
+    }
 
     function updatePanel() {
-        const total  = getTotal();
-        const count  = getCount();
-        const pct    = Math.min(100, (total / MIN_SUB) * 100);
+        const count = getCount();
+        const total = getTotal();
+        const baseTotal = getBaseTotal();
 
-        document.getElementById('progressAmount').textContent = total;
+        // Прогресс-бар (макс 5)
+        const pct = Math.min(100, (count / 5) * 100);
+        document.getElementById('progressAmount').textContent = count;
         document.getElementById('progressFill').style.width = pct + '%';
         document.getElementById('itemCount').textContent = count;
-        document.getElementById('totalPrice').textContent = total;
 
-        document.getElementById('milestone1').classList.toggle('is-unlocked', total >= MIN_SUB);
-        document.getElementById('milestone2').classList.toggle('is-unlocked', total >= GIFT_TH);
+        // Майлстоуны
+        document.getElementById('milestone1').classList.toggle('is-unlocked', count >= 3);
+        document.getElementById('milestone2').classList.toggle('is-unlocked', count >= 4);
+        document.getElementById('milestone3').classList.toggle('is-unlocked', count >= 5);
 
-        document.getElementById('deliveryLine').textContent =
-            total >= MIN_SUB ? '🚚 Бесплатно!' : 'ещё ' + (MIN_SUB - total) + ' BYN';
+        // VIP Выбор подарка
+        const vipGiftDiv = document.getElementById('vipGiftSelection');
+        if (count >= 5 && mode !== 'once') {
+            vipGiftDiv.style.display = 'block';
+        } else {
+            vipGiftDiv.style.display = 'none';
+        }
 
+        // Доставка
+        document.getElementById('deliveryLine').innerHTML =
+            count >= 3 && mode !== 'once' ? '🚚 <span style="color:#2ecc71;">Бесплатно</span>' : '<span style="color:#c0392b;">Платная</span>';
+
+        // Итого сумма
+        let totalHtml = `<span style="font-family:var(--font-display); font-size: 28px;">${total} BYN</span>`;
+        if (mode === 'split') {
+            totalHtml = `<span style="font-size:14px;font-weight:400;color:var(--color-fem-muted);text-decoration:line-through;margin-right:8px;">${baseTotal}</span><span style="font-family:var(--font-display); font-size: 28px;">${total} BYN</span><br><span style="font-size:12px;color:#c9956e;font-weight:400;">в месяц (Долями на 1 год)</span>`;
+        } else if (mode === 'sub') {
+            totalHtml = `<span style="font-size:14px;font-weight:400;color:var(--color-fem-muted);text-decoration:line-through;margin-right:8px;">${baseTotal}</span><span style="font-family:var(--font-display); font-size: 28px;">${total} BYN</span>`;
+        }
+        document.getElementById('totalPrice').innerHTML = totalHtml;
+
+        // Блокировка кнопки
+        const btn = document.getElementById('checkoutBtn');
         const warn = document.getElementById('minWarn');
-        if (mode === 'sub' && count > 0 && total < MIN_SUB) {
+
+        if (mode !== 'once' && count > 0 && count < MIN_ITEMS) {
+            warn.textContent = `Добавьте еще ${MIN_ITEMS - count} товар(а) для активации подписки`;
             warn.classList.add('is-visible');
+            btn.disabled = true;
+            btn.style.opacity = '0.4';
+            btn.innerHTML = 'Минимум 3 товара для подписки';
+        } else if (count === 0) {
+            warn.classList.remove('is-visible');
+            btn.disabled = true;
+            btn.style.opacity = '0.4';
+            btn.innerHTML = 'Добавьте товары';
         } else {
             warn.classList.remove('is-visible');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.innerHTML = mode === 'split' ? 'Оформить Долями <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' : 'Оформить бокс <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
         }
     }
 
@@ -1100,26 +1103,49 @@
         mode = m;
         document.getElementById('toggleOnce').classList.toggle('is-active', m === 'once');
         document.getElementById('toggleSub').classList.toggle('is-active', m === 'sub');
-        updatePanel();
+        document.getElementById('toggleSplit').classList.toggle('is-active', m === 'split');
+        
+        const discText = document.getElementById('subDiscount');
+        if(m === 'once') discText.innerHTML = '<span style="color:var(--color-fem-muted);">Базовая цена. Платная доставка. Без подарков.</span>';
+        else if(m === 'sub') discText.textContent = 'Скидка 15% каждый месяц + управление в ЛК';
+        else if(m === 'split') discText.textContent = 'Фиксация цены на год (-20%). Оплата частями раз в месяц.';
+
+        renderConstructor(); // Перерисовываем, чтобы обновить цены в карточках
     }
 
     function handleCheckout() {
-        const total = getTotal();
         const count = getCount();
-        if (count === 0) { alert('Добавь хотя бы один продукт'); return; }
-        if (mode === 'sub' && total < MIN_SUB) {
-            document.getElementById('minWarn').classList.add('is-visible');
-            document.getElementById('minWarn').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
+        const total = getTotal();
+        
+        if (count === 0) return;
+        if (mode !== 'once' && count < MIN_ITEMS) return;
+
+        let giftInfo = '';
+        if (mode !== 'once') {
+            if (count >= 5) {
+                const giftSelect = document.getElementById('vipGiftSelect');
+                giftInfo = '\n🎁 VIP Подарок: ' + giftSelect.options[giftSelect.selectedIndex].text;
+            } else if (count >= 4) {
+                giftInfo = '\n🎁 Подарок: Сюрприз от бренда!';
+            }
         }
-        const items = PRODUCTS.filter(p => boxQty[p.id] > 0)
-            .map(p => p.name + ' x' + boxQty[p.id]).join(', ');
-        alert('✅ Бокс оформлен!\n\nСостав: ' + items + '\nИтого: ' + total + ' BYN\nРежим: ' +
-              (mode === 'sub' ? 'Подписка на ' + curDuration + ' мес (скидка ' + DUR_DISCOUNTS[curDuration] + '%)' : 'Разовая покупка') +
-              '\n\n(Здесь будет переход к оплате через ЮKassa / CloudPayments)');
+
+        const items = PRODUCTS.filter(p => boxQty[p.id] > 0).map(p => p.name + ' x' + boxQty[p.id]).join('\n- ');
+        const modeText = mode === 'once' ? 'Разовая покупка' : (mode === 'split' ? 'Годовая подписка (Оплата Долями)' : 'Гибкая Подписка (-15%)');
+
+        alert(`✅ Создание заказа!\n\nФормат: ${modeText}\n\nСостав бокса:\n- ${items}${giftInfo}\n\nСумма: ${total} BYN${mode === 'split' ? ' / ежемесячно' : ''}\n\nДалее произойдет интеграция с ЮKassa (рекуррент) или BNPL (Долями) и СДЭК API.`);
     }
 
-    // ── Render ──
+    // ── Мок отмены с удержанием ──
+    function mockCancelSub() {
+        if (confirm('Уверены, что хотите отменить подписку?\n\nОСТАНЬТЕСЬ С НАМИ, и в следующем месяце мы положим в ваш бокс ПРЕМИУМ-СКРАБ абсолютно бесплатно! 🎁\n\nНажмите Отмена, чтобы забрать подарок и остаться.')) {
+            alert('Подписка отменена. Возвращайтесь!');
+        } else {
+            alert('Отличный выбор! Скраб добавлен в ваш следующий бокс.');
+        }
+    }
+
+    // ── Рендер ──
     function renderConstructor() {
         const container = document.getElementById('constructorProducts');
         const filtered = curFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p =>
@@ -1133,24 +1159,30 @@
             const brandTag = isHomme
                 ? '<span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-accent);font-weight:700;">INTELEGENTOFF</span>'
                 : '<span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-accent);font-weight:700;">Pearl by Tais</span>';
-            return '<div class="constructor-product" data-product-id="' + p.id + '" style="' + bg + '">' +
-                '<div class="constructor-product__img"><img src="' + p.img + '" alt="' + p.name + '" onerror="this.parentElement.style.background='' + (isHomme ? '#1a1714' : '#f0ebe4') + '';this.style.display='none';"></div>' +
-                '<div class="constructor-product__info">' + brandTag +
-                    '<div class="constructor-product__name" style="' + textColor + '">' + p.name + '</div>' +
-                    '<div class="constructor-product__meta" style="' + metaColor + '">' + p.size + '</div>' +
-                '</div>' +
-                '<div class="constructor-product__price" style="' + textColor + '">' + p.price + ' BYN</div>' +
-                '<div class="constructor-product__qty">' +
-                    '<button class="qty-minus" onclick="setQty('' + p.id + '',-1)" disabled>−</button>' +
-                    '<span class="qty-val">' + (boxQty[p.id] || 0) + '</span>' +
-                    '<button onclick="setQty('' + p.id + '',1)">+</button>' +
-                '</div>' +
-            '</div>';
+            
+            let itemPrice = p.price;
+            if (mode === 'sub') itemPrice = Math.round(p.price * 0.85);
+            if (mode === 'split') itemPrice = Math.round(p.price * 0.80);
+
+            return `<div class="constructor-product" data-product-id="${p.id}" style="${bg}">
+                <div class="constructor-product__img"><img src="${p.img}" alt="${p.name}" onerror="this.parentElement.style.background='${isHomme ? '#1a1714' : '#f0ebe4'}';this.style.display='none';"></div>
+                <div class="constructor-product__info">${brandTag}
+                    <div class="constructor-product__name" style="${textColor}">${p.name}</div>
+                    <div class="constructor-product__meta" style="${metaColor}">${p.size}</div>
+                </div>
+                <div class="constructor-product__price" style="${textColor}">${itemPrice} BYN</div>
+                <div class="constructor-product__qty">
+                    <button class="qty-minus" onclick="setQty('${p.id}', -1)" disabled>−</button>
+                    <span class="qty-val">${boxQty[p.id] || 0}</span>
+                    <button onclick="setQty('${p.id}', 1)">+</button>
+                </div>
+            </div>`;
         }).join('');
-        // Restore qty display
+        
+        // Восстановление счетчиков
         filtered.forEach(p => {
             if (boxQty[p.id] > 0) {
-                const row = document.querySelector('[data-product-id="' + p.id + '"]');
+                const row = document.querySelector(`[data-product-id="${p.id}"]`);
                 if (row) {
                     row.querySelector('.qty-val').textContent = boxQty[p.id];
                     row.querySelector('.qty-minus').disabled = false;
@@ -1167,7 +1199,8 @@
         btn.nextElementSibling.classList.toggle('is-open', !expanded);
     }
 
-    // ── Init ──
+    // Инит
     renderConstructor();
     </script>
 </body>
+</html>
