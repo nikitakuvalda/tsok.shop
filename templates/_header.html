@@ -1,63 +1,133 @@
 <!-- ═══════════════════════════════════════════
-     ЕДИНАЯ ШАПКА САЙТА
+     TSOK BOUTIQUE — SITE HEADER v2.0
+     Aesop-style: promo bar + frosted glass nav
+     Logo: center / Nav: left / Utils: right
      ═══════════════════════════════════════════ -->
 <div class="site-top" id="siteTop">
-    <div class="promo-bar">
-        Бесплатная доставка от 80 BYN &nbsp;·&nbsp;
-        <a href="catalog">Pearl by Tais</a> &nbsp;·&nbsp;
-        <a href="catalog-homme">INTELEGENTOFF</a>
-    </div>
 
-    <div class="header-group" id="headerGroup">
-        <header class="header container-header">
-            <div class="header__inner">
-                <div class="header__left">
-                    <button class="icon-btn mobile-only" id="burgerBtn" aria-label="Меню">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-                    </button>
-                    <nav class="desktop-nav desktop-only">
-                        <a href="index" class="nav-link">Главная</a>
-                        <div class="nav-dropdown-wrap">
-                            <span class="nav-link nav-dropdown-btn">
-                                Бренды
-                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-                            </span>
-                            <div class="nav-dropdown-content">
-                                <a href="catalog">✦ Pearl by Tais</a>
-                                <a href="catalog-homme">● INTELEGENTOFF</a>
-                                <a href="subscription" class="text-gold">TSOK BOX</a>
-                            </div>
-                        </div>
-                        <a href="subscription" class="nav-link text-gold">TSOK BOX</a>
-                        <a href="index#our-story" class="nav-link">История</a>
-                    </nav>
-                </div>
+  <!-- Promo bar -->
+  <div class="promo-bar">
+    Бесплатная доставка от 80 BYN&nbsp;·&nbsp;
+    <a href="catalog">Pearl by Tais</a>&nbsp;·&nbsp;
+    <a href="catalog-homme">INTELEGENTOFF</a>&nbsp;·&nbsp;
+    <a href="subscription" class="text-gold-lt">TSOK BOX — откройте мир красоты</a>
+  </div>
 
-                <div class="header__center">
-                    <a href="index" class="logo-main" aria-label="TSOK Boutique">
-                        <span class="logo-main__title">TSOK</span>
-                        <span class="logo-main__subtitle">boutique</span>
-                    </a>
-                </div>
+  <!-- Header glass -->
+  <div class="header-group" id="headerGroup">
+    <header class="header">
+      <div class="header__inner">
 
-                <div class="header__right">
-                    <button class="icon-btn desktop-only" aria-label="Поиск">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                    </button>
-                    <button class="icon-btn desktop-only" id="loginBtn">
-                        <span class="btn-text">Войти</span>
-                    </button>
-                    <button class="icon-btn" id="headerFavBtn" aria-label="Избранное">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        <span class="fav-count"></span>
-                    </button>
-                    <button class="icon-btn" id="cartOpenBtn" aria-label="Корзина">
-                        <span class="desktop-only btn-text">Корзина</span>
-                        <svg class="mobile-only" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6a2 2 0 0 1 4 0v2"/></svg>
-                        <span class="cart-count"></span>
-                    </button>
-                </div>
+        <!-- LEFT: desktop nav -->
+        <div class="header__left">
+          <!-- Burger (mobile only) -->
+          <button class="burger-btn mobile-only" id="burgerBtn" aria-label="Открыть меню" aria-expanded="false">
+            <span></span><span></span><span></span>
+          </button>
+
+          <!-- Desktop navigation -->
+          <nav class="desktop-nav desktop-only" aria-label="Основная навигация">
+            <a href="index" class="nav-link">Главная</a>
+
+            <div class="nav-dropdown" role="navigation">
+              <span class="nav-link nav-dropdown__trigger" tabindex="0">
+                Бренды
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+              </span>
+              <div class="nav-dropdown__panel" role="menu">
+                <a href="catalog" role="menuitem">✦ Pearl by Tais</a>
+                <a href="catalog-homme" role="menuitem">● INTELEGENTOFF</a>
+                <a href="subscription" role="menuitem" style="color: var(--gold-light) !important;">TSOK BOX</a>
+              </div>
             </div>
-        </header>
-    </div>
+
+            <a href="subscription" class="nav-link" style="color: var(--gold-light) !important;">TSOK BOX</a>
+            <a href="index#our-story" class="nav-link">История</a>
+          </nav>
+        </div>
+
+        <!-- CENTER: logo -->
+        <div class="header__center">
+          <a href="index" class="site-logo" aria-label="TSOK Boutique — на главную">
+            <span class="site-logo__name">TSOK</span>
+            <span class="site-logo__sub">boutique</span>
+          </a>
+        </div>
+
+        <!-- RIGHT: utility buttons -->
+        <div class="header__right">
+          <button class="icon-btn desktop-only" aria-label="Поиск" id="searchBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </button>
+
+          <button class="icon-btn desktop-only" id="loginBtn" aria-label="Войти в аккаунт">
+            <span class="desktop-only" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;font-weight:400;">Войти</span>
+          </button>
+
+          <button class="icon-btn" id="headerFavBtn" aria-label="Избранное" style="position:relative;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span class="fav-count"></span>
+          </button>
+
+          <button class="icon-btn" id="cartOpenBtn" aria-label="Корзина" style="position:relative;">
+            <span class="desktop-only" style="font-size:11px;letter-spacing:0.14em;text-transform:uppercase;font-weight:400;">Корзина</span>
+            <svg class="mobile-only" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
+              <rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6a2 2 0 0 1 4 0v2"/>
+            </svg>
+            <span class="cart-count"></span>
+          </button>
+        </div>
+
+      </div>
+    </header>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     MOBILE MENU (full-screen overlay)
+     ═══════════════════════════════════════════ -->
+<div class="mobile-menu" id="mobileMenu" aria-hidden="true" role="dialog" aria-label="Меню навигации">
+  <div class="mobile-menu__header">
+    <a href="index" class="site-logo" style="color: var(--on-dark) !important;">
+      <span class="site-logo__name">TSOK</span>
+      <span class="site-logo__sub">boutique</span>
+    </a>
+    <button class="mobile-menu__close" id="mobileMenuClose" aria-label="Закрыть меню">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </div>
+
+  <nav class="mobile-nav" aria-label="Мобильная навигация">
+    <a href="index" class="mobile-nav__link">
+      Главная
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+    <a href="catalog" class="mobile-nav__link">
+      Pearl by Tais
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+    <a href="catalog-homme" class="mobile-nav__link">
+      INTELEGENTOFF
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+    <a href="subscription" class="mobile-nav__link mobile-nav__link--gold">
+      TSOK BOX
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+    <a href="index#our-story" class="mobile-nav__link">
+      История
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </nav>
+
+  <div class="mobile-menu__foot">
+    <button class="btn btn--outline-light w-full" id="mobileLoginBtn">Войти в аккаунт</button>
+    <a href="checkout" class="btn btn--gold w-full">Перейти в корзину</a>
+  </div>
 </div>
