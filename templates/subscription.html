@@ -2,1205 +2,353 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>TSOK BOX — Гибкая Рутина | Pearl by Tais</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TSOK BOX — Персональная подписка · TSOK Boutique</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=DM+Sans:opsz,wght@9,300;9,400;9,500;9,600;9,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        :root {
-            --sub-accent: #c9956e;
-            --sub-gold:   #b8862a;
-            --sub-pearl:  #f0ebe4;
-            --sub-dark:   #2c2320;
-        }
-
-        /* ─── HERO ─── */
-        .sub-hero {
-            min-height: 92vh;
-            display: flex; align-items: center;
-            background: linear-gradient(160deg, #1c1714 0%, #2c2320 60%, #3a2e28 100%);
-            position: relative; overflow: hidden;
-        }
-        .sub-hero__deco {
-            position: absolute; inset: 0; pointer-events: none;
-        }
-        .sub-hero__deco-ring {
-            position: absolute;
-            border-radius: 50%;
-            border: 1px solid rgba(201,149,110,0.15);
-        }
-        .sub-hero__deco-ring:nth-child(1) { width: 600px; height: 600px; top: -150px; right: -100px; }
-        .sub-hero__deco-ring:nth-child(2) { width: 400px; height: 400px; top: -50px;  right: 0px; border-color: rgba(201,149,110,0.08); }
-        .sub-hero__deco-ring:nth-child(3) { width: 200px; height: 200px; bottom: 80px; left: 60px; border-color: rgba(201,149,110,0.1); }
-        .sub-hero__inner {
-            position: relative; z-index: 2;
-            padding: 120px var(--pad-x) 100px;
-            display: grid; grid-template-columns: 1fr 420px;
-            gap: 80px; align-items: center;
-            width: 100%; max-width: 1400px; margin: 0 auto;
-        }
-        .sub-hero__eyebrow {
-            display: inline-flex; align-items: center; gap: 12px;
-            font-size: 11px; font-weight: 600; letter-spacing: 0.22em;
-            text-transform: uppercase; color: var(--sub-accent);
-            margin-bottom: 28px;
-        }
-        .sub-hero__eyebrow::before { content:''; width:28px; height:1px; background:var(--sub-accent); }
-        .sub-hero__title {
-            font-family: var(--font-display);
-            font-size: clamp(52px, 7vw, 96px);
-            font-weight: 400; line-height: 0.92;
-            color: white; margin-bottom: 32px;
-            letter-spacing: -0.01em;
-        }
-        .sub-hero__title em { font-style: italic; color: var(--sub-accent); }
-        .sub-hero__desc {
-            font-size: 16px; font-weight: 300; line-height: 1.8;
-            color: rgba(255,255,255,0.6); max-width: 500px; margin-bottom: 48px;
-        }
-        .sub-hero__perks {
-            display: flex; flex-direction: column; gap: 14px; margin-bottom: 48px;
-        }
-        .sub-hero__perk {
-            display: flex; align-items: center; gap: 14px;
-            font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.75);
-        }
-        .sub-hero__perk-icon {
-            width: 32px; height: 32px; border-radius: 50%;
-            background: rgba(201,149,110,0.15);
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; font-size: 14px;
-        }
-        .sub-hero__cta { display: flex; gap: 16px; flex-wrap: wrap; }
-
-        /* Hero preview card */
-        .sub-hero__preview {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(201,149,110,0.2);
-            backdrop-filter: blur(20px);
-            padding: 36px;
-            border-radius: 2px;
-        }
-        .preview-label {
-            font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
-            color: var(--sub-accent); margin-bottom: 20px;
-            display: flex; align-items: center; gap: 8px;
-        }
-        .preview-label::after { content:''; flex:1; height:1px; background:rgba(201,149,110,0.2); }
-        .preview-products { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
-        .preview-product {
-            display: flex; align-items: center; gap: 14px; padding: 12px;
-            background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
-        }
-        .preview-product__img {
-            width: 40px; height: 50px; background: rgba(240,235,228,0.1);
-            flex-shrink: 0; overflow: hidden;
-        }
-        .preview-product__img img { width:100%; height:100%; object-fit:cover; }
-        .preview-product__name { font-size: 13px; color: rgba(255,255,255,0.8); flex:1; }
-        .preview-product__price { font-size: 13px; font-weight: 500; color: white; }
-        .preview-progress { margin-bottom: 20px; }
-        .preview-progress__bar {
-            height: 4px; background: rgba(255,255,255,0.1);
-            position: relative; border-radius: 2px; margin-bottom: 8px;
-        }
-        .preview-progress__fill {
-            position: absolute; left:0; top:0; height:100%;
-            background: linear-gradient(90deg, var(--sub-accent), var(--sub-gold));
-            border-radius: 2px; width: 80%; transition: width 0.5s ease;
-        }
-        .preview-progress__labels {
-            display: flex; justify-content: space-between;
-            font-size: 11px; color: rgba(255,255,255,0.4);
-        }
-        .preview-total {
-            display: flex; justify-content: space-between; align-items: baseline;
-            padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);
-        }
-        .preview-total__label { font-size: 12px; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; text-transform: uppercase; }
-        .preview-total__price { font-family: var(--font-display); font-size: 28px; color: white; }
-        @media (max-width: 1024px) {
-            .sub-hero__inner { grid-template-columns: 1fr; gap: 48px; }
-            .sub-hero__preview { max-width: 440px; }
-        }
-
-        /* ─── HOW IT WORKS ─── */
-        .how-section {
-            padding: var(--section-y) var(--pad-x);
-            background: var(--color-off-white);
-            border-bottom: 1px solid var(--color-fem-border);
-        }
-        .how-grid {
-            display: grid; grid-template-columns: repeat(4, 1fr);
-            gap: 1px; background: var(--color-fem-border);
-            margin-top: 64px;
-        }
-        .how-step {
-            background: var(--color-off-white);
-            padding: 44px 32px;
-            transition: background 0.3s;
-        }
-        .how-step:hover { background: var(--color-fem-card); }
-        .how-step__num {
-            font-family: var(--font-display);
-            font-size: 72px; font-weight: 300;
-            color: rgba(44,35,32,0.08); line-height: 1;
-            margin-bottom: 20px;
-        }
-        .how-step__title {
-            font-size: 14px; font-weight: 600; letter-spacing: 0.08em;
-            text-transform: uppercase; margin-bottom: 12px;
-        }
-        .how-step__desc {
-            font-size: 14px; font-weight: 300; line-height: 1.7;
-            color: var(--color-fem-muted);
-        }
-        @media (max-width: 768px) { .how-grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 480px) { .how-grid { grid-template-columns: 1fr; } }
-
-        /* ─── CONSTRUCTOR ─── */
-        .constructor-section {
-            padding: var(--section-y) var(--pad-x);
-            background: var(--color-fem-card);
-        }
-        .constructor-layout {
-            display: grid; grid-template-columns: 1fr 400px;
-            gap: 48px; align-items: start;
-            margin-top: 64px;
-        }
-        @media (max-width: 1100px) { .constructor-layout { grid-template-columns: 1fr; } }
-
-        /* Products list */
-        .constructor-products { display: flex; flex-direction: column; gap: 1px; background: var(--color-fem-border); }
-        .constructor-product {
-            background: var(--color-off-white);
-            display: flex; align-items: center; gap: 20px;
-            padding: 20px 24px;
-            transition: background 0.2s;
-        }
-        .constructor-product:hover { background: #faf9f7; }
-        .constructor-product__img {
-            width: 60px; height: 75px; flex-shrink: 0;
-            background: var(--color-fem-card); overflow: hidden;
-        }
-        .constructor-product__img img { width:100%; height:100%; object-fit:cover; }
-        .constructor-product__info { flex:1; min-width: 0; }
-        .constructor-product__name {
-            font-family: var(--font-display); font-size: 18px; font-weight: 400;
-            margin-bottom: 4px;
-        }
-        .constructor-product__meta {
-            font-size: 12px; color: var(--color-fem-muted); letter-spacing: 0.04em;
-        }
-        .constructor-product__price {
-            font-size: 15px; font-weight: 500; flex-shrink: 0;
-        }
-        .constructor-product__qty {
-            display: flex; align-items: center;
-            border: 1px solid var(--color-fem-border);
-            flex-shrink: 0;
-        }
-        .constructor-product__qty button {
-            width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 18px; line-height: 1;
-            transition: background 0.2s;
-        }
-        .constructor-product__qty button:hover { background: var(--color-fem-card); }
-        .constructor-product__qty span {
-            width: 32px; text-align: center;
-            font-size: 14px; font-weight: 500;
-        }
-
-        /* Progress panel */
-        .constructor-panel {
-            background: white;
-            border: 1px solid var(--color-fem-border);
-            padding: 32px;
-            position: sticky; top: calc(var(--top-h) + 20px);
-        }
-        .progress-section { margin-bottom: 32px; }
-        .progress-header {
-            display: flex; justify-content: space-between; align-items: baseline;
-            margin-bottom: 12px;
-        }
-        .progress-label { font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
-        .progress-amount {
-            font-family: var(--font-display); font-size: 22px; font-weight: 400;
-        }
-        .progress-bar-wrap {
-            height: 6px; background: var(--color-fem-border);
-            border-radius: 3px; position: relative; overflow: hidden;
-            margin-bottom: 16px;
-        }
-        .progress-bar-fill {
-            height: 100%; border-radius: 3px;
-            background: linear-gradient(90deg, #c9956e, #b8862a);
-            transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
-            width: 0%;
-        }
-        .progress-milestones { display: flex; flex-direction: column; gap: 10px; }
-        .progress-milestone {
-            display: flex; align-items: center; gap: 12px;
-            padding: 12px 16px;
-            border: 1px solid var(--color-fem-border);
-            transition: border-color 0.3s, background 0.3s;
-            opacity: 0.45;
-        }
-        .progress-milestone.is-unlocked {
-            border-color: #c9956e;
-            background: rgba(201,149,110,0.06);
-            opacity: 1;
-        }
-        .progress-milestone__icon { font-size: 18px; flex-shrink:0; }
-        .progress-milestone__text { flex:1; }
-        .progress-milestone__title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
-        .progress-milestone__sub { font-size: 11px; color: var(--color-fem-muted); }
-        .progress-milestone__check {
-            width: 20px; height: 20px; border-radius: 50%;
-            background: var(--color-fem-border);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 10px; flex-shrink: 0;
-            transition: background 0.3s;
-        }
-        .progress-milestone.is-unlocked .progress-milestone__check {
-            background: #c9956e; color: white;
-        }
-
-        /* Panel totals */
-        .panel-totals { border-top: 1px solid var(--color-fem-border); padding-top: 24px; margin-bottom: 24px; }
-        .panel-line {
-            display: flex; justify-content: space-between;
-            font-size: 13px; margin-bottom: 8px; color: var(--color-fem-muted);
-        }
-        .panel-line strong { color: var(--color-fem-text); font-weight: 500; }
-        .panel-line--total {
-            display: flex; justify-content: space-between; align-items: baseline;
-            padding-top: 12px; border-top: 1px solid var(--color-fem-border);
-            margin-top: 8px;
-        }
-        .panel-line--total .label { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-        .panel-line--total .price { font-family: var(--font-display); font-size: 28px; }
-
-        /* Subscribe toggle */
-        .sub-toggle { margin-bottom: 20px; }
-        .sub-toggle__options {
-            display: grid; grid-template-columns: 1fr 1fr 1fr;
-            border: 1px solid var(--color-fem-border); gap: 0;
-        }
-        .sub-toggle__option {
-            padding: 14px 10px; text-align: center; cursor: pointer;
-            font-size: 11px; font-weight: 500; letter-spacing: 0.08em;
-            text-transform: uppercase; transition: all 0.22s;
-            color: var(--color-fem-muted);
-            border-right: 1px solid var(--color-fem-border);
-        }
-        .sub-toggle__option:last-child { border-right: none; }
-        .sub-toggle__option.is-active {
-            background: var(--color-fem-text); color: white;
-        }
-        .sub-toggle__discount {
-            text-align: center; font-size: 11px; color: #c9956e;
-            margin-top: 8px; font-weight: 500;
-        }
-
-        /* ─── CABINET (лк) ─── */
-        .cabinet-section {
-            padding: var(--section-y) var(--pad-x);
-            background: var(--color-off-white);
-        }
-        .cabinet-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 1px; background: var(--color-fem-border);
-            margin-top: 64px;
-        }
-        .cabinet-card {
-            background: var(--color-off-white);
-            padding: 44px 40px;
-            transition: background 0.25s;
-        }
-        .cabinet-card:hover { background: white; }
-        .cabinet-card__icon {
-            font-size: 28px; margin-bottom: 20px;
-        }
-        .cabinet-card__title {
-            font-family: var(--font-display);
-            font-size: 22px; font-weight: 400; margin-bottom: 12px;
-        }
-        .cabinet-card__desc {
-            font-size: 14px; font-weight: 300; line-height: 1.7;
-            color: var(--color-fem-muted); margin-bottom: 24px;
-        }
-        .cabinet-card--cancel { border-left: 3px solid rgba(44,35,32,0.1); }
-        .cabinet-card--cancel .cabinet-card__title { font-size: 18px; }
-        @media (max-width: 768px) { .cabinet-grid { grid-template-columns: 1fr; } }
-
-        /* ─── NOTIFY SECTION ─── */
-        .notify-section {
-            padding: var(--section-y) var(--pad-x);
-            background: #1c1714; color: white;
-        }
-        .notify-preview {
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(201,149,110,0.2);
-            padding: 32px 36px; margin-top: 48px;
-            max-width: 560px;
-        }
-        .notify-preview__from {
-            display: flex; align-items: center; gap: 12px;
-            margin-bottom: 20px; padding-bottom: 16px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .notify-preview__avatar {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: var(--sub-accent);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 600; color: white;
-        }
-        .notify-preview__sender { font-size: 13px; font-weight: 500; }
-        .notify-preview__time { font-size: 11px; color: rgba(255,255,255,0.35); margin-left: auto; }
-        .notify-preview__body {
-            font-size: 15px; font-weight: 300; line-height: 1.8;
-            color: rgba(255,255,255,0.75);
-        }
-        .notify-preview__body strong { color: white; font-weight: 500; }
-        .notify-preview__actions { display: flex; gap: 12px; margin-top: 20px; }
-        .notify-btn {
-            padding: 10px 20px; font-size: 12px; font-weight: 500;
-            letter-spacing: 0.08em; text-transform: uppercase;
-            border: 1px solid rgba(201,149,110,0.4);
-            color: var(--sub-accent); cursor: pointer;
-            transition: all 0.22s;
-        }
-        .notify-btn:hover { background: var(--sub-accent); color: white; border-color: var(--sub-accent); }
-
-        /* ─── FAQ ─── */
-        .faq-section {
-            padding: var(--section-y) var(--pad-x);
-            background: var(--color-fem-card);
-        }
-        .faq-list {
-            max-width: 800px; margin: 64px auto 0;
-        }
-        .faq-item {
-            border-bottom: 1px solid var(--color-fem-border);
-        }
-        .faq-btn {
-            width: 100%; display: flex; justify-content: space-between;
-            align-items: center; padding: 24px 0;
-            font-size: 15px; font-weight: 400; text-align: left;
-            gap: 20px; cursor: pointer;
-            transition: color 0.2s;
-        }
-        .faq-btn:hover { color: var(--color-accent); }
-        .faq-btn__icon {
-            width: 24px; height: 24px; flex-shrink: 0;
-            border: 1px solid var(--color-fem-border);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; transition: all 0.3s;
-        }
-        .faq-btn[aria-expanded=true] .faq-btn__icon { background: var(--color-fem-text); color: white; border-color: var(--color-fem-text); transform: rotate(45deg); }
-        .faq-answer {
-            overflow: hidden; max-height: 0;
-            transition: max-height 0.4s ease, padding 0.4s ease;
-        }
-        .faq-answer.is-open { max-height: 400px; }
-        .faq-answer__inner {
-            padding: 0 0 24px;
-            font-size: 14px; font-weight: 300; line-height: 1.8;
-            color: var(--color-fem-muted);
-        }
-
-        /* ─── INTERACTIVE DEMO ─── */
-        .demo-min-warn {
-            font-size: 12px; font-weight: 500; color: #fff; text-align: center;
-            padding: 12px; background: #c0392b;
-            border-radius: 2px;
-            margin-bottom: 16px; display: none;
-        }
-        .demo-min-warn.is-visible { display: block; }
+        .comparison-table{width:100%;border-collapse:collapse;margin-top:40px}
+        .comparison-table th,.comparison-table td{padding:18px 20px;text-align:left;border-bottom:1px solid var(--line-d-soft);font-size:14px}
+        .comparison-table th{font-family:var(--font-display);font-weight:500;font-size:18px;color:var(--paper)}
+        .comparison-table td{color:var(--text-d);font-weight:300}
+        .comparison-table .col-box{color:var(--clay)}
+        .comparison-table tr td:first-child{color:var(--muted-d);font-size:13px}
+        .vip-gift-note{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--clay-deep);font-weight:600;margin-bottom:10px}
     </style>
 </head>
-<body>
+<body class="subscription-page">
 
-    <!-- ═════ SITE TOP ═════ -->
-    {% include "_header.html" %}
+{% include "_header.html" %}
 
-    <!-- ═════ HERO ═════ -->
-    <section class="sub-hero">
-        <div class="sub-hero__deco">
-            <div class="sub-hero__deco-ring"></div>
-            <div class="sub-hero__deco-ring"></div>
-            <div class="sub-hero__deco-ring"></div>
-        </div>
-        <div class="sub-hero__inner">
-            <div class="sub-hero__text">
-                <div class="sub-hero__eyebrow">Персональная подписка</div>
-                <h1 class="sub-hero__title">
-                    Собери свою<br><em style="color:var(--sub-accent);">идеальную рутину</em>
-                </h1>
-                <p class="sub-hero__desc">
-                    А мы позаботимся об остальном. Больше никаких забытых покупок и пустых банок. Премиальный уход с доставкой прямо в руки. Бесплатно курьером от 3-х продуктов.
-                </p>
-                <div class="sub-hero__perks">
-                    <div class="sub-hero__perk">
-                        <div class="sub-hero__perk-icon">✦</div>
-                        <span>Ты собираешь бокс сам — только то, что нужно</span>
-                    </div>
-                    <div class="sub-hero__perk">
-                        <div class="sub-hero__perk-icon">🚚</div>
-                        <span>Бесплатная доставка курьером от 3 товаров</span>
-                    </div>
-                    <div class="sub-hero__perk">
-                        <div class="sub-hero__perk-icon">🎁</div>
-                        <span>VIP подарки на твой выбор в боксах от 5 товаров</span>
-                    </div>
-                    <div class="sub-hero__perk">
-                        <div class="sub-hero__perk-icon">⚡</div>
-                        <span>Меняй состав или пропускай месяц без штрафов</span>
-                    </div>
-                </div>
-                <div class="sub-hero__cta">
-                    <a href="#constructor" class="btn btn--dark" style="background:#c9956e;border-color:#c9956e;">
-                        Собрать свой бокс
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </a>
-                    <a href="#how" class="btn btn--outline-dark" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);">Как это работает</a>
-                </div>
+<!-- ═══════════════ HERO ═══════════════ -->
+<section class="sub-hero">
+    <div class="sub-hero__deco">
+        <div class="sub-hero__deco-ring"></div>
+        <div class="sub-hero__deco-ring"></div>
+        <div class="sub-hero__deco-ring"></div>
+    </div>
+    <div class="grain"></div>
+    <div class="sub-hero__inner">
+        <div class="sub-hero__text">
+            <div class="sub-hero__eyebrow">Персональная подписка</div>
+            <h1 class="sub-hero__title">
+                TSOK<br><em>BOX</em>
+            </h1>
+            <p class="sub-hero__desc">
+                Твой личный ритуал ухода — собранный один раз и приезжающий под дверь каждый месяц. Меняй состав, пропускай месяцы, получай подарки. Без звонков и штрафов.
+            </p>
+            <div class="sub-hero__perks">
+                <div class="sub-hero__perk"><div class="sub-hero__perk-icon">✦</div>Гибкий состав</div>
+                <div class="sub-hero__perk"><div class="sub-hero__perk-icon">🚚</div>Бесплатная доставка</div>
+                <div class="sub-hero__perk"><div class="sub-hero__perk-icon">🎁</div>Подарок внутри</div>
+                <div class="sub-hero__perk"><div class="sub-hero__perk-icon">⚡</div>Скидка до 25%</div>
             </div>
-            <!-- Preview card -->
-            <div class="sub-hero__preview">
-                <div class="preview-label">Пример бокса</div>
-                <div class="preview-products">
-                    <div class="preview-product">
-                        <div class="preview-product__img"><img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" alt=""></div>
-                        <span class="preview-product__name">Tonic Youth Restoring</span>
-                        <span class="preview-product__price">79 BYN</span>
-                    </div>
-                    <div class="preview-product">
-                        <div class="preview-product__img"><img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" alt=""></div>
-                        <span class="preview-product__name">Foam Mousse Moisture</span>
-                        <span class="preview-product__price">81 BYN</span>
-                    </div>
-                    <div class="preview-product">
-                        <div class="preview-product__img"><img src="{{ url_for('static', filename='img/Pearl6.jpg') }}" alt=""></div>
-                        <span class="preview-product__name">Velvet Oil Blend</span>
-                        <span class="preview-product__price">58 BYN</span>
-                    </div>
-                    <div class="preview-product" style="border-color:#c9956e; background:rgba(201,149,110,0.1);">
-                        <div class="preview-product__img" style="background:transparent; font-size:24px; display:flex; align-items:center; justify-content:center;">🎁</div>
-                        <span class="preview-product__name" style="color:#c9956e;">Секретный подарок</span>
-                        <span class="preview-product__price" style="color:#c9956e;">Бесплатно</span>
-                    </div>
-                </div>
-                <div class="preview-progress">
-                    <div class="preview-progress__bar"><div class="preview-progress__fill"></div></div>
-                    <div class="preview-progress__labels">
-                        <span>4 из 5 товаров</span>
-                        <span>🚚 Доставка: Бесплатно</span>
-                    </div>
-                </div>
-                <div class="preview-total">
-                    <span class="preview-total__label">Итого / мес (-15%)</span>
-                    <span class="preview-total__price">218 BYN</span>
-                </div>
+            <div class="sub-hero__cta">
+                <a href="#constructor" class="btn btn--accent">Собрать бокс
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
+                <a href="#how" class="btn btn--outline-light">Как работает</a>
             </div>
         </div>
-    </section>
+        <div class="sub-hero__preview">
+            <img src="{{ url_for('static', filename='img/BoxAfter.jpg') }}" alt="TSOK BOX"
+                 onerror="this.parentElement.style.background='linear-gradient(150deg,#262E22,#16150F)'">
+        </div>
+    </div>
+</section>
 
-    <!-- ═════ HOW IT WORKS ═════ -->
-    <section class="how-section" id="how">
-        <div style="max-width:1400px;margin:0 auto;">
-            <div class="anim-fade-up">
-                <span class="label">Просто и прозрачно</span>
-                <h2 class="section__title" style="margin-top:12px;">Как работает<br><em>TSOK BOX</em></h2>
+<!-- ═══════════════ КАК РАБОТАЕТ ═══════════════ -->
+<section class="how-section" id="how">
+    <div class="container">
+        <div class="section__header">
+            <span class="label">4 шага</span>
+            <h2 class="section__title" style="margin-top:12px;">Как работает<br><em>TSOK BOX</em></h2>
+        </div>
+        <div class="how-grid">
+            <div class="how-step">
+                <div class="how-step__num">01</div>
+                <div class="how-step__title">Собери рутину</div>
+                <p class="how-step__desc">Добавь 3 и более товаров, чтобы активировать подписку и открыть бесплатную доставку.</p>
             </div>
-            <div class="how-grid">
-                <div class="how-step">
-                    <div class="how-step__num">01</div>
-                    <div class="how-step__title">Собери рутину</div>
-                    <p class="how-step__desc">Добавь 3 и более товаров, чтобы активировать подписку и открыть доступ к бесплатной доставке.</p>
-                </div>
-                <div class="how-step">
-                    <div class="how-step__num">02</div>
-                    <div class="how-step__title">Выбери формат</div>
-                    <p class="how-step__desc">Оплачивай каждый месяц со скидкой 15% или зафиксируй цену на год со скидкой 20% через Долями.</p>
-                </div>
-                <div class="how-step">
-                    <div class="how-step__num">03</div>
-                    <div class="how-step__title">Меняй состав</div>
-                    <p class="how-step__desc">В личном кабинете в любой момент меняй состав бокса. Сумма следующего списания пересчитается автоматически.</p>
-                </div>
-                <div class="how-step">
-                    <div class="how-step__num">04</div>
-                    <div class="how-step__title">Получай бонусы</div>
-                    <p class="how-step__desc">Больше товаров = больше перков. Сюрпризы, бесплатная доставка и право выбора полноразмерного VIP-подарка.</p>
-                </div>
+            <div class="how-step">
+                <div class="how-step__num">02</div>
+                <div class="how-step__title">Выбери формат</div>
+                <p class="how-step__desc">Оплачивай каждый месяц со скидкой 15% или зафиксируй цену на год со скидкой 20% через Долями.</p>
+            </div>
+            <div class="how-step">
+                <div class="how-step__num">03</div>
+                <div class="how-step__title">Меняй состав</div>
+                <p class="how-step__desc">В личном кабинете в любой момент меняй состав бокса. Сумма следующего списания пересчитается автоматически.</p>
+            </div>
+            <div class="how-step">
+                <div class="how-step__num">04</div>
+                <div class="how-step__title">Получай бонусы</div>
+                <p class="how-step__desc">Больше товаров — больше перков. Сюрпризы, бесплатная доставка и право выбора полноразмерного VIP-подарка.</p>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- ═════ COMPARISON ═════ -->
-    <section style="padding:var(--section-y) var(--pad-x);background:var(--color-fem-text);color:white;" id="comparison">
-        <div style="max-width:1000px;margin:0 auto;text-align:center;">
-            <span style="font-size:10px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.35);">Сравнение</span>
-            <h2 style="font-family:var(--font-display);font-size:clamp(40px,5vw,72px);font-weight:400;line-height:0.95;color:white;margin:16px 0 48px;">
-                Почему подписка<br><em style="color:#c9956e;">выгоднее разовой покупки?</em>
-            </h2>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,0.06);text-align:left;">
-                <div style="background:#1c1714;padding:40px;">
-                    <h3 style="font-size:18px;font-weight:500;margin-bottom:24px;">Разовая покупка</h3>
-                    <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:16px;color:rgba(255,255,255,0.6);font-size:14px;font-weight:300;">
-                        <li><span style="color:#e74c3c;margin-right:8px;font-weight:bold;">✕</span> Базовая цена без скидки</li>
-                        <li><span style="color:#e74c3c;margin-right:8px;font-weight:bold;">✕</span> Платная доставка курьером</li>
-                        <li><span style="color:#e74c3c;margin-right:8px;font-weight:bold;">✕</span> Вы сами следите за остатками</li>
-                    </ul>
-                </div>
-                <div style="background:#2c2320;padding:40px;position:relative;overflow:hidden;">
-                    <div style="position:absolute;top:0;right:0;background:#c9956e;color:white;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;padding:6px 16px;">TSOK BOX</div>
-                    <h3 style="font-size:18px;font-weight:500;margin-bottom:24px;color:white;">Подписка</h3>
-                    <ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:16px;color:white;font-size:14px;font-weight:300;">
-                        <li><span style="color:#2ecc71;margin-right:8px;font-weight:bold;">✓</span> Выгода до 20% на каждый продукт</li>
-                        <li><span style="color:#2ecc71;margin-right:8px;font-weight:bold;">✓</span> Бесплатная доставка курьером (от 3х шт)</li>
-                        <li><span style="color:#2ecc71;margin-right:8px;font-weight:bold;">✓</span> Сюрпризы и VIP-подарки в каждом боксе</li>
-                        <li><span style="color:#2ecc71;margin-right:8px;font-weight:bold;">✓</span> Гибкая настройка: пропуск и замена в 1 клик</li>
-                    </ul>
-                </div>
+<!-- ═══════════════ СРАВНЕНИЕ ═══════════════ -->
+<section class="section section--dark" id="comparison">
+    <div class="grain"></div>
+    <div class="container">
+        <div class="section__header">
+            <span class="label on-dark">Почему подписка</span>
+            <h2 class="section__title text-white" style="margin-top:12px;">Разовая покупка<br>или <em>TSOK BOX?</em></h2>
+        </div>
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Разовая покупка</th>
+                    <th class="col-box">TSOK BOX</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Цена</td><td>Базовая</td><td class="col-box">−15% / −25%</td></tr>
+                <tr><td>Доставка</td><td>Платная</td><td class="col-box">Бесплатно от 3 товаров</td></tr>
+                <tr><td>Подарок внутри</td><td>—</td><td class="col-box">От 500 BYN</td></tr>
+                <tr><td>Гибкость состава</td><td>Каждый раз заново</td><td class="col-box">Меняй в один клик</td></tr>
+                <tr><td>Нужно помнить о заказе</td><td>Да</td><td class="col-box">Привозим сами</td></tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<!-- ═══════════════ ГОТОВЫЕ БОКСЫ ═══════════════ -->
+<section class="section section--cream section--bordered-top" id="ready-boxes">
+    <div class="container">
+        <div class="section__header">
+            <span class="label">Не хотите собирать сами?</span>
+            <h2 class="section__title" style="margin-top:12px;">Готовые боксы<br><em>на месяц</em></h2>
+        </div>
+        <div class="ready-boxes-grid">
+            <div class="ready-box ready-box--pearl">
+                <span class="ready-box__tag">Pearl by Tais</span>
+                <h3 class="ready-box__title">Женский ритуал</h3>
+                <p class="ready-box__desc">Тоник-реставратор, увлажняющая пенка, тоник для волос и мицеллярная вода — полный уход для неё.</p>
+                <button class="btn btn--dark" onclick="loadReadyBox('pearl')">Добавить этот бокс</button>
+            </div>
+            <div class="ready-box ready-box--homme">
+                <span class="ready-box__tag">INTELEGENTOFF</span>
+                <h3 class="ready-box__title">Мужской ритуал</h3>
+                <p class="ready-box__desc">Очищение, увлажнение и масло для бороды — концентрированный уход без компромиссов для него.</p>
+                <button class="btn btn--accent" onclick="loadReadyBox('homme')">Добавить этот бокс</button>
             </div>
         </div>
-        <style>@media(max-width:768px){#comparison>div>div:last-child{grid-template-columns:1fr!important;}}</style>
-    </section>
+    </div>
+</section>
 
-    <!-- ═════ PRE-BUILT BOXES ═════ -->
-    <section style="padding:var(--section-y) var(--pad-x);background:var(--color-off-white);border-bottom:1px solid var(--color-fem-border);" id="ready-boxes">
-        <div style="max-width:1400px;margin:0 auto;">
-            <div class="anim-fade-up" style="text-align:center;margin-bottom:64px;">
-                <span class="label">Собрали за вас</span>
-                <h2 class="section__title" style="margin-top:12px;">Готовые боксы<br><em>на месяц</em></h2>
-                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.7;">Взяли самое нужное для полного ритуала. Добавь в подписку одним кликом — или собери свой в конструкторе.</p>
+<!-- ═══════════════ КОНСТРУКТОР ═══════════════ -->
+<section class="constructor-section" id="constructor">
+    <div class="container">
+        <div class="section__header">
+            <span class="label">Собери сам</span>
+            <h2 class="section__title" style="margin-top:12px;">Конструктор<br><em>бокса</em></h2>
+        </div>
+
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin:32px 0 0;" id="boxFilters">
+            <button onclick="filterBox('all')" id="boxFilterAll" style="padding:9px 20px;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--ink);background:var(--ink);color:white;cursor:pointer;border-radius:var(--r);transition:all .22s;">Все</button>
+            <button onclick="filterBox('face')" id="boxFilterFace" style="padding:9px 20px;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;border-radius:var(--r);transition:all .22s;">Лицо Pearl</button>
+            <button onclick="filterBox('hair')" id="boxFilterHair" style="padding:9px 20px;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);background:transparent;color:var(--muted);cursor:pointer;border-radius:var(--r);transition:all .22s;">Волосы Pearl</button>
+            <button onclick="filterBox('homme')" id="boxFilterHomme" style="padding:9px 20px;font-size:11px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;border:1px solid rgba(255,255,255,.15);background:#0e0d08;color:rgba(255,255,255,.6);cursor:pointer;border-radius:var(--r);transition:all .22s;">INTELEGENTOFF</button>
+        </div>
+
+        <div class="constructor-layout">
+            <div>
+                <div class="constructor-products" id="constructorProducts"></div>
             </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--color-fem-border);">
 
-                <!-- Pearl by Tais Box -->
-                <div style="background:white;padding:48px 40px;">
-                    <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;">
-                        <span style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--color-accent);">Pearl by Tais</span>
-                        <span style="background:var(--color-fem-text);color:white;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;">ХИТ</span>
+            <div class="constructor-panel">
+                <div class="progress-block">
+                    <div class="progress-head">
+                        <span class="progress-amount"><span id="progressAmount">0</span> / 5 товаров</span>
                     </div>
-                    <h3 style="font-family:var(--font-display);font-size:clamp(28px,3vw,42px);font-weight:400;line-height:1.05;margin-bottom:14px;">Ритуал<br><em>Жемчужины</em></h3>
-                    <p style="font-size:14px;font-weight:300;line-height:1.7;color:var(--color-fem-muted);margin-bottom:24px;">Полный утренний и вечерний уход: очищение, тонизирование, питание волос — 4 продукта на месяц.</p>
-                    <div style="display:flex;flex-direction:column;gap:0;margin-bottom:24px;border-top:1px solid var(--color-fem-border);">
-                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
-                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
-                            <div style="flex:1;font-size:13px;">Tonic Youth Restoring <span style="color:var(--color-fem-muted);">150 мл</span></div>
+                    <div class="progress-bar">
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-milestones">
+                        <div class="progress-milestone" id="milestone1">
+                            <div class="progress-milestone__icon">✓</div>
+                            <span>3 товара — бесплатная доставка</span>
                         </div>
-                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
-                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
-                            <div style="flex:1;font-size:13px;">Foam Mousse Moisture <span style="color:var(--color-fem-muted);">150 мл</span></div>
+                        <div class="progress-milestone" id="milestone2">
+                            <div class="progress-milestone__icon">🎁</div>
+                            <span>4 товара — подарок-сюрприз</span>
                         </div>
-                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--color-fem-border);">
-                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
-                            <div style="flex:1;font-size:13px;">Hair Tonic Radiance <span style="color:var(--color-fem-muted);">200 мл</span></div>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
-                            <div style="width:40px;height:50px;overflow:hidden;flex-shrink:0;background:var(--color-fem-card);"><img src="{{ url_for('static', filename='img/Pearl7.jpg') }}" style="width:100%;height:100%;object-fit:cover;"></div>
-                            <div style="flex:1;font-size:13px;">Micellar Water <span style="color:var(--color-fem-muted);">200 мл</span></div>
+                        <div class="progress-milestone" id="milestone3">
+                            <div class="progress-milestone__icon">★</div>
+                            <span>5 товаров — выбор VIP-подарка</span>
                         </div>
                     </div>
-                    <div style="margin-bottom:24px;padding-top:16px;border-top:1px solid var(--color-fem-border);">
-                        <span style="font-size:13px; font-weight:600; color:#2ecc71;">✓ Бесплатная доставка + Подарок разблокированы</span>
-                    </div>
-                    <button class="btn btn--dark" style="width:100%;" onclick="loadReadyBox('pearl')">
-                        Выбрать этот бокс
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
                 </div>
 
-                <!-- INTELEGENTOFF Box -->
-                <div style="background:#0e0b09;color:white;padding:48px 40px;position:relative;overflow:hidden;">
-                    <div style="position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;border:1px solid rgba(255,255,255,0.04);"></div>
-                    <div style="display:flex;align-items:center;gap:14px;margin-bottom:28px;">
-                        <span style="font-size:10px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--color-accent);">INTELEGENTOFF</span>
-                        <span style="background:var(--color-accent);color:white;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:3px 10px;">МУЖСКОЙ</span>
-                    </div>
-                    <h3 style="font-family:var(--font-brutal);font-size:clamp(28px,3vw,48px);line-height:0.88;margin-bottom:14px;color:white;letter-spacing:0.03em;">INTEL<span style="color:var(--color-accent);">.</span>BOX</h3>
-                    <p style="font-size:14px;font-weight:300;line-height:1.7;color:rgba(255,255,255,0.45);margin-bottom:24px;">Мужской ритуал: очищение, увлажнение, защита. 3 концентрированные формулы на месяц.</p>
-                    <div style="display:flex;flex-direction:column;margin-bottom:24px;border-top:1px solid rgba(255,255,255,0.08);">
-                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                            <div style="width:40px;height:50px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.25);">фото</div>
-                            <div style="flex:1;font-size:13px;color:rgba(255,255,255,0.8);">Face Wash Intense <span style="color:rgba(255,255,255,0.3);">150 мл</span></div>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                            <div style="width:40px;height:50px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.25);">фото</div>
-                            <div style="flex:1;font-size:13px;color:rgba(255,255,255,0.8);">Moisturizer Power <span style="color:rgba(255,255,255,0.3);">50 мл</span></div>
-                        </div>
-                        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;">
-                            <div style="width:40px;height:50px;background:rgba(255,255,255,0.06);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,0.25);">фото</div>
-                            <div style="flex:1;font-size:13px;color:rgba(255,255,255,0.8);">Beard Oil Brutal <span style="color:rgba(255,255,255,0.3);">30 мл</span></div>
-                        </div>
-                    </div>
-                    <div style="margin-bottom:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);">
-                        <span style="font-size:13px; font-weight:600; color:#2ecc71;">✓ Бесплатная доставка курьером разблокирована</span>
-                    </div>
-                    <button class="btn btn--accent" style="width:100%;" onclick="loadReadyBox('homme')">
-                        Выбрать этот бокс
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
+                <div id="vipGiftSelection" style="display:none; margin-top:16px; padding:16px; border:1px solid var(--clay-deep); background:rgba(201,168,118,.06); border-radius:var(--r);">
+                    <div class="vip-gift-note">Выберите ваш VIP-подарок</div>
+                    <select id="vipGiftSelect" style="width:100%; padding:11px; border:1px solid var(--line); background:var(--paper); font-size:13px; outline:none; cursor:pointer; border-radius:var(--r); font-family:var(--font-body);">
+                        <option>Премиальный скраб для тела</option>
+                        <option>Набор тканевых масок</option>
+                        <option>Массажный роллер из кварца</option>
+                    </select>
                 </div>
+
+                <div class="sub-toggle">
+                    <div class="sub-toggle__options">
+                        <div class="sub-toggle__option" id="toggleOnce" onclick="setMode('once')">Разовая<br><span style="font-size:9px; opacity:.6; text-transform:none;">Базовая цена</span></div>
+                        <div class="sub-toggle__option is-active" id="toggleSub" onclick="setMode('sub')">Подписка ✦<br><span style="font-size:9px; color:var(--clay-deep); text-transform:none;">−15% в месяц</span></div>
+                        <div class="sub-toggle__option" id="toggleSplit" onclick="setMode('split')">Долями<br><span style="font-size:9px; color:var(--clay-deep); text-transform:none;">Год (−20%)</span></div>
+                    </div>
+                    <div class="sub-toggle__discount" id="subDiscount">Скидка 15% каждый месяц + управление в ЛК</div>
+                </div>
+
+                <div class="panel-line"><span>Товаров в боксе:</span><strong id="itemCount">0</strong></div>
+                <div class="panel-line"><span>Доставка:</span><strong id="deliveryLine"><span style="color:#c0392b;">Платная</span></strong></div>
+
+                <div class="panel-total">
+                    <span class="panel-total__label">Итого</span>
+                    <div id="totalPrice" style="text-align:right;"><span style="font-family:var(--font-display); font-size:28px;">0 BYN</span></div>
+                </div>
+
+                <p class="panel-warn" id="minWarn"></p>
+
+                <button class="btn btn--dark w-100" id="checkoutBtn" onclick="handleCheckout()" disabled style="opacity:.4;">Добавьте товары</button>
+
+                <button onclick="mockCancelSub()" style="display:block;width:100%;margin-top:14px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);background:none;border:none;cursor:pointer;text-decoration:underline;">Отменить подписку</button>
             </div>
         </div>
-        <style>@media(max-width:768px){#ready-boxes>div>div:nth-child(2){grid-template-columns:1fr!important;}}</style>
-    </section>
+    </div>
+</section>
 
-    <!-- ═════ CONSTRUCTOR ═════ -->
-    <section class="constructor-section" id="constructor">
-        <div style="max-width:1400px;margin:0 auto;">
-            <div class="anim-fade-up">
-                <span class="label">Умная сборка</span>
-                <h2 class="section__title" style="margin-top:12px;">Конструктор<br><em>бокса</em></h2>
-                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:520px;line-height:1.7;">Больше товаров — больше привилегий. От 3-х товаров доставка курьером за наш счет, от 5 — вы забираете премиум-подарок.</p>
+<!-- ═══════════════ FAQ ═══════════════ -->
+<section class="section section--light section--bordered-top" id="faq">
+    <div class="container">
+        <div class="section__header text-center" style="max-width:640px;margin:0 auto;">
+            <span class="label center">Частые вопросы</span>
+            <h2 class="section__title" style="margin-top:12px;">Всё о <em>TSOK BOX</em></h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                    Можно ли менять состав каждый месяц?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer"><div class="faq-answer__inner">Да. За 3 дня до отправки придёт напоминание — вы можете заменить любой продукт, добавить новый или убрать ненужный. Сумма следующего списания пересчитается автоматически.</div></div>
             </div>
-            
-            <div style="display:flex;gap:8px;flex-wrap:wrap;margin:32px 0 0;" id="boxFilters">
-                <button onclick="filterBox('all')" id="boxFilterAll" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--color-fem-text);background:var(--color-fem-text);color:white;cursor:pointer;transition:all 0.22s;">Все</button>
-                <button onclick="filterBox('face')" id="boxFilterFace" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--color-fem-border);background:transparent;color:var(--color-fem-muted);cursor:pointer;transition:all 0.22s;">Лицо Pearl</button>
-                <button onclick="filterBox('hair')" id="boxFilterHair" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid var(--color-fem-border);background:transparent;color:var(--color-fem-muted);cursor:pointer;transition:all 0.22s;">Волосы Pearl</button>
-                <button onclick="filterBox('homme')" id="boxFilterHomme" style="padding:8px 18px;font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;border:1px solid rgba(255,255,255,0.15);background:#0e0b09;color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.22s;">INTELEGENTOFF</button>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                    Что если я не успеваю израсходовать продукты?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer"><div class="faq-answer__inner">Просто пропустите месяц в один клик в личном кабинете. Никаких штрафов и обязательных списаний — подписка остаётся гибкой.</div></div>
             </div>
-
-            <div class="constructor-layout" style="margin-top:32px;">
-                <div>
-                    <div class="constructor-products" id="constructorProducts"></div>
-                </div>
-                <div class="constructor-panel">
-                    <div class="progress-section">
-                        <div class="progress-header">
-                            <span class="progress-label">Твой бокс</span>
-                            <span class="progress-amount"><span id="progressAmount">0</span> / 5 товаров</span>
-                        </div>
-                        <div class="progress-bar-wrap">
-                            <div class="progress-bar-fill" id="progressFill"></div>
-                        </div>
-                        <div class="progress-milestones">
-                            <div class="progress-milestone" id="milestone1">
-                                <div class="progress-milestone__icon">🚚</div>
-                                <div class="progress-milestone__text">
-                                    <div class="progress-milestone__title">Бесплатная доставка курьером</div>
-                                    <div class="progress-milestone__sub">Открывается от 3 товаров</div>
-                                </div>
-                                <div class="progress-milestone__check">✓</div>
-                            </div>
-                            <div class="progress-milestone" id="milestone2">
-                                <div class="progress-milestone__icon">🎁</div>
-                                <div class="progress-milestone__text">
-                                    <div class="progress-milestone__title">Сюрприз-подарок внутри</div>
-                                    <div class="progress-milestone__sub">Открывается от 4 товаров</div>
-                                </div>
-                                <div class="progress-milestone__check">✓</div>
-                            </div>
-                            <div class="progress-milestone" id="milestone3">
-                                <div class="progress-milestone__icon">👑</div>
-                                <div class="progress-milestone__text">
-                                    <div class="progress-milestone__title">VIP-подарок на твой выбор</div>
-                                    <div class="progress-milestone__sub">Открывается от 5 товаров</div>
-                                </div>
-                                <div class="progress-milestone__check">✓</div>
-                            </div>
-                        </div>
-
-                        <!-- VIP Gift Selector -->
-                        <div id="vipGiftSelection" style="display:none; margin-top: 16px; padding: 16px; border: 1px solid #c9956e; background: rgba(201,149,110,0.05);">
-                            <label style="font-size: 11px; font-weight: 600; text-transform: uppercase; color: var(--color-fem-text); margin-bottom: 8px; display: block;">👑 Выберите ваш VIP-подарок:</label>
-                            <select id="vipGiftSelect" style="width: 100%; padding: 10px; border: 1px solid var(--color-fem-border); background: var(--color-off-white); font-size: 13px; outline: none; cursor: pointer;">
-                                <option value="tonic">Tonic Youth Restoring (Полноразмерный) — Бесплатно</option>
-                                <option value="mousse">Foam Mousse Moisture (Полноразмерный) — Бесплатно</option>
-                                <option value="oil">Velvet Oil Blend (Полноразмерный) — Бесплатно</option>
-                            </select>
-                            <p style="font-size: 10px; color: var(--color-fem-muted); margin-top: 8px; line-height: 1.4;">Этот подарок будет добавляться в каждую коробку, пока в ней 5 и более товаров.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="sub-toggle">
-                        <div class="sub-toggle__options">
-                            <div class="sub-toggle__option" id="toggleOnce" onclick="setMode('once')">Разовая<br><span style="font-size:9px; opacity:0.6; text-transform:none;">Базовая цена</span></div>
-                            <div class="sub-toggle__option is-active" id="toggleSub" onclick="setMode('sub')">Подписка ✦<br><span style="font-size:9px; color:#c9956e; text-transform:none;">−15% в месяц</span></div>
-                            <div class="sub-toggle__option" id="toggleSplit" onclick="setMode('split')">Долями<br><span style="font-size:9px; color:#c9956e; text-transform:none;">Год (−20%)</span></div>
-                        </div>
-                        <div class="sub-toggle__discount" id="subDiscount">Скидка 15% каждый месяц + управление в ЛК</div>
-                    </div>
-
-                    <div class="panel-totals">
-                        <div class="panel-line"><span>Товаров в боксе:</span><strong id="itemCount">0</strong></div>
-                        <div class="panel-line"><span>Доставка:</span><strong id="deliveryLine" style="color:#c9956e;">Платная</strong></div>
-                        <div class="panel-line--total">
-                            <span class="label">Итого</span>
-                            <span class="price" id="totalPrice">0 BYN</span>
-                        </div>
-                    </div>
-
-                    <div class="demo-min-warn" id="minWarn">Добавьте еще товаров для оформления подписки (минимум 3)</div>
-                    
-                    <button class="btn btn--dark" style="width:100%;background:#c9956e;border-color:#c9956e;" id="checkoutBtn" onclick="handleCheckout()">
-                        Оформить бокс
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                    <p style="font-size:11px;text-align:center;color:var(--color-fem-muted);margin-top:12px;">Отмена — одним кликом, без звонков и штрафов</p>
-                </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                    Как работает скидка «Долями»?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer"><div class="faq-answer__inner">Формат «Долями» фиксирует цену на год со скидкой 20%, а оплата делится на равные части и списывается раз в месяц. Удобно, если хотите зафиксировать выгодную стоимость.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                    Какой подарок внутри коробки?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer"><div class="faq-answer__inner">От 4 товаров — приятный сюрприз от бренда. От 5 товаров вы сами выбираете полноразмерный VIP-подарок: скраб, набор масок или кварцевый роллер.</div></div>
+            </div>
+            <div class="faq-item">
+                <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
+                    Можно ли совмещать Pearl by Tais и INTELEGENTOFF в одном боксе?
+                    <span class="faq-icon">+</span>
+                </button>
+                <div class="faq-answer"><div class="faq-answer__inner">Конечно. TSOK BOX — это единая подписка бутика. Добавляйте в один бокс продукты обоих брендов: например, женский уход и средства для бороды для пары.</div></div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
-    <!-- ═════ CABINET ═════ -->
-    <section class="cabinet-section" id="cabinet">
-        <div style="max-width:1400px;margin:0 auto;">
-            <div class="anim-fade-up">
-                <span class="label">Личный кабинет</span>
-                <h2 class="section__title" style="margin-top:12px;">Гибкая<br><em>рутина</em></h2>
-                <p style="font-size:15px;font-weight:300;color:var(--color-fem-muted);margin-top:16px;max-width:520px;line-height:1.7;">Полный контроль над подпиской — как Apple Settings, только для твоей кожи.</p>
-            </div>
-            <div class="cabinet-grid">
-                <div class="cabinet-card">
-                    <div class="cabinet-card__icon">📅</div>
-                    <h3 class="cabinet-card__title">Дашборд подписки</h3>
-                    <p class="cabinet-card__desc">Видна дата следующей отправки, состав коробки и сумма автосписания. Всё в одном экране — как на главной Apple Watch.</p>
-                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;" onclick="alert('Доступно после оформления подписки')">Перейти в кабинет</button>
-                </div>
-                <div class="cabinet-card">
-                    <div class="cabinet-card__icon">✏️</div>
-                    <h3 class="cabinet-card__title">Изменить состав</h3>
-                    <p class="cabinet-card__desc">Убери пенку, добавь шампунь — система мгновенно пересчитает сумму следующего списания. Бокс не может быть меньше 3 продуктов.</p>
-                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;" onclick="alert('Доступно после оформления подписки')">Изменить бокс</button>
-                </div>
-                <div class="cabinet-card">
-                    <div class="cabinet-card__icon">⏸️</div>
-                    <h3 class="cabinet-card__title">Пропустить месяц</h3>
-                    <p class="cabinet-card__desc">Дата списания и отправки сдвигается на +30 дней. Без штрафов, без вопросов — одна кнопка. Используй, если продукты ещё не закончились.</p>
-                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;" onclick="alert('Доступно после оформления подписки')">Пропустить</button>
-                </div>
-                <div class="cabinet-card cabinet-card--cancel">
-                    <div class="cabinet-card__icon">🔓</div>
-                    <h3 class="cabinet-card__title">Отменить подписку</h3>
-                    <p class="cabinet-card__desc">Кнопка на видном месте — потому что мы верим: если отмену легко найти, ты меньше боишься подписываться. Отмена без звонков и ожиданий.</p>
-                    <button class="btn btn--outline-dark" style="font-size:11px;padding:12px 24px;border-color:rgba(44,35,32,0.2);" onclick="mockCancelSub()">Отменить</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ═════ NOTIFY ═════ -->
-    <section class="notify-section">
-        <div style="max-width:1400px;margin:0 auto;">
-            <div class="anim-fade-up">
-                <span class="label" style="color:rgba(255,255,255,0.4);">Умные уведомления</span>
-                <h2 class="section__title" style="margin-top:12px;color:white;">За 3 дня до<br><em style="color:#c9956e;">отправки</em></h2>
-                <p style="font-size:15px;font-weight:300;color:rgba(255,255,255,0.5);margin-top:16px;max-width:520px;line-height:1.7;">Мы напомним тебе вовремя — и дадим возможность поменять бокс до того, как он уйдёт.</p>
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;margin-top:64px;">
-                <div>
-                    <div style="display:flex;flex-direction:column;gap:20px;margin-bottom:40px;">
-                        <div style="display:flex;gap:16px;align-items:flex-start;">
-                            <div style="width:40px;height:40px;border-radius:50%;background:rgba(201,149,110,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">📧</div>
-                            <div>
-                                <div style="font-size:14px;font-weight:500;color:white;margin-bottom:4px;">Email-уведомление</div>
-                                <div style="font-size:13px;font-weight:300;color:rgba(255,255,255,0.5);line-height:1.6;">Приходит за 3 дня до сборки бокса со ссылкой на редактирование</div>
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:16px;align-items:flex-start;">
-                            <div style="width:40px;height:40px;border-radius:50%;background:rgba(201,149,110,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">✈️</div>
-                            <div>
-                                <div style="font-size:14px;font-weight:500;color:white;margin-bottom:4px;">Telegram-бот</div>
-                                <div style="font-size:13px;font-weight:300;color:rgba(255,255,255,0.5);line-height:1.6;">Подключи бота — и получи уведомление прямо в мессенджер</div>
-                            </div>
-                        </div>
-                        <div style="display:flex;gap:16px;align-items:flex-start;">
-                            <div style="width:40px;height:40px;border-radius:50%;background:rgba(201,149,110,0.15);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;">⚙️</div>
-                            <div>
-                                <div style="font-size:14px;font-weight:500;color:white;margin-bottom:4px;">Ты управляешь</div>
-                                <div style="font-size:13px;font-weight:300;color:rgba(255,255,255,0.5);line-height:1.6;">Прямо из уведомления — заменить продукт, пропустить или подтвердить</div>
-                            </div>
-                        </div>
-                    </div>
-                    <a href="#constructor" class="btn btn--dark" style="background:#c9956e;border-color:#c9956e;">Собрать бокс сейчас</a>
-                </div>
-                <div class="notify-preview">
-                    <div class="notify-preview__from">
-                        <div class="notify-preview__avatar">T</div>
-                        <div>
-                            <div class="notify-preview__sender">TSOK BOX</div>
-                            <div style="font-size:11px;color:rgba(255,255,255,0.35);">tsok.shop</div>
-                        </div>
-                        <span class="notify-preview__time">за 3 дня</span>
-                    </div>
-                    <div class="notify-preview__body">
-                        Привет! 👋 Через <strong>3 дня</strong> мы собираем твой <strong>TSOK BOX</strong>.<br><br>
-                        Если умывалка ещё не закончилась — ты можешь заменить её на другой продукт или пропустить этот месяц.<br><br>
-                        Никаких штрафов, один клик.
-                    </div>
-                    <div class="notify-preview__actions">
-                        <button class="notify-btn">Изменить состав</button>
-                        <button class="notify-btn">Пропустить месяц</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <style>@media(max-width:1024px){.notify-section > div > div:last-child{grid-template-columns:1fr!important;} .notify-preview{margin-top:0;}}</style>
-    </section>
-
-    <!-- ═════ FAQ ═════ -->
-    <section class="faq-section">
-        <div style="max-width:1400px;margin:0 auto;">
-            <div class="anim-fade-up" style="text-align:center;">
-                <span class="label">Вопросы и ответы</span>
-                <h2 class="section__title" style="margin-top:12px;">Всё что<br><em>хочется знать</em></h2>
-            </div>
-            <div class="faq-list">
-                <div class="faq-item">
-                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
-                        Можно ли отменить подписку в любой момент?
-                        <span class="faq-btn__icon">+</span>
-                    </button>
-                    <div class="faq-answer"><div class="faq-answer__inner">Да, без условий и штрафов. Кнопка отмены находится на видном месте в личном кабинете — мы специально не прячем её. Если отменить за 24 часа до даты списания, текущий бокс уже не отправится.</div></div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
-                        Что будет если я пропущу месяц?
-                        <span class="faq-btn__icon">+</span>
-                    </button>
-                    <div class="faq-answer"><div class="faq-answer__inner">Дата следующего списания и отправки сдвинется ровно на +30 дней. Никаких удержаний, никаких вопросов. Можно пропускать неограниченное количество месяцев.</div></div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
-                        Как работает оплата "Долями"?
-                        <span class="faq-btn__icon">+</span>
-                    </button>
-                    <div class="faq-answer"><div class="faq-answer__inner">При выборе "Долями" (Яндекс.Сплит / Тинькофф Долями) вы фиксируете цену бокса на год вперед с максимальной скидкой (-20%). Сумма за год разбивается на комфортные равные платежи, которые вы платите банку каждый месяц, а бокс получаете регулярно. Выгодно и удобно.</div></div>
-                </div>
-                <div class="faq-item">
-                    <button class="faq-btn" aria-expanded="false" onclick="toggleFaq(this)">
-                        Как работает VIP Gift?
-                        <span class="faq-btn__icon">+</span>
-                    </button>
-                    <div class="faq-answer"><div class="faq-answer__inner">Если в вашем боксе 5 или более продуктов, в личном кабинете открывается поле выбора полноразмерного VIP-подарка. Вы сами решаете, какой продукт мы положим вам абсолютно бесплатно! Если вы не выбрали его до даты списания, мы положим рандомный продукт.</div></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ═════ FINAL CTA ═════ -->
-    <section style="padding:var(--section-y) var(--pad-x);background:var(--color-fem-text);color:white;text-align:center;">
-        <span style="font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Начни сегодня</span>
-        <h2 style="font-family:var(--font-display);font-size:clamp(48px,7vw,96px);font-weight:400;line-height:0.95;margin:20px 0 32px;color:white;">
-            Твоя рутина,<br><em>твои правила</em>
-        </h2>
-        <a href="#constructor" class="btn" style="background:#c9956e;border-color:#c9956e;color:white;font-size:13px;padding:18px 48px;">
-            Собрать TSOK BOX
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
-    </section>
-
-    <!-- Footer, Overlays, Mobile menu -->
-    <footer class="footer">
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
         <div class="footer__grid">
-            <div class="footer__logo-area">
-                <a href="index" class="footer__logo">цок-цок</a>
-                <div class="footer__brands" style="margin-top:16px;">
-                    <a href="catalog" class="footer__brand-link" style="color:rgba(255,255,255,0.8);">Pearl by Tais</a>
-                    <a href="catalog-homme" class="footer__brand-link">INTELEGENTOFF</a>
+            <div>
+                <a href="index" class="footer__logo">TSOK <span class="footer__logo-sub">boutique</span></a>
+                <span class="footer__tagline">Два бренда. Одна философия.</span>
+                <div class="footer__brand-links">
+                    <a href="catalog" class="footer__link">Pearl by Tais</a>
+                    <a href="catalog-homme" class="footer__link">INTELEGENTOFF</a>
+                    <a href="subscription" class="footer__link text-gold">TSOK BOX</a>
                 </div>
             </div>
-            <div><div class="footer__col-title">TSOK BOX</div><nav class="footer__nav"><a href="#constructor">Собрать бокс</a><a href="#cabinet">Личный кабинет</a><a href="#how">Как работает</a></nav></div>
-            <div><div class="footer__col-title">Каталог</div><nav class="footer__nav"><a href="catalog">Pearl by Tais</a><a href="catalog-homme">INTELEGENTOFF</a></nav></div>
-            <div><div class="footer__col-title">Помощь</div><nav class="footer__nav"><a href="#">FAQ</a><a href="#">Доставка</a><a href="#">Контакты</a></nav></div>
+            <div>
+                <div class="footer__col-title">Pearl by Tais</div>
+                <nav class="footer__nav">
+                    <a href="catalog">Все продукты</a>
+                    <a href="subscription">TSOK BOX</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">INTELEGENTOFF</div>
+                <nav class="footer__nav">
+                    <a href="catalog-homme">Все продукты</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">Бутик</div>
+                <nav class="footer__nav">
+                    <a href="index#our-story">О нас</a>
+                    <a href="#">Доставка</a>
+                    <a href="#faq">FAQ</a>
+                </nav>
+            </div>
         </div>
         <div class="footer__bottom">
-            <span class="footer__copy">© 2026 TSOK Boutique</span>
-            <div class="footer__legal"><a href="#">Политика конфиденциальности</a><a href="#">Оферта</a></div>
-        </div>
-    </footer>
-
-    <div class="global-overlay" id="globalOverlay"></div>
-    <div class="cart-drawer" id="cartDrawer">
-        <div class="cart-drawer__header"><h3>Корзина</h3><button class="close-btn" id="cartCloseBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-        <div class="cart-drawer__scroll"><div class="cart-drawer__body" id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div></div>
-        <div class="cart-drawer__footer"><div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div><a href="checkout" class="btn btn--dark">Оформить заказ</a></div>
-    </div>
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu__header">
-            <svg viewBox="0 0 180 50" xmlns="http://www.w3.org/2000/svg" style="height:34px;width:auto;">
-                <text x="90" y="24" font-family="'Cormorant Garamond',Georgia,serif" font-size="22" font-weight="400" letter-spacing="4" text-anchor="middle" fill="#2c2320">цок-цок</text>
-                <text x="90" y="42" font-family="'Cormorant Garamond',Georgia,serif" font-size="11" font-style="italic" letter-spacing="1.5" text-anchor="middle" fill="#8a7a72">Pearl by Tais</text>
-            </svg>
-            <button class="close-btn" id="mobileMenuClose"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-        </div>
-        <div class="mobile-menu__body">
-            <nav class="mobile-nav">
-                <a href="index">Главная</a>
-                <a href="catalog">Каталог Pearl by Tais</a>
-                <a href="subscription" style="color:var(--color-accent);">✦ TSOK BOX (подписка)</a>
-                <a href="catalog-homme">INTELEGENTOFF</a>
-            </nav>
+            <span>© 2026 TSOK Boutique</span>
+            <div class="footer__legal">
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Публичная оферта</a>
+            </div>
         </div>
     </div>
-    <div id="toastContainer" class="toast-container"></div>
+</footer>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    
-    <script>
-    // ════════════════════════════════════════════
-    //  JS: КОНСТРУКТОР БОКСА И РАСЧЕТ ПОДПИСОК
-    // ════════════════════════════════════════════
-    const PRODUCTS = [
-        { id:'pearl-01', name:'Foam Mousse Moisture',      size:'150 мл', price:96,  img:'img/Pearl1.jpg', cat:'face',  brand:'pearl' },
-        { id:'pearl-02', name:'Face Tonic Toning',         size:'150 мл', price:93,  img:'img/Pearl2.jpg', cat:'face',  brand:'pearl' },
-        { id:'pearl-03', name:'Tonic Youth Restoring',     size:'150 мл', price:93,  img:'img/Pearl3.jpg', cat:'face',  brand:'pearl' },
-        { id:'pearl-04', name:'Foam Mousse Cleansing',     size:'150 мл', price:96,  img:'img/Pearl4.jpg', cat:'face',  brand:'pearl' },
-        { id:'pearl-05', name:'Hair Tonic Radiance',       size:'200 мл', price:88,  img:'img/Pearl5.jpg', cat:'hair',  brand:'pearl' },
-        { id:'pearl-06', name:'Velvet Oil Blend',          size:'60 мл',  price:69,  img:'img/Pearl6.jpg', cat:'hair',  brand:'pearl' },
-        { id:'pearl-07', name:'Micellar Water Extract Mix',size:'200 мл', price:99,  img:'img/Pearl7.jpg', cat:'face',  brand:'pearl' },
-        { id:'homme-01', name:'Face Wash Intense',         size:'150 мл', price:110, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
-        { id:'homme-02', name:'Moisturizer Power',         size:'50 мл',  price:145, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
-        { id:'homme-03', name:'Beard Oil Brutal',          size:'30 мл',  price:120, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
-    ];
+<!-- ОВЕРЛЕИ -->
+<div class="global-overlay" id="globalOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header">
+        <h3 class="cart-drawer__title">Корзина</h3>
+        <button class="close-btn" id="cartCloseBtn" aria-label="Закрыть"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="cart-drawer__scroll">
+        <div id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div>
+    </div>
+    <div class="cart-drawer__footer">
+        <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div>
+        <a href="checkout" class="btn btn--dark w-100">Оформить заказ</a>
+    </div>
+</div>
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu__header">
+        <div class="logo-main"><span class="logo-main__title">TSOK</span></div>
+        <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть меню"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mobile-menu__body">
+        <nav class="mobile-nav">
+            <a href="index" class="mobile-nav__link">Главная</a>
+            <a href="catalog" class="mobile-nav__link">Pearl by Tais</a>
+            <a href="catalog-homme" class="mobile-nav__link">INTELEGENTOFF</a>
+            <a href="subscription" class="mobile-nav__link text-gold">TSOK BOX</a>
+        </nav>
+    </div>
+    <div class="mobile-menu__footer">
+        <div class="action-group-col">
+            <a href="catalog" class="btn btn--outline-dark w-100">Женская коллекция</a>
+            <a href="catalog-homme" class="btn btn--dark w-100">Мужская коллекция</a>
+        </div>
+    </div>
+</div>
+<div id="toastContainer" class="toast-container"></div>
 
-    // ── Состояние ──
-    let boxQty = {};
-    let mode = 'sub'; // 'once', 'sub', 'split'
-    let curFilter = 'all';
-    const MIN_ITEMS = 3;
-
-    // ── Фильтр ──
-    function filterBox(cat) {
-        curFilter = cat;
-        ['all','face','hair','homme'].forEach(c => {
-            const btn = document.getElementById('boxFilter' + c.charAt(0).toUpperCase() + c.slice(1));
-            if (!btn) return;
-            const isActive = c === cat;
-            if (c === 'homme') {
-                btn.style.background = isActive ? '#c9956e' : '#0e0b09';
-                btn.style.color = isActive ? 'white' : 'rgba(255,255,255,0.6)';
-                btn.style.borderColor = isActive ? '#c9956e' : 'rgba(255,255,255,0.15)';
-            } else {
-                btn.style.background = isActive ? 'var(--color-fem-text)' : 'transparent';
-                btn.style.color = isActive ? 'white' : 'var(--color-fem-muted)';
-                btn.style.borderColor = isActive ? 'var(--color-fem-text)' : 'var(--color-fem-border)';
-            }
-        });
-        renderConstructor();
-    }
-
-    // ── Готовые боксы ──
-    function loadReadyBox(type) {
-        boxQty = {};
-        if (type === 'pearl') {
-            boxQty['pearl-03'] = 1;
-            boxQty['pearl-01'] = 1;
-            boxQty['pearl-05'] = 1;
-            boxQty['pearl-07'] = 1;
-        } else if (type === 'homme') {
-            boxQty['homme-01'] = 1;
-            boxQty['homme-02'] = 1;
-            boxQty['homme-03'] = 1;
-        }
-        filterBox('all');
-        updatePanel();
-        document.getElementById('constructor').scrollIntoView({ behavior: 'smooth', block: 'start' });
-        setTimeout(() => showToast('Бокс добавлен — можешь изменить состав ниже', 'heart'), 600);
-    }
-
-    // ── Математика ──
-    function getCount() {
-        return Object.values(boxQty).reduce((s, q) => s + q, 0);
-    }
-    
-    function getBaseTotal() {
-        return PRODUCTS.reduce((sum, p) => sum + p.price * (boxQty[p.id] || 0), 0);
-    }
-
-    function getTotal() {
-        return PRODUCTS.reduce((sum, p) => {
-            let itemPrice = p.price;
-            if (mode === 'sub') itemPrice = Math.round(p.price * 0.85); // -15%
-            if (mode === 'split') itemPrice = Math.round(p.price * 0.80); // -20%
-            return sum + itemPrice * (boxQty[p.id] || 0);
-        }, 0);
-    }
-
-    function updatePanel() {
-        const count = getCount();
-        const total = getTotal();
-        const baseTotal = getBaseTotal();
-
-        // Прогресс-бар (макс 5)
-        const pct = Math.min(100, (count / 5) * 100);
-        document.getElementById('progressAmount').textContent = count;
-        document.getElementById('progressFill').style.width = pct + '%';
-        document.getElementById('itemCount').textContent = count;
-
-        // Майлстоуны
-        document.getElementById('milestone1').classList.toggle('is-unlocked', count >= 3);
-        document.getElementById('milestone2').classList.toggle('is-unlocked', count >= 4);
-        document.getElementById('milestone3').classList.toggle('is-unlocked', count >= 5);
-
-        // VIP Выбор подарка
-        const vipGiftDiv = document.getElementById('vipGiftSelection');
-        if (count >= 5 && mode !== 'once') {
-            vipGiftDiv.style.display = 'block';
-        } else {
-            vipGiftDiv.style.display = 'none';
-        }
-
-        // Доставка
-        document.getElementById('deliveryLine').innerHTML =
-            count >= 3 && mode !== 'once' ? '🚚 <span style="color:#2ecc71;">Бесплатно</span>' : '<span style="color:#c0392b;">Платная</span>';
-
-        // Итого сумма
-        let totalHtml = `<span style="font-family:var(--font-display); font-size: 28px;">${total} BYN</span>`;
-        if (mode === 'split') {
-            totalHtml = `<span style="font-size:14px;font-weight:400;color:var(--color-fem-muted);text-decoration:line-through;margin-right:8px;">${baseTotal}</span><span style="font-family:var(--font-display); font-size: 28px;">${total} BYN</span><br><span style="font-size:12px;color:#c9956e;font-weight:400;">в месяц (Долями на 1 год)</span>`;
-        } else if (mode === 'sub') {
-            totalHtml = `<span style="font-size:14px;font-weight:400;color:var(--color-fem-muted);text-decoration:line-through;margin-right:8px;">${baseTotal}</span><span style="font-family:var(--font-display); font-size: 28px;">${total} BYN</span>`;
-        }
-        document.getElementById('totalPrice').innerHTML = totalHtml;
-
-        // Блокировка кнопки
-        const btn = document.getElementById('checkoutBtn');
-        const warn = document.getElementById('minWarn');
-
-        if (mode !== 'once' && count > 0 && count < MIN_ITEMS) {
-            warn.textContent = `Добавьте еще ${MIN_ITEMS - count} товар(а) для активации подписки`;
-            warn.classList.add('is-visible');
-            btn.disabled = true;
-            btn.style.opacity = '0.4';
-            btn.innerHTML = 'Минимум 3 товара для подписки';
-        } else if (count === 0) {
-            warn.classList.remove('is-visible');
-            btn.disabled = true;
-            btn.style.opacity = '0.4';
-            btn.innerHTML = 'Добавьте товары';
-        } else {
-            warn.classList.remove('is-visible');
-            btn.disabled = false;
-            btn.style.opacity = '1';
-            btn.innerHTML = mode === 'split' ? 'Оформить Долями <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' : 'Оформить бокс <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
-        }
-    }
-
-    function setQty(id, delta) {
-        const next = Math.max(0, (boxQty[id] || 0) + delta);
-        boxQty[id] = next;
-        const row = document.querySelector('[data-product-id="' + id + '"]');
-        if (row) {
-            row.querySelector('.qty-val').textContent = next;
-            row.querySelector('.qty-minus').disabled = next === 0;
-        }
-        updatePanel();
-    }
-
-    function setMode(m) {
-        mode = m;
-        document.getElementById('toggleOnce').classList.toggle('is-active', m === 'once');
-        document.getElementById('toggleSub').classList.toggle('is-active', m === 'sub');
-        document.getElementById('toggleSplit').classList.toggle('is-active', m === 'split');
-        
-        const discText = document.getElementById('subDiscount');
-        if(m === 'once') discText.innerHTML = '<span style="color:var(--color-fem-muted);">Базовая цена. Платная доставка. Без подарков.</span>';
-        else if(m === 'sub') discText.textContent = 'Скидка 15% каждый месяц + управление в ЛК';
-        else if(m === 'split') discText.textContent = 'Фиксация цены на год (-20%). Оплата частями раз в месяц.';
-
-        renderConstructor(); // Перерисовываем, чтобы обновить цены в карточках
-    }
-
-    function handleCheckout() {
-        const count = getCount();
-        const total = getTotal();
-        
-        if (count === 0) return;
-        if (mode !== 'once' && count < MIN_ITEMS) return;
-
-        let giftInfo = '';
-        if (mode !== 'once') {
-            if (count >= 5) {
-                const giftSelect = document.getElementById('vipGiftSelect');
-                giftInfo = '\n🎁 VIP Подарок: ' + giftSelect.options[giftSelect.selectedIndex].text;
-            } else if (count >= 4) {
-                giftInfo = '\n🎁 Подарок: Сюрприз от бренда!';
-            }
-        }
-
-        const items = PRODUCTS.filter(p => boxQty[p.id] > 0).map(p => p.name + ' x' + boxQty[p.id]).join('\n- ');
-        const modeText = mode === 'once' ? 'Разовая покупка' : (mode === 'split' ? 'Годовая подписка (Оплата Долями)' : 'Гибкая Подписка (-15%)');
-
-        alert(`✅ Создание заказа!\n\nФормат: ${modeText}\n\nСостав бокса:\n- ${items}${giftInfo}\n\nСумма: ${total} BYN${mode === 'split' ? ' / ежемесячно' : ''}\n\nДалее произойдет интеграция с ЮKassa (рекуррент) или BNPL (Долями) и СДЭК API.`);
-    }
-
-    // ── Мок отмены с удержанием ──
-    function mockCancelSub() {
-        if (confirm('Уверены, что хотите отменить подписку?\n\nОСТАНЬТЕСЬ С НАМИ, и в следующем месяце мы положим в ваш бокс ПРЕМИУМ-СКРАБ абсолютно бесплатно! 🎁\n\nНажмите Отмена, чтобы забрать подарок и остаться.')) {
-            alert('Подписка отменена. Возвращайтесь!');
-        } else {
-            alert('Отличный выбор! Скраб добавлен в ваш следующий бокс.');
-        }
-    }
-
-    // ── Рендер ──
-    function renderConstructor() {
-        const container = document.getElementById('constructorProducts');
-        const filtered = curFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p =>
-            curFilter === 'homme' ? p.brand === 'homme' : p.cat === curFilter
-        );
-        container.innerHTML = filtered.map(p => {
-            const isHomme = p.brand === 'homme';
-            const bg = isHomme ? 'background:#0e0b09;' : '';
-            const textColor = isHomme ? 'color:rgba(255,255,255,0.85);' : '';
-            const metaColor = isHomme ? 'color:rgba(255,255,255,0.35);' : '';
-            const brandTag = isHomme
-                ? '<span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-accent);font-weight:700;">INTELEGENTOFF</span>'
-                : '<span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-accent);font-weight:700;">Pearl by Tais</span>';
-            
-            let itemPrice = p.price;
-            if (mode === 'sub') itemPrice = Math.round(p.price * 0.85);
-            if (mode === 'split') itemPrice = Math.round(p.price * 0.80);
-
-            return `<div class="constructor-product" data-product-id="${p.id}" style="${bg}">
-                <div class="constructor-product__img"><img src="${p.img}" alt="${p.name}" onerror="this.parentElement.style.background='${isHomme ? '#1a1714' : '#f0ebe4'}';this.style.display='none';"></div>
-                <div class="constructor-product__info">${brandTag}
-                    <div class="constructor-product__name" style="${textColor}">${p.name}</div>
-                    <div class="constructor-product__meta" style="${metaColor}">${p.size}</div>
-                </div>
-                <div class="constructor-product__price" style="${textColor}">${itemPrice} BYN</div>
-                <div class="constructor-product__qty">
-                    <button class="qty-minus" onclick="setQty('${p.id}', -1)" disabled>−</button>
-                    <span class="qty-val">${boxQty[p.id] || 0}</span>
-                    <button onclick="setQty('${p.id}', 1)">+</button>
-                </div>
-            </div>`;
-        }).join('');
-        
-        // Восстановление счетчиков
-        filtered.forEach(p => {
-            if (boxQty[p.id] > 0) {
-                const row = document.querySelector(`[data-product-id="${p.id}"]`);
-                if (row) {
-                    row.querySelector('.qty-val').textContent = boxQty[p.id];
-                    row.querySelector('.qty-minus').disabled = false;
-                }
-            }
-        });
-        updatePanel();
-    }
-
-    // ── FAQ ──
-    function toggleFaq(btn) {
-        const expanded = btn.getAttribute('aria-expanded') === 'true';
-        btn.setAttribute('aria-expanded', !expanded);
-        btn.nextElementSibling.classList.toggle('is-open', !expanded);
-    }
-
-    // Инит
-    renderConstructor();
-    </script>
-</body>
-</html>
+<script src="{{ url_for('static', filename='script.js') }}"></script>

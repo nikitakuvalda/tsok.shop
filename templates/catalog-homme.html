@@ -2,657 +2,329 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>INTELEGENTOFF — Каталог | TSOK Boutique</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INTELEGENTOFF — Мужская коллекция · TSOK Boutique</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=DM+Sans:opsz,wght@9,300;9,400;9,500;9,600;9,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        body { background: var(--color-man-bg); color: var(--color-man-text); }
-
-        .homme-catalog-hero {
-            position: relative; overflow: hidden;
-            padding: calc(76px + 43px + 100px) var(--pad-x) 100px;
-            background: var(--color-man-bg);
-            border-bottom: 1px solid var(--color-dark-border);
-        }
-        .homme-catalog-hero__grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 80px; align-items: end;
-        }
-        @media (max-width: 1024px) { .homme-catalog-hero__grid { grid-template-columns: 1fr; gap: 48px; } }
-
-        .homme-catalog-hero__title {
-            font-family: var(--font-brutal);
-            font-size: clamp(72px, 12vw, 180px);
-            line-height: 0.82; letter-spacing: 0.02em;
-            color: var(--color-white);
-        }
-        .homme-catalog-hero__title .accent { color: var(--color-accent); }
-        .homme-catalog-hero__title .dim { color: rgba(255,255,255,0.12); }
-
-        /* Background text watermark */
-        .homme-catalog-hero__watermark {
-            position: absolute; top: 50%; right: -5%;
-            transform: translateY(-50%);
-            font-family: var(--font-brutal);
-            font-size: clamp(120px, 20vw, 280px);
-            line-height: 1; letter-spacing: 0.02em;
-            color: rgba(255,255,255,0.02);
-            pointer-events: none; user-select: none;
-            white-space: nowrap;
-        }
-
-        /* Dark toolbar */
-        .catalog-toolbar-dark {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px var(--pad-x);
-            border-bottom: 1px solid var(--color-dark-border);
-            background: var(--color-man-bg);
-            position: sticky; top: calc(76px + 43px); z-index: 50;
-        }
-        .catalog-count-dark {
-            font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
-            color: var(--color-man-muted);
-        }
-        .filter-btn-dark {
-            padding: 8px 20px;
-            font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-            border: 1px solid var(--color-dark-border); cursor: pointer;
-            transition: all 0.25s; color: var(--color-man-muted);
-            background: transparent; font-family: var(--font-body);
-        }
-        .filter-btn-dark:hover, .filter-btn-dark.is-active {
-            background: var(--color-white); color: var(--color-black); border-color: var(--color-white);
-        }
-
-        /* Dark catalog layout */
-        .catalog-layout-dark {
-            display: grid; grid-template-columns: 220px 1fr;
-            border-top: 1px solid var(--color-dark-border);
-        }
-        .catalog-sidebar-dark {
-            padding: 40px 28px;
-            border-right: 1px solid var(--color-dark-border);
-            position: sticky; top: calc(76px + 43px + 61px); height: fit-content;
-        }
-        .sidebar-section-dark { margin-bottom: 40px; }
-        .sidebar-title-dark {
-            font-size: 10px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
-            margin-bottom: 20px; color: rgba(255,255,255,0.25);
-        }
-        .sidebar-filter-dark { display: flex; flex-direction: column; gap: 12px; }
-        .sidebar-filter-dark label {
-            display: flex; align-items: center; gap: 10px;
-            font-size: 13px; font-weight: 300; cursor: pointer; color: var(--color-man-muted);
-            transition: color 0.2s;
-        }
-        .sidebar-filter-dark label:hover { color: var(--color-white); }
-        .sidebar-filter-dark input[type=checkbox] { accent-color: var(--color-accent); cursor: pointer; }
-        @media (max-width: 1024px) {
-            .catalog-layout-dark { grid-template-columns: 1fr; }
-            .catalog-sidebar-dark { display: none; }
-        }
-
-        /* Dark catalog grid */
-        .catalog-grid-dark {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 1px; background: var(--color-dark-border);
-        }
-        @media (max-width: 1200px) { .catalog-grid-dark { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 600px)  { .catalog-grid-dark { grid-template-columns: 1fr; } }
-
-        .product-card-homme {
-            background: var(--color-man-bg); color: var(--color-man-text);
-            display: flex; flex-direction: column; cursor: pointer;
-            position: relative; transition: background 0.3s;
-        }
-        .product-card-homme:hover { background: var(--color-man-card); }
-
-        .product-card-homme__image-wrap {
-            aspect-ratio: 1 / 1; overflow: hidden; position: relative;
-            background: var(--color-man-card);
-        }
-        .product-card-homme__placeholder {
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
-        }
-
-        /* Dark bottle shapes */
-        .dark-bottle {
-            display: flex; flex-direction: column; align-items: center;
-            position: relative;
-        }
-        .dark-bottle__cap {
-            background: rgba(0,136,255,0.25);
-            border: 1px solid rgba(0,136,255,0.4);
-        }
-        .dark-bottle__neck {
-            background: rgba(255,255,255,0.08);
-        }
-        .dark-bottle__body {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            position: relative; overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .dark-bottle__body::before {
-            content: ''; position: absolute;
-            top: 0; left: -100%;
-            width: 40%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
-            animation: bottle-shine 3s ease-in-out infinite;
-        }
-        @keyframes bottle-shine {
-            0% { left: -100%; }
-            100% { left: 200%; }
-        }
-        .dark-bottle__label {
-            font-family: var(--font-brutal);
-            font-size: 11px; letter-spacing: 0.3em;
-            color: rgba(255,255,255,0.2);
-        }
-
-        .product-card-homme__badge {
-            position: absolute; top: 16px; left: 16px; z-index: 2;
-            background: var(--color-accent); color: white;
-            font-size: 9px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
-            padding: 4px 10px;
-        }
-        .product-card-homme__bookmark {
-            position: absolute; top: 14px; right: 14px; z-index: 2;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.25s; color: rgba(255,255,255,0.4);
-        }
-        .product-card-homme__bookmark:hover { background: var(--color-accent); border-color: var(--color-accent); color: white; }
-
-        .product-card-homme__info {
-            padding: 24px 24px 22px;
-            border-top: 1px solid var(--color-dark-border);
-            display: flex; flex-direction: column; flex: 1;
-        }
-        .product-card-homme__brand {
-            font-size: 9px; font-weight: 600; letter-spacing: 0.25em; text-transform: uppercase;
-            color: var(--color-accent); margin-bottom: 8px; display: block;
-        }
-        .product-card-homme__title {
-            font-family: var(--font-brutal);
-            font-size: clamp(18px, 2vw, 26px); letter-spacing: 0.05em;
-            margin-bottom: 10px; line-height: 1.0;
-            color: var(--color-white);
-        }
-        .product-card-homme__desc {
-            font-size: 13px; font-weight: 300; line-height: 1.6;
-            color: var(--color-man-muted); margin-bottom: 20px; flex: 1;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-        }
-        .product-card-homme__footer {
-            display: flex; align-items: center; justify-content: space-between; gap: 12px;
-        }
-        .product-card-homme__price {
-            font-size: 16px; font-weight: 500; color: var(--color-white);
-        }
-        .product-card-homme__size {
-            font-size: 11px; color: var(--color-man-muted); display: block; margin-bottom: 4px;
-        }
-
-        /* CTA promo in grid */
-        .homme-promo-insert {
-            grid-column: span 3;
-            background: var(--color-accent);
-            color: var(--color-white);
-            padding: 60px var(--pad-x);
-            display: flex; justify-content: space-between; align-items: center; gap: 40px;
-        }
-        .homme-promo-insert__text {
-            font-family: var(--font-brutal);
-            font-size: clamp(28px, 4vw, 56px); letter-spacing: 0.05em; line-height: 0.95;
-        }
-        @media (max-width: 768px) { .homme-promo-insert { grid-column: span 1; flex-direction: column; gap: 24px; } }
-
-        /* Manifesto section */
-        .manifesto-section {
-            background: var(--color-black);
-            padding: var(--section-y) var(--pad-x);
-            text-align: center;
-            border-top: 1px solid var(--color-dark-border);
-        }
-        .manifesto-text {
-            font-family: var(--font-brutal);
-            font-size: clamp(44px, 7vw, 110px);
-            line-height: 0.88; letter-spacing: 0.03em;
-            color: var(--color-white); max-width: 900px; margin: 0 auto;
-        }
-        .manifesto-text .accent { color: var(--color-accent); }
-        .manifesto-text .dim { color: rgba(255,255,255,0.12); }
-
-        /* Kit section */
-        .homme-kit-section {
-            display: grid; grid-template-columns: 1fr 1fr;
-            background: var(--color-man-card);
-            border-top: 1px solid var(--color-dark-border);
-        }
-        @media (max-width: 1024px) { .homme-kit-section { grid-template-columns: 1fr; } }
-        .homme-kit-section__visual {
-            background: var(--color-black);
-            min-height: 500px;
-            display: flex; align-items: center; justify-content: center;
-            gap: 32px; position: relative; overflow: hidden;
-        }
-        .homme-kit-section__visual::after {
-            content: 'KIT'; position: absolute;
-            font-family: var(--font-brutal); font-size: 200px;
-            color: rgba(0,136,255,0.04); letter-spacing: 0.1em;
-            pointer-events: none;
-        }
-        .homme-kit-section__content {
-            padding: max(60px, 8vw);
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .homme-kit-section__title {
-            font-family: var(--font-brutal);
-            font-size: clamp(36px, 5vw, 72px); letter-spacing: 0.04em; line-height: 0.9;
-            color: var(--color-white); margin-bottom: 28px;
-        }
-        .homme-kit-section__title .accent { color: var(--color-accent); }
-        .homme-kit-section__desc {
-            font-size: 15px; font-weight: 300; line-height: 1.75;
-            color: var(--color-man-muted); margin-bottom: 36px;
-        }
-        .homme-kit-section__price-row {
-            display: flex; align-items: center; gap: 20px; margin-bottom: 36px;
-        }
-        .homme-kit-section__price {
-            font-family: var(--font-brutal); font-size: 52px; color: var(--color-accent); line-height: 1;
-        }
-        .homme-kit-section__old {
-            font-size: 22px; color: var(--color-man-muted); text-decoration: line-through;
-        }
-        .homme-kit-section__badge {
-            background: var(--color-accent); color: white;
-            font-size: 11px; font-weight: 600; padding: 5px 14px; letter-spacing: 0.1em;
-        }
-
-        /* Dark footer */
-        .footer-homme { border-top: 1px solid var(--color-dark-border); }
+        .homme-page{background:var(--ink)}
+        .homme-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line-d-soft);border:1px solid var(--line-d-soft);margin-top:44px}
+        .homme-stat{background:var(--ink);padding:24px 20px;text-align:center}
+        .homme-stat__val{font-family:var(--font-display);font-size:34px;color:var(--clay);display:block;line-height:1;font-weight:500}
+        .homme-stat__lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-d);margin-top:8px;display:block}
+        .marquee-section.dark{background:var(--ink-deep);border-top:1px solid var(--line-d-soft);border-bottom:1px solid var(--line-d-soft)}
+        .catalog-count-dark{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-d)}
+        /* full-bleed маркетинговые карточки для PNG с готовым фоном */
+        .product-card-homme--marketing .product-card-homme__image-wrap{aspect-ratio:3/4}
+        .product-card-homme--marketing .product-card-homme__image-wrap img{object-fit:cover;object-position:center}
     </style>
 </head>
-<body>
+<body class="homme-page">
 
-    {% include "_header.html" %}
+{% include "_header.html" %}
+<div class="page-offset"></div>
 
-    <!-- CATALOG HERO -->
-    <div class="homme-catalog-hero">
-        <div class="homme-catalog-hero__watermark">INTEL</div>
-        <div class="homme-catalog-hero__grid anim-fade-up">
-            <div>
-                <span class="label">Мужская коллекция</span>
-                <h1 class="homme-catalog-hero__title">
-                    INTEL<span class="accent">.</span><br>
-                    GENT<span class="dim">.</span><br>
-                    <span class="accent">OFF</span>
-                </h1>
-            </div>
-            <div>
-                <p style="font-size:16px;font-weight:300;line-height:1.8;color:var(--color-man-muted);margin-bottom:36px;">
-                    Брутальный уход для мужчин, которые не ищут объяснений. Концентрированные формулы, разработанные с учётом физиологии мужской кожи. Никаких компромиссов.
-                </p>
-                <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                    <a href="#catalog-main" class="btn btn--accent">Смотреть коллекцию</a>
-                    <a href="index" class="btn btn--ghost-white">О бренде</a>
-                </div>
-                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.06);margin-top:48px;">
-                    <div style="background:var(--color-man-bg);padding:24px 20px;text-align:center;">
-                        <span style="font-family:var(--font-brutal);font-size:36px;color:var(--color-accent);display:block;line-height:1;">72Ч</span>
-                        <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-man-muted);">Действие</span>
-                    </div>
-                    <div style="background:var(--color-man-bg);padding:24px 20px;text-align:center;">
-                        <span style="font-family:var(--font-brutal);font-size:36px;color:var(--color-accent);display:block;line-height:1;">0%</span>
-                        <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-man-muted);">Лишних добавок</span>
-                    </div>
-                    <div style="background:var(--color-man-bg);padding:24px 20px;text-align:center;">
-                        <span style="font-family:var(--font-brutal);font-size:36px;color:var(--color-accent);display:block;line-height:1;">5+</span>
-                        <span style="font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--color-man-muted);">Активных компонентов</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MARQUEE (dark) -->
-    <div class="marquee-section dark">
-        <div class="marquee-track">
-            <div class="marquee-item">INTELEGENTOFF <span class="dot"></span></div>
-            <div class="marquee-item">Без компромиссов <span class="dot"></span></div>
-            <div class="marquee-item">Концентрированные формулы <span class="dot"></span></div>
-            <div class="marquee-item">Мужская физиология <span class="dot"></span></div>
-            <div class="marquee-item">72 часа действия <span class="dot"></span></div>
-            <div class="marquee-item">Проверено клинически <span class="dot"></span></div>
-        </div>
-    </div>
-
-    <!-- TOOLBAR -->
-    <div class="catalog-toolbar-dark" id="catalog-main">
-        <span class="catalog-count-dark">10 продуктов</span>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="filter-btn-dark is-active" data-filter="all">Все</button>
-            <button class="filter-btn-dark" data-filter="face">Лицо</button>
-            <button class="filter-btn-dark" data-filter="body">Тело</button>
-            <button class="filter-btn-dark" data-filter="beard">Борода</button>
-            <button class="filter-btn-dark" data-filter="new">Новинки</button>
-        </div>
-        <div class="desktop-only" style="display:flex;align-items:center;gap:10px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-man-muted);">
-            Сортировка:
-            <select style="background:none;border:none;font-family:inherit;font-size:11px;letter-spacing:0.1em;color:var(--color-man-text);cursor:pointer;outline:none;">
-                <option>По популярности</option>
-                <option>Сначала дешевле</option>
-                <option>Сначала дороже</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- CATALOG LAYOUT -->
-    <div class="catalog-layout-dark">
-        <!-- Sidebar -->
-        <aside class="catalog-sidebar-dark">
-            <div class="sidebar-section-dark">
-                <div class="sidebar-title-dark">Категория</div>
-                <div class="sidebar-filter-dark">
-                    <label><input type="checkbox" checked> Уход за лицом</label>
-                    <label><input type="checkbox" checked> Тело</label>
-                    <label><input type="checkbox" checked> Борода</label>
-                    <label><input type="checkbox"> Наборы</label>
-                </div>
-            </div>
-            <div class="sidebar-section-dark">
-                <div class="sidebar-title-dark">Тип кожи</div>
-                <div class="sidebar-filter-dark">
-                    <label><input type="checkbox"> Жирная</label>
-                    <label><input type="checkbox"> Нормальная</label>
-                    <label><input type="checkbox"> Чувствительная</label>
-                    <label><input type="checkbox"> После бритья</label>
-                </div>
-            </div>
-            <div class="sidebar-section-dark">
-                <div class="sidebar-title-dark">Задача</div>
-                <div class="sidebar-filter-dark">
-                    <label><input type="checkbox"> Увлажнение</label>
-                    <label><input type="checkbox"> Очищение</label>
-                    <label><input type="checkbox"> Питание</label>
-                    <label><input type="checkbox"> Антиэйдж</label>
-                    <label><input type="checkbox"> После бритья</label>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Grid -->
+<!-- ═══════════════ HERO (dark) ═══════════════ -->
+<div class="homme-catalog-hero">
+    <div class="homme-catalog-hero__watermark">INTEL</div>
+    <div class="grain"></div>
+    <div class="homme-catalog-hero__grid anim-fade-up">
         <div>
-            <div class="catalog-grid-dark">
-
-                <!-- PRODUCT 1: Пенка -->
-                <div class="product-card-homme" data-category="face">
-                    <div class="product-card-homme__image-wrap">
-                        <img src="{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" alt="Face Wash" style="width: 100%; height: 100%; object-fit: cover;">
-                        <button class="product-card-homme__bookmark js-bookmark" data-id="homme-01" data-name="Face Wash Black">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        </button>
-                    </div>
-                    <div class="product-card-homme__info">
-                        <span class="product-card-homme__brand">INTELEGENTOFF</span>
-                        <h3 class="product-card-homme__title">FACE WASH BLACK</h3>
-                        <p class="product-card-homme__desc">Угольная пенка для умывания. Удаляет загрязнения на 99%, открывает поры и нормализует работу сальных желёз.</p>
-                        <div class="product-card-homme__footer">
-                            <div>
-                                <span class="product-card-homme__size">200 мл</span>
-                                <span class="product-card-homme__price">78 BYN</span>
-                            </div>
-                            <button class="btn btn--accent btn--add-card js-add-to-cart"
-                                data-id="homme-01" data-name="Face Wash Black" data-price="78" data-size="200 мл" data-brand="INTELEGENTOFF">+ В корзину</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PRODUCT 2: Тоник -->
-                <div class="product-card-homme" data-category="face">
-                    <div class="product-card-homme__image-wrap">
-                        <img src="{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" alt="Toner Control" style="width: 100%; height: 100%; object-fit: cover;">
-                        <div class="product-card-homme__badge">Хит</div>
-                        <button class="product-card-homme__bookmark js-bookmark" data-id="homme-02" data-name="Toner Control">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        </button>
-                    </div>
-                    <div class="product-card-homme__info">
-                        <span class="product-card-homme__brand">INTELEGENTOFF</span>
-                        <h3 class="product-card-homme__title">TONER CONTROL</h3>
-                        <p class="product-card-homme__desc">Тоник матирования. Контролирует жирность 12 часов, сужает поры, выравнивает рельеф кожи.</p>
-                        <div class="product-card-homme__footer">
-                            <div>
-                                <span class="product-card-homme__size">150 мл</span>
-                                <span class="product-card-homme__price">89 BYN</span>
-                            </div>
-                            <button class="btn btn--accent btn--add-card js-add-to-cart"
-                                data-id="homme-02" data-name="Toner Control" data-price="89" data-size="150 мл" data-brand="INTELEGENTOFF">+ В корзину</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PRODUCT 3: Масло для бороды -->
-                <div class="product-card-homme" data-category="beard">
-                    <div class="product-card-homme__image-wrap">
-                        <img src="{{ url_for('static', filename='img/INTELEGENT масло.png') }}" alt="Beard Oil" style="width: 100%; height: 100%; object-fit: cover;">
-                        <button class="product-card-homme__bookmark js-bookmark" data-id="homme-03" data-name="Beard Oil">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        </button>
-                    </div>
-                    <div class="product-card-homme__info">
-                        <span class="product-card-homme__brand">INTELEGENTOFF</span>
-                        <h3 class="product-card-homme__title">BEARD OIL DARK MATTER</h3>
-                        <p class="product-card-homme__desc">Масло для бороды. Питает волос изнутри, устраняет перхоть и зуд. Брутальный древесный аромат.</p>
-                        <div class="product-card-homme__footer">
-                            <div>
-                                <span class="product-card-homme__size">50 мл</span>
-                                <span class="product-card-homme__price">96 BYN</span>
-                            </div>
-                            <button class="btn btn--accent btn--add-card js-add-to-cart"
-                                data-id="homme-03" data-name="Beard Oil" data-price="96" data-size="50 мл" data-brand="INTELEGENTOFF">+ В корзину</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PRODUCT 4: Воск для бороды -->
-                <div class="product-card-homme" data-category="beard">
-                    <div class="product-card-homme__image-wrap">
-                        <img src="{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" alt="Beard Wax" style="width: 100%; height: 100%; object-fit: cover;">
-                        <button class="product-card-homme__bookmark js-bookmark" data-id="homme-04" data-name="Beard Wax">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        </button>
-                    </div>
-                    <div class="product-card-homme__info">
-                        <span class="product-card-homme__brand">INTELEGENTOFF</span>
-                        <h3 class="product-card-homme__title">BEARD WAX STRONG</h3>
-                        <p class="product-card-homme__desc">Воск для бороды. Экстремальная фиксация на весь день, дисциплинирует самые жесткие волосы.</p>
-                        <div class="product-card-homme__footer">
-                            <div>
-                                <span class="product-card-homme__size">50 мл</span>
-                                <span class="product-card-homme__price">82 BYN</span>
-                            </div>
-                            <button class="btn btn--accent btn--add-card js-add-to-cart"
-                                data-id="homme-04" data-name="Beard Wax" data-price="82" data-size="50 мл" data-brand="INTELEGENTOFF">+ В корзину</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PRODUCT 5: Сыворотка (белый фон) -->
-                <div class="product-card-homme" data-category="face">
-                    <div class="product-card-homme__image-wrap">
-                        <img src="{{ url_for('static', filename='img/prod-photo-1.jpg') }}" alt="Serum" style="width: 100%; height: 100%; object-fit: cover;">
-                        <button class="product-card-homme__bookmark js-bookmark" data-id="homme-05" data-name="Face Serum Black">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        </button>
-                    </div>
-                    <div class="product-card-homme__info">
-                        <span class="product-card-homme__brand">INTELEGENTOFF</span>
-                        <h3 class="product-card-homme__title">FACE SERUM BLACK</h3>
-                        <p class="product-card-homme__desc">Концентрированная сыворотка с пептидами. Ночное восстановление на клеточном уровне.</p>
-                        <div class="product-card-homme__footer">
-                            <div>
-                                <span class="product-card-homme__size">30 мл</span>
-                                <span class="product-card-homme__price">134 BYN</span>
-                            </div>
-                            <button class="btn btn--accent btn--add-card js-add-to-cart"
-                                data-id="homme-05" data-name="Face Serum Black" data-price="134" data-size="30 мл" data-brand="INTELEGENTOFF">+ В корзину</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- PRODUCT 6: Гель (белый фон) -->
-                <div class="product-card-homme" data-category="face">
-                    <div class="product-card-homme__image-wrap">
-                        <img src="{{ url_for('static', filename='img/prod-photo-2.jpg') }}" alt="After Shave" style="width: 100%; height: 100%; object-fit: cover;">
-                        <button class="product-card-homme__bookmark js-bookmark" data-id="homme-06" data-name="After Shave Balm">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                        </button>
-                    </div>
-                    <div class="product-card-homme__info">
-                        <span class="product-card-homme__brand">INTELEGENTOFF</span>
-                        <h3 class="product-card-homme__title">AFTER SHAVE RAW</h3>
-                        <p class="product-card-homme__desc">Бальзам после бритья с пантенолом. Мгновенно снимает раздражение, восстанавливает барьер.</p>
-                        <div class="product-card-homme__footer">
-                            <div>
-                                <span class="product-card-homme__size">100 мл</span>
-                                <span class="product-card-homme__price">82 BYN</span>
-                            </div>
-                            <button class="btn btn--accent btn--add-card js-add-to-cart"
-                                data-id="homme-06" data-name="After Shave Balm" data-price="82" data-size="100 мл" data-brand="INTELEGENTOFF">+ В корзину</button>
-                        </div>
-                    </div>
-                </div>
-
-            </div><!-- .catalog-grid-dark -->
+            <span class="label on-dark">Мужская коллекция</span>
+            <h1 class="homme-catalog-hero__title">
+                INTEL<span class="accent">.</span><br>
+                GENT<span class="dim">.</span><br>
+                <span class="accent">OFF</span>
+            </h1>
         </div>
-    </div><!-- .catalog-layout-dark -->
-
-    <!-- MANIFESTO -->
-    <section class="manifesto-section anim-fade-up">
-        <p class="manifesto-text">
-            УХОД — ЭТО<br>
-            НЕ <span class="dim">СЛАБОСТЬ</span>.<br>
-            ЭТО <span class="accent">СТРАТЕГИЯ</span>.
-        </p>
-    </section>
-
-    <!-- KIT SECTION -->
-    <section class="homme-kit-section" id="homme-kit">
-        <div class="homme-kit-section__visual anim-fade-up">
-            <div class="dark-bottle" style="transform:scale(1.1);">
-                <div class="dark-bottle__cap" style="width:32px;height:20px;border-radius:3px 3px 0 0;background:rgba(0,136,255,0.3);border-color:rgba(0,136,255,0.5);"></div>
-                <div class="dark-bottle__neck" style="width:22px;height:16px;"></div>
-                <div class="dark-bottle__body" style="width:68px;height:110px;border-radius:3px 3px 8px 8px;"><span class="dark-bottle__label">WASH</span></div>
-            </div>
-            <div class="dark-bottle">
-                <div class="dark-bottle__cap" style="width:26px;height:14px;border-radius:2px;"></div>
-                <div class="dark-bottle__neck" style="width:18px;height:18px;"></div>
-                <div class="dark-bottle__body" style="width:60px;height:120px;border-radius:3px 3px 6px 6px;"><span class="dark-bottle__label">TONER</span></div>
-            </div>
-            <div class="dark-bottle" style="transform:scale(0.9);">
-                <div class="dark-bottle__cap" style="width:62px;height:16px;border-radius:2px;"></div>
-                <div class="dark-bottle__body" style="width:88px;height:60px;border-radius:4px;"><span class="dark-bottle__label">MOISTURIZER</span></div>
-            </div>
-        </div>
-        <div class="homme-kit-section__content anim-fade-up anim-delay-1">
-            <span class="label">Специальный набор</span>
-            <h2 class="homme-kit-section__title">
-                STARTER<br><span class="accent">KIT</span>
-            </h2>
-            <p class="homme-kit-section__desc">
-                Три базовых продукта для полноценного ежедневного ухода: гель для умывания, тоник и крем-увлажнитель. Подобраны для максимальной совместимости и эффективности.
+        <div>
+            <p style="font-size:16px;font-weight:300;line-height:1.8;color:var(--text-d);margin-bottom:36px;max-width:440px;">
+                Брутальный уход для мужчин, которые не ищут объяснений. Концентрированные формулы, разработанные с учётом физиологии мужской кожи. Никаких компромиссов.
             </p>
-            <div class="homme-kit-section__price-row">
-                <span class="homme-kit-section__price">254 BYN</span>
-                <span class="homme-kit-section__old">284 BYN</span>
-                <span class="homme-kit-section__badge">-11%</span>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <a href="#catalog-main" class="btn btn--accent">Смотреть коллекцию</a>
+                <a href="index#homme-story" class="btn btn--outline-light">О бренде</a>
             </div>
-            <button class="btn btn--accent js-add-to-cart"
-                data-id="homme-kit-01" data-name="INTELEGENTOFF Starter Kit"
-                data-price="254" data-size="Набор 3 продукта" data-brand="INTELEGENTOFF"
-                style="max-width:300px;">
-                Добавить набор
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
+            <div class="homme-stat-row">
+                <div class="homme-stat"><span class="homme-stat__val">72Ч</span><span class="homme-stat__lbl">Действие</span></div>
+                <div class="homme-stat"><span class="homme-stat__val">0%</span><span class="homme-stat__lbl">Лишних добавок</span></div>
+                <div class="homme-stat"><span class="homme-stat__val">5+</span><span class="homme-stat__lbl">Активных компонентов</span></div>
+            </div>
         </div>
-    </section>
+    </div>
+</div>
 
-    <!-- FOOTER -->
-    <footer class="footer footer-homme">
-        <div class="footer__grid">
-            <div class="footer__logo-area">
-                <a href="index" class="footer__logo" style="font-family:var(--font-brutal);letter-spacing:0.1em;font-size:clamp(20px,2.5vw,28px);">INTELEGENTOFF</a>
-                <span class="footer__tagline">Брутальный уход без компромиссов</span>
-                <div class="footer__brands">
-                    <a href="catalog-homme" class="footer__brand-link" style="color:var(--color-white);">INTELEGENTOFF</a>
-                    <a href="catalog" class="footer__brand-link">Pearl by Tais</a>
-                </div>
-                <form class="subscribe-form" onsubmit="return false;"><input type="email" placeholder="Email для новостей"><button>→</button></form>
+<!-- MARQUEE (dark) -->
+<div class="marquee-section dark">
+    <div class="marquee-track">
+        <div class="marquee-item">INTELEGENTOFF <span class="dot"></span></div>
+        <div class="marquee-item">Без компромиссов <span class="dot"></span></div>
+        <div class="marquee-item">Концентрированные формулы <span class="dot"></span></div>
+        <div class="marquee-item">Мужская физиология <span class="dot"></span></div>
+        <div class="marquee-item">72 часа действия <span class="dot"></span></div>
+        <div class="marquee-item">Проверено клинически <span class="dot"></span></div>
+    </div>
+</div>
+
+<!-- TOOLBAR (dark) -->
+<div class="catalog-toolbar-dark" id="catalog-main">
+    <span class="catalog-count-dark">7 продуктов</span>
+    <div class="catalog-filters">
+        <button class="filter-btn-dark is-active" data-filter="all">Все</button>
+        <button class="filter-btn-dark" data-filter="face">Лицо</button>
+        <button class="filter-btn-dark" data-filter="beard">Борода</button>
+        <button class="filter-btn-dark" data-filter="kit">Наборы</button>
+    </div>
+</div>
+
+<!-- ═══════════════ GRID (dark) ═══════════════ -->
+<div class="catalog-grid-dark" id="catalogGridHomme">
+
+    <!-- homme-01 Face Wash Black -->
+    <div class="product-card-homme product-card-homme--marketing" data-category="face">
+        <div class="product-card-homme__image-wrap">
+            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" alt="Face Wash Black"
+                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-01" data-name="Face Wash Black"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <h3 class="product-card-homme__title">Face Wash Black</h3>
+            <p class="product-card-homme__desc">Глубокое очищение для мужской кожи. Удаляет излишки себума и загрязнения.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">200 мл</span><span class="product-card-homme__price">78 BYN</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-01" data-name="Face Wash Black" data-price="78" data-size="200 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT Пенка.png">+ В корзину</button>
             </div>
-            <div><div class="footer__col-title">Продукты</div><nav class="footer__nav"><a href="catalog-homme?category=face">Уход за лицом</a><a href="catalog-homme?category=body">Тело</a><a href="catalog-homme?category=beard">Борода</a><a href="#">Наборы</a></nav></div>
-            <div><div class="footer__col-title">Бренд</div><nav class="footer__nav"><a href="index">О TSOK</a><a href="#">Состав и философия</a><a href="#">Доставка</a><a href="#">FAQ</a></nav></div>
-            <div><div class="footer__col-title">Другие бренды</div><nav class="footer__nav"><a href="catalog">цок-цок</a><a href="catalog">Pearl by Tais</a><a href="index">Главная</a></nav></div>
+        </div>
+    </div>
+
+    <!-- homme-02 Toner Control -->
+    <div class="product-card-homme product-card-homme--marketing" data-category="face">
+        <div class="product-card-homme__image-wrap">
+            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" alt="Toner Control"
+                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-02" data-name="Toner Control"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <h3 class="product-card-homme__title">Toner Control</h3>
+            <p class="product-card-homme__desc">Тоник для контроля жирного блеска. Сужает поры и матирует кожу.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">150 мл</span><span class="product-card-homme__price">89 BYN</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-02" data-name="Toner Control" data-price="89" data-size="150 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT тоник.png">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- homme-03 Beard Oil -->
+    <div class="product-card-homme product-card-homme--marketing" data-category="beard">
+        <div class="product-card-homme__image-wrap">
+            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/INTELEGENT масло.png') }}" alt="Beard Oil"
+                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-03" data-name="Beard Oil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <h3 class="product-card-homme__title">Beard Oil</h3>
+            <p class="product-card-homme__desc">Масло для бороды. Смягчает жёсткий волос, питает кожу под бородой.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">50 мл</span><span class="product-card-homme__price">96 BYN</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-03" data-name="Beard Oil" data-price="96" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT масло.png">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- homme-04 Beard Wax -->
+    <div class="product-card-homme product-card-homme--marketing" data-category="beard">
+        <div class="product-card-homme__image-wrap">
+            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" alt="Beard Wax"
+                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-04" data-name="Beard Wax"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <h3 class="product-card-homme__title">Beard Wax</h3>
+            <p class="product-card-homme__desc">Воск для укладки бороды. Фиксация и матовый финиш на весь день.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">50 мл</span><span class="product-card-homme__price">82 BYN</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-04" data-name="Beard Wax" data-price="82" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT Воск.png">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- homme-05 Face Serum Black -->
+    <div class="product-card-homme" data-category="face">
+        <div class="product-card-homme__image-wrap">
+            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/prod-photo-1.jpg') }}" alt="Face Serum Black"
+                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
+            <div class="product-card-homme__badge">Хит</div>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-05" data-name="Face Serum Black"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <h3 class="product-card-homme__title">Face Serum Black</h3>
+            <p class="product-card-homme__desc">Концентрированная сыворотка для лица. Антивозрастной комплекс высокой концентрации.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">30 мл</span><span class="product-card-homme__price">134 BYN</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-05" data-name="Face Serum Black" data-price="134" data-size="30 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-1.jpg">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- homme-06 After Shave Balm -->
+    <div class="product-card-homme" data-category="face">
+        <div class="product-card-homme__image-wrap">
+            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/prod-photo-2.jpg') }}" alt="After Shave Balm"
+                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-06" data-name="After Shave Balm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <h3 class="product-card-homme__title">After Shave Balm</h3>
+            <p class="product-card-homme__desc">Бальзам после бритья. Успокаивает раздражение и восстанавливает кожу.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">100 мл</span><span class="product-card-homme__price">82 BYN</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-06" data-name="After Shave Balm" data-price="82" data-size="100 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-2.jpg">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- homme-kit-01 Starter Kit -->
+    <div class="product-card-homme" data-category="kit">
+        <div class="product-card-homme__image-wrap" style="background:linear-gradient(150deg,#16150F,#262E22);display:flex;align-items:center;justify-content:center;padding:40px;">
+            <img src="{{ url_for('static', filename='img/logoIntelegent.png') }}" alt="Starter Kit" style="width:70%;height:auto;object-fit:contain;"
+                onerror="this.style.display='none'">
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-kit-01" data-name="INTELEGENTOFF Starter Kit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <h3 class="product-card-homme__title">Starter Kit</h3>
+            <p class="product-card-homme__desc">Стартовый набор: 3 продукта для полного ритуала ухода. Выгоднее, чем по отдельности.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">Набор 3 продукта</span><span class="product-card-homme__price">254 BYN</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-kit-01" data-name="INTELEGENTOFF Starter Kit" data-price="254" data-size="Набор 3 продукта" data-brand="INTELEGENTOFF" data-img="img/logoIntelegent.png">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Перекрёстная ссылка на женскую линию -->
+<section class="section section--light section--bordered-top">
+    <div class="container" style="text-align:center;">
+        <span class="label center">Вторая линия</span>
+        <h2 class="section-title" style="margin-top:14px;">Ищете уход<br><em>для неё?</em></h2>
+        <p class="section-desc" style="margin:18px auto 30px;">Pearl by Tais — нежные формулы на натуральных гидролатах.</p>
+        <a href="catalog" class="btn btn--dark">Перейти в Pearl by Tais
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__grid">
+            <div>
+                <a href="index" class="footer__logo">TSOK <span class="footer__logo-sub">boutique</span></a>
+                <span class="footer__tagline">Два бренда. Одна философия.</span>
+                <div class="footer__brand-links">
+                    <a href="catalog" class="footer__link">Pearl by Tais</a>
+                    <a href="catalog-homme" class="footer__link">INTELEGENTOFF</a>
+                    <a href="subscription" class="footer__link text-gold">TSOK BOX</a>
+                </div>
+            </div>
+            <div>
+                <div class="footer__col-title">Pearl by Tais</div>
+                <nav class="footer__nav">
+                    <a href="catalog">Все продукты</a>
+                    <a href="catalog?category=face">Уход за лицом</a>
+                    <a href="catalog?category=hair">Волосы</a>
+                    <a href="subscription">TSOK BOX</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">INTELEGENTOFF</div>
+                <nav class="footer__nav">
+                    <a href="catalog-homme">Все продукты</a>
+                    <a href="catalog-homme?category=face">Лицо</a>
+                    <a href="catalog-homme?category=beard">Борода</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">Бутик</div>
+                <nav class="footer__nav">
+                    <a href="index#our-story">О нас</a>
+                    <a href="#">Доставка</a>
+                    <a href="#">FAQ</a>
+                    <a href="#">Контакты</a>
+                </nav>
+            </div>
         </div>
         <div class="footer__bottom">
-            <span class="footer__copy">© 2025 TSOK Boutique</span>
-            <div class="footer__legal"><a href="#">Политика конфиденциальности</a><a href="#">Оферта</a></div>
-        </div>
-    </footer>
-
-    <!-- OVERLAYS & DRAWERS -->
-    <div class="global-overlay" id="globalOverlay"></div>
-    <div class="cart-drawer" style="background:var(--color-man-bg);color:var(--color-man-text);" id="cartDrawer">
-        <div class="cart-drawer__header" style="border-color:var(--color-dark-border);">
-            <h3>Корзина</h3>
-            <button class="close-btn" id="cartCloseBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-        </div>
-        <div class="cart-drawer__scroll"><div class="cart-drawer__body" id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage" style="color:var(--color-man-muted);">Ваша корзина пуста</p></div></div>
-        <div class="cart-drawer__footer" style="border-color:var(--color-dark-border);background:var(--color-man-bg);">
-            <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div>
-            <a href="checkout" class="btn btn--accent">Оформить заказ</a>
+            <span>© 2026 TSOK Boutique</span>
+            <div class="footer__legal">
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Публичная оферта</a>
+            </div>
         </div>
     </div>
-    <div class="mobile-menu" style="background:var(--color-man-bg);color:var(--color-man-text);" id="mobileMenu">
-        <div class="mobile-menu__header" style="border-color:var(--color-dark-border);">
-            <span style="font-family:var(--font-brutal);font-size:20px;letter-spacing:0.15em;">INTELEGENTOFF</span>
-            <button class="close-btn" id="mobileMenuClose"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
-        </div>
-        <div class="mobile-menu__body">
-            <nav class="mobile-nav" style="border-color:var(--color-dark-border);">
-                <a href="index" style="border-color:var(--color-dark-border);">Главная</a>
-                <a href="catalog-homme" style="border-color:var(--color-dark-border);">INTELEGENTOFF</a>
-                <a href="catalog-homme?category=face" style="border-color:var(--color-dark-border);">Уход за лицом</a>
-                <a href="catalog-homme?category=beard" style="border-color:var(--color-dark-border);">Борода</a>
-                <a href="catalog-homme?category=body" style="border-color:var(--color-dark-border);">Тело</a>
-                <a href="catalog" style="border-color:var(--color-dark-border);">Pearl by Tais</a>
-            </nav>
+</footer>
+
+<!-- ОВЕРЛЕИ -->
+<div class="global-overlay" id="globalOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header">
+        <h3 class="cart-drawer__title">Корзина</h3>
+        <button class="close-btn" id="cartCloseBtn" aria-label="Закрыть"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="cart-drawer__scroll">
+        <div id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div>
+    </div>
+    <div class="cart-drawer__footer">
+        <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div>
+        <a href="checkout" class="btn btn--dark w-100">Оформить заказ</a>
+    </div>
+</div>
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu__header">
+        <div class="logo-main"><span class="logo-main__title">TSOK</span></div>
+        <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть меню"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mobile-menu__body">
+        <nav class="mobile-nav">
+            <a href="index" class="mobile-nav__link">Главная</a>
+            <a href="catalog" class="mobile-nav__link">Pearl by Tais</a>
+            <a href="catalog-homme" class="mobile-nav__link">INTELEGENTOFF</a>
+            <a href="subscription" class="mobile-nav__link text-gold">TSOK BOX</a>
+            <a href="index#our-story" class="mobile-nav__link">О бутике</a>
+        </nav>
+    </div>
+    <div class="mobile-menu__footer">
+        <div class="action-group-col">
+            <a href="catalog" class="btn btn--outline-dark w-100">Женская коллекция</a>
+            <a href="catalog-homme" class="btn btn--dark w-100">Мужская коллекция</a>
+            <a href="subscription" class="btn btn--gold w-100">TSOK BOX</a>
         </div>
     </div>
-    <div id="toastContainer" class="toast-container"></div>
+</div>
+<div id="toastContainer" class="toast-container"></div>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script>
-        // Dark filter buttons
-        document.querySelectorAll('.filter-btn-dark[data-filter]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn-dark').forEach(b => b.classList.remove('is-active'));
-                btn.classList.add('is-active');
-                const f = btn.dataset.filter;
-                document.querySelectorAll('.product-card-homme[data-category]').forEach(card => {
-                    card.style.display = (f === 'all' || card.dataset.category === f) ? '' : 'none';
-                });
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+    // Тёмные фильтры (собственная логика страницы)
+    document.querySelectorAll('.filter-btn-dark[data-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.filter-btn-dark').forEach(b => b.classList.remove('is-active'));
+            btn.classList.add('is-active');
+            const f = btn.dataset.filter;
+            document.querySelectorAll('.product-card-homme[data-category]').forEach(card => {
+                card.style.display = (f === 'all' || card.dataset.category === f) ? '' : 'none';
             });
         });
-    </script>
+    });
+</script>
 </body>
 </html>

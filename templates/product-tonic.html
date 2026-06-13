@@ -2,1582 +2,273 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="pageTitle">Pearl by Tais — TSOK Boutique</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Продукт · Pearl by Tais — TSOK Boutique</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=DM+Sans:opsz,wght@9,300;9,400;9,500;9,600;9,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        .product-page-wrapper { margin-top: 0; }
-
-        .product-sticky-bar {
-            position: fixed; top: var(--top-h); left: 0; width: 100%;
-            background: rgba(248,247,244,0.97); backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--color-fem-border);
-            z-index: 80;
-            padding: 12px var(--pad-x);
-            display: flex; justify-content: space-between; align-items: center;
-            transform: translateY(-100%);
-            transition: transform 0.4s var(--ease-smooth);
-        }
-        .product-sticky-bar.is-visible { transform: translateY(0); }
-        .product-sticky-bar__name { font-family: var(--font-display); font-size: 20px; font-weight: 400; font-style: italic; }
-        .product-sticky-bar__price { font-size: 16px; font-weight: 500; }
-        .product-sticky-bar__actions { display: flex; gap: 12px; }
-
-        .product-split {
-            display: grid; grid-template-columns: 55% 45%;
-            min-height: calc(100vh - var(--top-h));
-            border-top: 1px solid var(--color-fem-border);
-        }
-        @media (max-width: 1024px) { .product-split { grid-template-columns: 1fr; } }
-
-        .product-gallery-col { position: relative; background: var(--color-fem-card); }
-        .product-gallery-sticky {
-            position: sticky; top: var(--top-h);
-            height: calc(100vh - var(--top-h));
-            overflow: hidden;
-        }
-        .product-gallery-main {
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; cursor: zoom-in;
-        }
-        .product-gallery-main img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.6s var(--ease-out);
-        }
-        .product-gallery-main:hover img { transform: scale(1.04); }
-
-        .product-gallery-thumbs {
-            position: absolute; bottom: 32px; left: 50%;
-            transform: translateX(-50%);
-            display: flex; gap: 10px; z-index: 5;
-        }
-        .product-gallery-thumb {
-            width: 56px; height: 70px;
-            background: rgba(255,255,255,0.5);
-            border: 2px solid transparent;
-            overflow: hidden; cursor: pointer;
-            transition: border-color 0.2s;
-        }
-        .product-gallery-thumb.is-active { border-color: var(--color-accent); }
-        .product-gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-        @media (max-width: 1024px) {
-            .product-gallery-col { height: 70vw; min-height: 400px; }
-            .product-gallery-sticky { position: relative; top: 0; height: 100%; }
-        }
-
-        .product-details-col {
-            padding: 60px max(36px, 6vw) 100px;
-            border-left: 1px solid var(--color-fem-border);
-        }
-        @media (max-width: 1024px) {
-            .product-details-col { border-left: none; border-top: 1px solid var(--color-fem-border); padding: 48px var(--pad-x) 80px; }
-        }
-
-        .product-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
-        .stars { display: flex; gap: 3px; }
-        .star { color: var(--color-accent); font-size: 14px; }
-        .star.empty { color: var(--color-fem-border); }
-        .rating-count { font-size: 12px; color: var(--color-fem-muted); }
-
-        .product-qty {
-            display: flex; align-items: center;
-            border: 1px solid var(--color-fem-border);
-            width: fit-content; margin-bottom: 16px;
-        }
-        .product-qty button {
-            width: 44px; height: 44px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; transition: background 0.2s;
-        }
-        .product-qty button:hover { background: var(--color-fem-card); }
-        .product-qty span { width: 44px; text-align: center; font-size: 15px; font-weight: 500; }
-
-        .product-cta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
-
-        .trust-badges {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 1px; background: var(--color-fem-border);
-            border: 1px solid var(--color-fem-border);
-            margin-bottom: 40px;
-        }
-        .trust-badge {
-            background: var(--color-off-white);
-            padding: 18px 12px; text-align: center;
-        }
-        .trust-badge svg { color: var(--color-accent); margin-bottom: 8px; }
-        .trust-badge__text { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.4; }
-
-        .ingredient-card {
-            display: flex; gap: 16px; padding: 20px 0;
-            border-bottom: 1px solid var(--color-fem-border);
-        }
-        .ingredient-card:last-child { border-bottom: none; }
-        .ingredient-card__icon {
-            width: 44px; height: 44px; border-radius: 50%;
-            background: var(--color-fem-card);
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; font-size: 20px;
-        }
-        .ingredient-card__name { font-size: 13px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
-        .ingredient-card__desc { font-size: 13px; font-weight: 300; line-height: 1.6; color: var(--color-fem-muted); }
-
-        .reviews-section {
-            padding: var(--section-y) var(--pad-x);
-            background: var(--color-fem-card);
-            border-top: 1px solid var(--color-fem-border);
-        }
-        .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 60px; }
-        @media (max-width: 1024px) { .reviews-grid { grid-template-columns: 1fr; } }
-        .review-card { background: var(--color-off-white); padding: 32px; border: 1px solid var(--color-fem-border); }
-        .review-card__rating { display: flex; gap: 3px; margin-bottom: 16px; color: var(--color-accent); }
-        .review-card__text { font-size: 15px; font-weight: 300; line-height: 1.75; color: var(--color-fem-muted); margin-bottom: 20px; font-style: italic; }
-        .review-card__author { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-        .review-card__date { font-size: 11px; color: var(--color-fem-muted); margin-top: 4px; }
-
-        .related-section { padding: var(--section-y) var(--pad-x); border-top: 1px solid var(--color-fem-border); }
-
-        /* Beautiful product image gallery with zoom overlay */
-        .gallery-zoom-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.92); z-index: 999;
-            align-items: center; justify-content: center;
-            cursor: zoom-out;
-        }
-        .gallery-zoom-overlay.is-open { display: flex; }
-        .gallery-zoom-overlay img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+        .product-benefits{display:flex;flex-direction:column;gap:14px;margin-bottom:28px}
+        .product-benefit{display:flex;align-items:flex-start;gap:14px;font-size:13.5px;line-height:1.6;color:var(--ink-soft)}
+        .product-benefit__ico{width:34px;height:34px;border-radius:var(--r);background:var(--clay-pale);color:var(--clay-deep);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .product-benefit strong{display:block;font-weight:600;color:var(--ink);margin-bottom:2px}
+        .breadcrumbs{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:24px;display:flex;gap:8px;align-items:center}
+        .breadcrumbs a{color:var(--muted);transition:color .25s}
+        .breadcrumbs a:hover{color:var(--clay-deep)}
     </style>
 </head>
-<body>
+<body class="product-page-body">
 
-    <!-- ═══════════════════════════════════════════
-         SITE TOP — FIXED: promo bar + header
-         ═══════════════════════════════════════════ -->
-    {% include "_header.html" %}
+{% include "_header.html" %}
+<div class="page-offset"></div>
 
-    <!-- STICKY BAR -->
-    <div class="product-sticky-bar" id="productStickyBar">
-        <div style="display:flex;align-items:center;gap:20px;">
-            <span class="product-sticky-bar__name" id="prodStickyName">Pearl by Tais</span>
-            <span class="product-sticky-bar__price js-dyn-price"></span>
-        </div>
-        <div class="product-sticky-bar__actions">
-            <button class="btn btn--outline-dark js-bookmark" id="stickyBookmarkBtn" style="padding:10px 20px;font-size:11px;">Сохранить</button>
-            <button class="btn btn--dark js-add-to-cart" id="stickyCartBtn" style="padding:10px 24px;font-size:11px;">В корзину</button>
+<!-- Плавающая нижняя панель -->
+<div class="product-sticky-bar" id="productStickyBar">
+    <div class="product-sticky-bar__info">
+        <span class="product-sticky-bar__name" id="prodStickyName">Pearl by Tais</span>
+        <span class="product-sticky-bar__price js-dyn-price"></span>
+    </div>
+    <div class="product-sticky-bar__actions">
+        <button class="btn btn--outline-dark js-bookmark" id="stickyBookmarkBtn" style="padding:11px 20px;font-size:10px;">Сохранить</button>
+        <button class="btn btn--dark js-add-to-cart" id="stickyCartBtn" style="padding:11px 24px;font-size:10px;">В корзину</button>
+    </div>
+</div>
+
+<section class="product-page">
+    <div style="max-width:var(--maxw);margin:0 auto;">
+        <div class="breadcrumbs">
+            <a href="index">Главная</a> <span>/</span>
+            <a href="catalog">Pearl by Tais</a> <span>/</span>
+            <span id="prodStickyName2">Продукт</span>
         </div>
     </div>
 
-    <!-- PRODUCT PAGE -->
-    <div class="product-page-wrapper">
-
-        <!-- Breadcrumb -->
-        <div class="breadcrumb" style="padding: 20px var(--pad-x); border-bottom: 1px solid var(--color-fem-border);">
-            <a href="index">Главная</a><span>/</span>
-            <a href="catalog">Pearl by Tais</a><span>/</span>
-            <span id="breadcrumbCat" style="color:var(--color-fem-muted);"></span>
-            <span id="breadcrumbSep" style="color:var(--color-fem-muted);">/</span>
-            <span id="breadcrumbName" style="color:var(--color-fem-text);"></span>
-        </div>
-
-        <!-- Split product layout -->
-        <div class="product-split">
-
-            <!-- Gallery -->
-            <div class="product-gallery-col">
-                <div class="product-gallery-sticky">
-                    <div class="product-gallery-main" id="galleryMain">
-                        <img src="" id="prodMainImg" style="width:100%;height:100%;object-fit:cover;" alt="">
-                    </div>
-                    <div class="product-gallery-thumbs" id="galleryThumbs"></div>
-                </div>
+    <div class="product-layout">
+        <!-- Галерея -->
+        <div class="product-gallery">
+            <div class="product-gallery__main">
+                <img src="" id="prodMainImg" class="product-gallery__img" alt="">
             </div>
-
-            <!-- Details -->
-            <div class="product-details-col" id="productDetailsCol">
-                <span class="product-info__brand">Pearl by Tais</span>
-                <h1 class="product-info__title" id="prodMainTitle"></h1>
-
-                <div class="product-rating">
-                    <div class="stars" id="prodStars"></div>
-                    <span class="rating-count" id="prodRatingCount"></span>
+            <div class="product-gallery__thumbs">
+                <div class="product-gallery__thumb is-active">
+                    <img src="" id="prodThumbImg" alt="">
                 </div>
-
-                <p class="product-info__desc" id="prodMainDesc"></p>
-
-                <div class="product-meta-grid" id="prodMetaGrid"></div>
-
-                <!-- Qty + CTA -->
-                <div style="margin-bottom:24px;">
-                    <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-fem-muted);display:block;margin-bottom:10px;">Количество</span>
-                    <div class="product-qty">
-                        <button onclick="this.nextElementSibling.textContent=Math.max(1,+this.nextElementSibling.textContent-1)">−</button>
-                        <span id="qtyVal">1</span>
-                        <button onclick="this.previousElementSibling.textContent=+this.previousElementSibling.textContent+1">+</button>
-                    </div>
-                </div>
-
-                <div class="product-cta">
-                    <button class="btn btn--dark js-add-to-cart" id="mainCartBtn">
-                        Добавить в корзину
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6C8 4.9 8.9 4 10 4h4c1.1 0 2 .9 2 2v2"/></svg>
-                    </button>
-                    <button class="btn btn--outline-dark js-bookmark" id="mainBookmarkBtn">
-                        Сохранить в избранное
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                    </button>
-                </div>
-
-                <!-- Trust badges -->
-                <div class="trust-badges">
-                    <div class="trust-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="display:block;margin:0 auto 8px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <div class="trust-badge__text">Без парабенов</div>
-                    </div>
-                    <div class="trust-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="display:block;margin:0 auto 8px;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                        <div class="trust-badge__text">Доставка 1-3 дня</div>
-                    </div>
-                    <div class="trust-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="display:block;margin:0 auto 8px;"><polyline points="20 6 9 17 4 12"/></svg>
-                        <div class="trust-badge__text">Клинически проверено</div>
-                    </div>
-                </div>
-
-                <!-- Accordions -->
-                <div class="accordions" id="prodAccordions"></div>
-
             </div>
         </div>
 
-        <!-- REVIEWS SECTION -->
-        <section class="reviews-section" id="reviewsSection">
-            <div style="max-width:1400px;margin:0 auto;">
-                <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;" class="anim-fade-up">
-                    <div>
-                        <span class="label">Отзывы покупателей</span>
-                        <h2 class="section__title" id="reviewsTitle"></h2>
-                    </div>
-                    <div style="text-align:center;">
-                        <div id="reviewsScore" style="font-family:var(--font-brutal);font-size:72px;color:var(--color-accent);line-height:1;"></div>
-                        <div class="stars" style="justify-content:center;margin:8px 0;" id="reviewsStars"></div>
-                        <div style="font-size:12px;color:var(--color-fem-muted);">из 5 звёзд</div>
-                    </div>
+        <!-- Информация -->
+        <div class="product-info">
+            <span class="product-info__brand">Pearl by Tais</span>
+            <h1 class="product-info__title" id="prodMainTitle"></h1>
+
+            <div class="product-info__price-row">
+                <span class="product-info__price js-dyn-price"></span>
+            </div>
+
+            <p class="product-info__desc" id="prodMainDesc"></p>
+
+            <div class="product-meta-grid">
+                <div class="meta-block"><span>Объём</span><strong class="js-dyn-size"></strong></div>
+                <div class="meta-block"><span>Стоимость</span><strong class="js-dyn-price"></strong></div>
+            </div>
+
+            <div class="product-benefits">
+                <div class="product-benefit">
+                    <div class="product-benefit__ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l2.4 7.4H22l-6 4.5 2.3 7.1-6.3-4.6-6.3 4.6L8 13.9 2 9.4h7.6z"/></svg></div>
+                    <div><strong>Натуральные гидролаты</strong>Активная основа без агрессивных ПАВ и парабенов.</div>
                 </div>
-                <div class="reviews-grid" id="reviewsGrid"></div>
-                <div style="text-align:center;margin-top:48px;">
-                    <button class="btn btn--outline-dark" id="allReviewsBtn">Читать все отзывы</button>
+                <div class="product-benefit">
+                    <div class="product-benefit__ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></div>
+                    <div><strong>pH 5.5</strong>Физиологичный баланс — комфорт для кожи каждый день.</div>
+                </div>
+                <div class="product-benefit">
+                    <div class="product-benefit__ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+                    <div><strong>Дерматологический контроль</strong>Протестировано на чувствительной коже.</div>
                 </div>
             </div>
-        </section>
 
-        <!-- RELATED PRODUCTS -->
-        <section class="related-section" data-carousel>
-            <div class="section__header">
-                <div class="section__header-text">
-                    <span class="label">Дополни уход</span>
-                    <h2 class="section__title">С этим продуктом<br><em>берут</em></h2>
-                </div>
-                <div class="carousel-nav desktop-only">
-                    <button class="icon-btn" data-carousel-prev>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-                    </button>
-                    <button class="icon-btn" data-carousel-next>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
+            <div class="product-actions">
+                <button class="btn btn--dark js-add-to-cart" id="mainCartBtn">
+                    Добавить в корзину
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6a2 2 0 0 1 4 0v2"/></svg>
+                </button>
+                <button class="btn btn--outline-dark js-bookmark" id="mainBookmarkBtn">В избранное</button>
             </div>
-            <div class="carousel" id="relatedCarousel"></div>
-        </section>
 
-    </div><!-- .product-page-wrapper -->
-
-    <!-- ZOOM OVERLAY -->
-    <div class="gallery-zoom-overlay" id="zoomOverlay">
-        <img id="zoomImg" src="" alt="">
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer__grid">
-            <div class="footer__logo-area">
-                <a href="index" class="footer__logo">TSOK<em style="font-style:italic;font-weight:300;font-size:0.65em;opacity:0.5;"> boutique</em></a>
-                <span class="footer__tagline">Pearl by Tais — женская коллекция</span>
-                <div class="footer__brands">
-                    <a href="catalog" class="footer__brand-link" style="color:white;">цок-цок / Pearl by Tais</a>
-                    <a href="catalog-homme" class="footer__brand-link">INTELEGENTOFF</a>
-                </div>
-                <form class="subscribe-form" onsubmit="return false;"><input type="email" placeholder="Email для новостей"><button>→</button></form>
-            </div>
-            <div><div class="footer__col-title">Pearl by Tais</div><nav class="footer__nav"><a href="catalog?category=face">Уход за лицом</a><a href="catalog?category=body">Тело</a><a href="catalog?category=hair">Волосы</a><a href="#">Наборы</a></nav></div>
-            <div><div class="footer__col-title">Информация</div><nav class="footer__nav"><a href="index#our-story">О бренде</a><a href="#">Доставка</a><a href="#">FAQ</a><a href="#">Сертификаты</a></nav></div>
-            <div><div class="footer__col-title">Бутик</div><nav class="footer__nav"><a href="index">О TSOK</a><a href="catalog-homme">INTELEGENTOFF</a><a href="#">Контакты</a></nav></div>
-        </div>
-        <div class="footer__bottom">
-            <span class="footer__copy">© 2025 TSOK Boutique</span>
-            <div class="footer__legal"><a href="#">Политика конфиденциальности</a><a href="#">Оферта</a></div>
-        </div>
-    </footer>
-
-    <!-- OVERLAYS & DRAWERS -->
-    <div class="global-overlay" id="globalOverlay"></div>
-    <div class="cart-drawer" id="cartDrawer">
-        <div class="cart-drawer__header"><h3>Корзина</h3><button class="close-btn" id="cartCloseBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-        <div class="cart-drawer__scroll"><div class="cart-drawer__body" id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div></div>
-        <div class="cart-drawer__footer"><div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div><a href="checkout" class="btn btn--dark">Оформить заказ</a></div>
-    </div>
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu__header">
-            <svg viewBox="0 0 180 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:36px;width:auto;">
-                <text x="90" y="25" font-family="'Cormorant Garamond', Georgia, serif" font-size="24" font-weight="400" letter-spacing="5" text-anchor="middle" fill="#2c2320">цок-цок</text>
-                <text x="90" y="43" font-family="'Cormorant Garamond', Georgia, serif" font-size="11" font-style="italic" letter-spacing="1.5" text-anchor="middle" fill="#6b5e56">Pearl by Tais</text>
-            </svg>
-            <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-        </div>
-        <div class="mobile-menu__body">
-            <nav class="mobile-nav">
-                <a href="index">Главная</a>
-                <a href="catalog">Все продукты Pearl</a>
-                <a href="catalog?category=face">— Уход за лицом</a>
-                <a href="catalog?category=body">— Тело</a>
-                <a href="catalog?category=hair">— Волосы</a>
-                <a href="catalog-homme">INTELEGENTOFF</a>
-                <a href="index#our-story">О бренде</a>
-            </nav>
-        </div>
-        <div class="mobile-menu__footer">
-            <div class="mobile-menu__footer brand-btns">
-                <a href="catalog" class="btn btn--dark">цок-цок / Pearl by Tais</a>
-                <a href="catalog-homme" class="btn btn--outline-dark">INTELEGENTOFF</a>
-            </div>
+            <a href="catalog" class="nav-link" style="color:var(--clay-deep);">← Вернуться в коллекцию Pearl</a>
         </div>
     </div>
-    <div id="toastContainer" class="toast-container"></div>
+</section>
 
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script>
-    // ════════════════════════════════════════════
-    //   ПОЛНАЯ БАЗА ДАННЫХ ПРОДУКТОВ Pearl by Tais
-    // ════════════════════════════════════════════
-    const PRODUCTS = {
-        'pearl-01': {
-            id: 'pearl-01',
-            name: 'Foam Mousse Moisture',
-            titleHtml: 'Foam Mousse<br><em>Moisture</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Увлажняющая пенка-мусс для умывания. Бережное очищение без чувства стянутости и дискомфорта.',
-            size: '150 мл',
-            price: 96,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Сухая, нормальная',
-            usage: 'Утро и вечер',
-            images: ['{{ url_for("static", filename="img/Pearl1.jpg") }}'],
-            rating: 4.8,
-            ratingCount: 32,
-            badge: null,
-            ingredients: [
-                { icon: '🌸', name: 'Гидролат лаванды', desc: 'Успокаивает и снимает раздражение. Природный антисептик с нежным флоральным ароматом, поддерживает баланс микробиома кожи.' },
-                { icon: '🧴', name: 'Кокосовый ПАВ', desc: 'Мягкое пенообразующее вещество на растительной основе. Очищает без нарушения pH-баланса и защитного барьера кожи.' },
-                { icon: '💧', name: 'Глицерин', desc: 'Удерживает влагу в верхних слоях кожи, создаёт защитную плёнку, предотвращающую сухость после умывания.' },
-                { icon: '🌿', name: 'Пантенол (B5)', desc: 'Ускоряет регенерацию клеток, успокаивает раздражение, обеспечивает длительное увлажнение.' }
-            ],
-            composition: 'Aqua (Lavandula Angustifolia Flower Water), Cocamidopropyl Betaine, Glycerin, Panthenol, Allantoin, Niacinamide, Hydroxypropyl Methylcellulose, Phenoxyethanol, Ethylhexylglycerin, Citric Acid.',
-            howToUse: '<p><strong>Утро и вечер:</strong> Нанесите небольшое количество пенки на влажную кожу лица. Мягкими круговыми движениями распределите по всему лицу и шее, уделяя внимание Т-зоне. Смойте тёплой водой.</p><p>После умывания продолжите уход тоником для лучшего результата. Пенка подходит для ежедневного двойного очищения.</p>',
-            reviews: [
-                { rating: 5, text: '«Лучшая пенка, которую я когда-либо пробовала! После умывания кожа не стянутая, а мягкая и увлажнённая. Флакон заканчивается нескоро — расход очень экономный.»', author: 'Виктория М.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Моя кожа очень чувствительная, и я долго искала нежную пенку. Эта — просто находка. Никакого раздражения, прекрасно смывает загрязнения, запах нейтральный.»', author: 'Дарья П.', city: 'Гомель', date: 'апрель 2025' },
-                { rating: 5, text: '«Покупаю уже третий раз. Кожа у меня склонная к сухости, эта пенка — единственная, от которой нет дискомфорта. Рекомендую всем.»', author: 'Елена К.', city: 'Витебск', date: 'март 2025' }
-            ]
-        },
-        'pearl-02': {
-            id: 'pearl-02',
-            name: 'Face Tonic Toning',
-            titleHtml: 'Face Tonic<br><em>Toning</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Тоник для лица «Тонус». Устраняет следы усталости, мгновенно освежает и придаёт коже здоровое сияние.',
-            size: '150 мл',
-            price: 93,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Все типы',
-            usage: 'Утро и вечер',
-            images: ['{{ url_for("static", filename="img/Pearl2.jpg") }}'],
-            rating: 4.7,
-            ratingCount: 28,
-            badge: null,
-            ingredients: [
-                { icon: '🍊', name: 'Экстракт апельсина', desc: 'Выравнивает тон кожи, стимулирует выработку коллагена, придаёт свежесть и сияние.' },
-                { icon: '💧', name: 'Гиалуроновая кислота', desc: 'Удерживает влагу, разглаживает микрорельеф кожи, укрепляет защитный барьер.' },
-                { icon: '🌿', name: 'Ниацинамид (B3)', desc: 'Сужает поры, выравнивает тон, борется с пигментацией и жирным блеском.' },
-                { icon: '🌸', name: 'Гидролат ромашки', desc: 'Успокаивает, снимает покраснения, поддерживает здоровый pH-баланс кожи.' }
-            ],
-            composition: 'Aqua (Matricaria Chamomilla Flower Water), Glycerin, Niacinamide, Sodium Hyaluronate, Citrus Sinensis Fruit Extract, Allantoin, Betaine, Panthenol, Phenoxyethanol, Ethylhexylglycerin, Citric Acid.',
-            howToUse: '<p><strong>Утром и вечером:</strong> После умывания нанесите тоник на ватный диск или ладони и мягкими похлопывающими движениями распределите по коже лица.</p><p>Используйте как первый шаг после очищения — тоник подготавливает кожу к сыворотке и крему, усиливая их эффективность.</p>',
-            reviews: [
-                { rating: 5, text: '«Утром после него выгляжу отдохнувшей. Кожа реально приобретает тонус — не просто ощущение, а визуально заметно.»', author: 'Наталья Р.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Покупала на пробу, теперь это база моего утреннего ухода. Расход экономный, запах нейтральный — идеально.»', author: 'Ирина С.', city: 'Брест', date: 'апрель 2025' },
-                { rating: 4, text: '«Хороший тоник, кожа освежается. Хотелось бы чуть большего объёма, но качество отличное.»', author: 'Светлана Т.', city: 'Гродно', date: 'март 2025' }
-            ]
-        },
-        'pearl-03': {
-            id: 'pearl-03',
-            name: 'Tonic Youth Restoring',
-            titleHtml: 'Tonic Youth<br><em>Restoring</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Тоник-реставратор молодости. Восстанавливает pH-баланс после умывания, сужает поры и активирует процессы омоложения.',
-            size: '150 мл',
-            price: 93,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Все типы',
-            usage: 'Ежедневно',
-            images: ['{{ url_for("static", filename="img/Pearl3.jpg") }}'],
-            rating: 4.9,
-            ratingCount: 47,
-            badge: 'Хит',
-            ingredients: [
-                { icon: '🌹', name: 'Цветочная вода розы', desc: 'Тонизирует, омолаживает и освежает цвет лица. Природный антиоксидант с выраженным противовоспалительным действием.' },
-                { icon: '🌿', name: 'Экстракт саган-дайля', desc: 'Природный адаптоген, активирующий процессы омоложения на клеточном уровне. Защищает от свободных радикалов.' },
-                { icon: '🌾', name: 'Экстракт амаранта', desc: 'Богат скваленом — веществом, близким к кожному себуму. Восстанавливает гидролипидный барьер, разглаживает кожу.' },
-                { icon: '💧', name: 'Гиалуроновая кислота', desc: 'Низкомолекулярная форма для глубокого проникновения. Удерживает влагу на молекулярном уровне.' },
-                { icon: '🍵', name: 'Пантенол (B5)', desc: 'Успокаивает раздражённую кожу, ускоряет регенерацию, обеспечивает длительное увлажнение.' }
-            ],
-            composition: 'Aqua (Rosa Damascena Flower Water), Glycerin, Butylene Glycol, Amaranthus Cruentus Seed Extract, Ledum Palustre Extract, Sodium Hyaluronate, Panthenol, Allantoin, Niacinamide, Betaine, Hydroxyethylcellulose, Phenoxyethanol, Ethylhexylglycerin, Sodium PCA, Citric Acid.',
-            howToUse: '<p><strong>Утро и вечер:</strong> Нанесите небольшое количество тоника на ватный диск или в ладони. Мягкими похлопывающими движениями распределите по очищенной коже лица и шеи.</p><p><strong>Совет:</strong> Охладите флакон в холодильнике — прохладный тоник дополнительно тонизирует кожу и сужает поры.</p>',
-            reviews: [
-                { rating: 5, text: '«Пользуюсь уже три месяца. Кожа стала намного ровнее, поры визуально уменьшились. Запах нежный — розовая вода. Очень рада, что нашла этот тоник.»', author: 'Анастасия К.', city: 'Минск', date: 'апрель 2025' },
-                { rating: 5, text: '«После первого же применения почувствовала разницу. Кожа как будто «ожила». Использую утром и вечером, расход экономный.»', author: 'Марина Д.', city: 'Гродно', date: 'март 2025' },
-                { rating: 4, text: '«Отличный тоник для чувствительной кожи — не щиплет, не сушит. Заметила, что крем после него лучше впитывается.»', author: 'Ольга В.', city: 'Брест', date: 'май 2025' }
-            ]
-        },
-        'pearl-04': {
-            id: 'pearl-04',
-            name: 'Foam Mousse Cleansing',
-            titleHtml: 'Foam Mousse<br><em>Cleansing</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Пенка для умывания «Мягкое очищение». Деликатно очищает кожу, не нарушая её защитный барьер. Идеально для чувствительной и реактивной кожи.',
-            size: '150 мл',
-            price: 96,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Чувствительная, реактивная',
-            usage: 'Утро и вечер',
-            images: ['{{ url_for("static", filename="img/Pearl4.jpg") }}'],
-            rating: 4.8,
-            ratingCount: 39,
-            badge: null,
-            ingredients: [
-                { icon: '🌾', name: 'Гидролат овса', desc: 'Снимает зуд и раздражение, питает и смягчает кожу. Идеален для чувствительной и атопичной кожи.' },
-                { icon: '🧴', name: 'Мягкий ПАВ (Decyl Glucoside)', desc: 'Полностью растительный очищающий агент. Не нарушает pH, не раздражает, биоразлагаем.' },
-                { icon: '💧', name: 'Алоэ Вера', desc: 'Интенсивно увлажняет, ускоряет регенерацию, снимает воспаление. 99% чистый гель без добавок.' },
-                { icon: '🌿', name: 'Аллантоин', desc: 'Смягчает, разглаживает и защищает кожу. Стимулирует обновление клеток.' }
-            ],
-            composition: 'Aqua (Avena Sativa Kernel Extract), Aloe Barbadensis Leaf Juice, Decyl Glucoside, Glycerin, Allantoin, Panthenol, Hydroxyethylcellulose, Phenoxyethanol, Ethylhexylglycerin, Citric Acid.',
-            howToUse: '<p><strong>Утром и вечером:</strong> Нанесите пенку на влажную кожу. Массирующими движениями распределите по лицу и шее. Смойте прохладной водой.</p><p>Особенно рекомендуется для кожи с куперозом, атопическими реакциями и постакне.</p>',
-            reviews: [
-                { rating: 5, text: '«Наконец-то нашла пенку, которая не сушит кожу! У меня розацеа, и эта пенка — единственная, после которой нет покраснений.»', author: 'Татьяна Л.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Покупаю для дочери с атопическим дерматитом. Кожа не реагирует негативно, что само по себе — уже достижение.»', author: 'Людмила В.', city: 'Могилёв', date: 'апрель 2025' },
-                { rating: 5, text: '«Деликатная, эффективная, с приятной текстурой. Давно искала такую пенку без ароматизаторов.»', author: 'Юлия П.', city: 'Гомель', date: 'март 2025' }
-            ]
-        },
-        'pearl-05': {
-            id: 'pearl-05',
-            name: 'Hair Tonic Radiance',
-            titleHtml: 'Hair Tonic<br><em>Radiance</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Тоник для волос «Укрепляющий». Стимулирует рост, укрепляет корни и придаёт волосам зеркальный блеск.',
-            size: '200 мл',
-            price: 88,
-            category: 'hair',
-            categoryName: 'Уход за волосами',
-            skinType: 'Все типы волос',
-            usage: 'Ежедневно',
-            images: ['{{ url_for("static", filename="img/Pearl5.jpg") }}'],
-            rating: 4.8,
-            ratingCount: 24,
-            badge: null,
-            ingredients: [
-                { icon: '🌿', name: 'Экстракт крапивы', desc: 'Стимулирует кровообращение кожи головы, укрепляет волосяные фолликулы, снижает выпадение волос.' },
-                { icon: '🫒', name: 'Масло репейника', desc: 'Питает кожу головы, укрепляет структуру волоса, придаёт объём и блеск.' },
-                { icon: '🌹', name: 'Гидролат розы', desc: 'Увлажняет кожу головы, нормализует выработку себума, придаёт волосам шелковистость.' },
-                { icon: '💧', name: 'Кератин гидролизованный', desc: 'Проникает в структуру волоса, восстанавливает повреждённые участки, запечатывает кутикулу.' }
-            ],
-            composition: 'Aqua (Rosa Damascena Flower Water), Urtica Dioica Leaf Extract, Arctium Lappa Root Oil, Hydrolyzed Keratin, Panthenol, Biotin, Niacinamide, Zinc PCA, Phenoxyethanol, Ethylhexylglycerin.',
-            howToUse: '<p><strong>Нанесение:</strong> Распределите тоник по кожe головы, слегка массируя подушечками пальцев 2-3 минуты. Не смывайте.</p><p>Используйте ежедневно или через день после мытья головы, пока волосы ещё слегка влажные. Курс — не менее 4 недель для заметного результата.</p>',
-            reviews: [
-                { rating: 5, text: '«После месяца применения выпадение волос значительно уменьшилось! Волосы стали более густыми и блестящими.»', author: 'Кристина Б.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Использую как профилактику — волосы крепкие, не секутся, блестят. Запах лёгкий, ненавязчивый.»', author: 'Алина С.', city: 'Гродно', date: 'апрель 2025' },
-                { rating: 4, text: '«Хороший тоник, заметила укрепление волос. Немного липнет после нанесения, но после высыхания всё окей.»', author: 'Нина Ж.', city: 'Брест', date: 'март 2025' }
-            ]
-        },
-        'pearl-06': {
-            id: 'pearl-06',
-            name: 'Velvet Oil Blend',
-            titleHtml: 'Velvet Oil<br><em>Blend</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Микс масел для волос. Глубокое питание, восстановление структуры и защита секущихся кончиков.',
-            size: '60 мл',
-            price: 69,
-            category: 'hair',
-            categoryName: 'Уход за волосами',
-            skinType: 'Сухие, повреждённые волосы',
-            usage: 'По необходимости',
-            images: ['{{ url_for("static", filename="img/Pearl6.jpg") }}'],
-            rating: 4.9,
-            ratingCount: 18,
-            badge: null,
-            ingredients: [
-                { icon: '🥥', name: 'Масло кокоса', desc: 'Глубоко проникает в структуру волоса, питает изнутри, защищает от потери белка.' },
-                { icon: '🫒', name: 'Аргановое масло', desc: 'Жидкое золото для волос. Придаёт блеск, разглаживает кутикулу, защищает от термического воздействия.' },
-                { icon: '🌾', name: 'Масло жожоба', desc: 'По составу близко к кожному себуму. Балансирует увлажнение, не утяжеляет волосы.' },
-                { icon: '🌿', name: 'Витамин E', desc: 'Мощный антиоксидант, защищает от свободных радикалов, укрепляет структуру волоса.' }
-            ],
-            composition: 'Argania Spinosa Kernel Oil, Cocos Nucifera Oil, Simmondsia Chinensis Seed Oil, Tocopherol (Vitamin E), Parfum (натуральный).',
-            howToUse: '<p><strong>Для питания:</strong> Нанесите 3-5 капель на сухие кончики и среднюю длину волос. Не наносите на корни.</p><p><strong>Как маска:</strong> Нанесите на всю длину, заверните волосы в тёплое полотенце на 30 минут. Смойте шампунем.</p><p>Также отлично работает как термозащита перед укладкой.</p>',
-            reviews: [
-                { rating: 5, text: '«Мои кончики наконец-то перестали сечься! Масло лёгкое, не жирнит, впитывается быстро. Запах лёгкий и приятный.»', author: 'Полина Н.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Покупаю второй флакон. Использую как термозащиту и для питания кончиков. Волосы стали блестящими и живыми.»', author: 'Карина В.', city: 'Витебск', date: 'апрель 2025' },
-                { rating: 5, text: '«Для коротких волос хватает надолго — расход небольшой. Результат заметен сразу после первого применения.»', author: 'Алёна М.', city: 'Гомель', date: 'март 2025' }
-            ]
-        },
-        'pearl-07': {
-            id: 'pearl-07',
-            name: 'Micellar Water Extract Mix',
-            titleHtml: 'Micellar Water<br><em>Extract Mix</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Мицеллярная вода «С экстрактами». Лёгкий и бережный демакияж глаз, губ и лица с тонизирующим эффектом.',
-            size: '200 мл',
-            price: 99,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Все типы',
-            usage: 'Вечером',
-            images: ['{{ url_for("static", filename="img/Pearl7.jpg") }}'],
-            rating: 4.7,
-            ratingCount: 21,
-            badge: null,
-            ingredients: [
-                { icon: '🌼', name: 'Экстракт ромашки', desc: 'Снимает раздражение, успокаивает кожу после демакияжа, обладает противовоспалительным действием.' },
-                { icon: '🍀', name: 'Мицеллярный комплекс', desc: 'Захватывает и удаляет макияж, загрязнения и избыток себума без трения и агрессивного очищения.' },
-                { icon: '💧', name: 'Глицерин', desc: 'Поддерживает уровень увлажнения кожи в процессе очищения, предотвращает ощущение стянутости.' },
-                { icon: '🌸', name: 'Гидролат жасмина', desc: 'Тонизирует, придаёт коже сияние, обладает лёгким лифтинговым эффектом.' }
-            ],
-            composition: 'Aqua (Jasminum Officinale Flower Water), Hexylene Glycol, Glycerin, Matricaria Chamomilla Flower Extract, Polysorbate 20, Panthenol, Allantoin, Phenoxyethanol, Ethylhexylglycerin.',
-            howToUse: '<p><strong>Нанесение:</strong> Обильно смочите ватный диск мицеллярной водой. Приложите к закрытым глазам на 5-10 секунд, затем мягко снимите макияж одним движением.</p><p>Для стойкого макияжа повторите 2-3 раза. После демакияжа умываться не обязательно, но можно для ощущения свежести.</p>',
-            reviews: [
-                { rating: 5, text: '«Снимает водостойкую тушь с первого раза! Не щиплет глаза, не оставляет плёнки. Нашла свою мицеллярку навсегда.»', author: 'Марьяна К.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Нежная, бережная, с приятным запахом. Кожа после не требует умывания — остаётся чистой и увлажнённой.»', author: 'Юлия Д.', city: 'Гомель', date: 'апрель 2025' },
-                { rating: 4, text: '«Хорошая мицеллярка. Со стойким базовым макияжем нужно чуть больше времени, но в целом очень довольна.»', author: 'Елена С.', city: 'Брест', date: 'март 2025' }
-            ]
-        }
-    };
-
-    // ────────────────────────────────────────────
-    //   РЕНДЕР СТРАНИЦЫ ТОВАРА
-    // ────────────────────────────────────────────
-    function renderProduct(product) {
-        if (!product) {
-            document.getElementById('prodMainTitle').textContent = 'Товар не найден';
-            return;
-        }
-
-        // Заголовок страницы
-        document.getElementById('pageTitle').textContent = `${product.name} | Pearl by Tais — TSOK Boutique`;
-
-        // Хлебные крошки
-        document.getElementById('breadcrumbCat').textContent = product.categoryName;
-        document.getElementById('breadcrumbName').textContent = product.name;
-
-        // Стики-бар
-        document.getElementById('prodStickyName').textContent = product.name;
-        document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = product.price + ' BYN');
-
-        // Кнопки корзины (sticky + main)
-        [document.getElementById('stickyCartBtn'), document.getElementById('mainCartBtn')].forEach(btn => {
-            if (!btn) return;
-            btn.dataset.id = product.id;
-            btn.dataset.name = product.name;
-            btn.dataset.price = product.price;
-            btn.dataset.size = product.size;
-            btn.dataset.brand = product.brand;
-        });
-        [document.getElementById('stickyBookmarkBtn'), document.getElementById('mainBookmarkBtn')].forEach(btn => {
-            if (!btn) return;
-            btn.dataset.id = product.id;
-            btn.dataset.name = product.name;
-        });
-
-        // Галерея
-        const mainImg = document.getElementById('prodMainImg');
-        mainImg.src = product.images[0];
-        mainImg.alt = product.name;
-        const thumbsContainer = document.getElementById('galleryThumbs');
-        thumbsContainer.innerHTML = product.images.map((img, i) =>
-            `<div class="product-gallery-thumb ${i === 0 ? 'is-active' : ''}" onclick="switchImg('${img}', this)">
-                <img src="${img}" alt="${product.name}">
-            </div>`
-        ).join('');
-
-        // Заголовок и инфо
-        document.getElementById('prodMainTitle').innerHTML = product.titleHtml;
-
-        // Рейтинг
-        const fullStars = Math.floor(product.rating);
-        const hasHalf = product.rating % 1 >= 0.5;
-        let starsHtml = '';
-        for (let i = 0; i < 5; i++) {
-            if (i < fullStars) starsHtml += '<span class="star">★</span>';
-            else if (i === fullStars && hasHalf) starsHtml += '<span class="star" style="opacity:0.5;">★</span>';
-            else starsHtml += '<span class="star empty">★</span>';
-        }
-        document.getElementById('prodStars').innerHTML = starsHtml;
-        document.getElementById('prodRatingCount').textContent = `${product.rating} · ${product.ratingCount} отзывов`;
-
-        // Описание
-        document.getElementById('prodMainDesc').textContent = product.desc;
-
-        // Мета-блоки
-        document.getElementById('prodMetaGrid').innerHTML = `
-            <div class="meta-block"><span>Объём</span><strong class="js-dyn-size">${product.size}</strong></div>
-            <div class="meta-block"><span>Стоимость</span><strong class="js-dyn-price">${product.price} BYN</strong></div>
-            <div class="meta-block"><span>Тип кожи</span><strong>${product.skinType}</strong></div>
-            <div class="meta-block"><span>Применение</span><strong>${product.usage}</strong></div>
-        `;
-
-        // Аккордеоны
-        const ingredientsHtml = product.ingredients.map((ing, i) =>
-            `<div class="ingredient-card" ${i === product.ingredients.length - 1 ? 'style="border-bottom:none;"' : ''}>
-                <div class="ingredient-card__icon">${ing.icon}</div>
-                <div class="ingredient-card__info">
-                    <div class="ingredient-card__name">${ing.name}</div>
-                    <div class="ingredient-card__desc">${ing.desc}</div>
-                </div>
-            </div>`
-        ).join('');
-
-        document.getElementById('prodAccordions').innerHTML = `
-            <div class="accordion">
-                <button class="accordion__btn" aria-expanded="false">
-                    Как использовать <span class="accordion__icon"></span>
-                </button>
-                <div class="accordion__content">
-                    <div class="accordion__content-inner">${product.howToUse}</div>
-                </div>
-            </div>
-            <div class="accordion">
-                <button class="accordion__btn" aria-expanded="true">
-                    Ключевые ингредиенты <span class="accordion__icon"></span>
-                </button>
-                <div class="accordion__content is-open">
-                    <div class="accordion__content-inner">${ingredientsHtml}</div>
-                </div>
-            </div>
-            <div class="accordion">
-                <button class="accordion__btn" aria-expanded="false">
-                    Полный состав <span class="accordion__icon"></span>
-                </button>
-                <div class="accordion__content">
-                    <div class="accordion__content-inner">
-                        <p style="font-size:13px;line-height:1.9;color:var(--color-fem-muted);">${product.composition}</p>
-                        <p style="font-size:12px;color:var(--color-fem-muted);margin-top:12px;">*Не содержит парабенов, силиконов, синтетических красителей и агрессивных отдушек.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion">
-                <button class="accordion__btn" aria-expanded="false">
-                    Доставка и возврат <span class="accordion__icon"></span>
-                </button>
-                <div class="accordion__content">
-                    <div class="accordion__content-inner">
-                        <p><strong>Доставка по Беларуси:</strong> Почта Беларуси или курьером — 1-3 рабочих дня. Бесплатно при заказе от 80 BYN.</p>
-                        <p><strong>Самовывоз:</strong> Доступен в Минске — уточняйте при оформлении заказа.</p>
-                        <p><strong>Возврат:</strong> Принимаем обмен и возврат неоткрытых продуктов в течение 14 дней.</p>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Отзывы
-        document.getElementById('reviewsTitle').innerHTML = `${product.ratingCount} отзывов<br><em>о продукте</em>`;
-        document.getElementById('reviewsScore').textContent = product.rating;
-        document.getElementById('reviewsStars').innerHTML = starsHtml;
-        document.getElementById('allReviewsBtn').textContent = `Читать все отзывы (${product.ratingCount})`;
-        document.getElementById('reviewsGrid').innerHTML = product.reviews.map((r, i) =>
-            `<div class="review-card anim-fade-up anim-delay-${i+1}">
-                <div class="review-card__rating">${'★'.repeat(r.rating)}${'★'.repeat(5 - r.rating)}</div>
-                <p class="review-card__text">${r.text}</p>
-                <div class="review-card__author">${r.author}</div>
-                <div class="review-card__date">${r.city} · ${r.date}</div>
-            </div>`
-        ).join('');
-
-        // Похожие товары (остальные 3-4 товара из той же или другой категории)
-        const related = Object.values(PRODUCTS)
-            .filter(p => p.id !== product.id)
-            .slice(0, 4);
-        document.getElementById('relatedCarousel').innerHTML = related.map(p => `
-            <div class="product-card">
+<!-- Похожие продукты -->
+<section class="section section--cream section--bordered-top" data-carousel>
+    <div class="container">
+        <div class="section__header">
+            <span class="label">Из этой же коллекции</span>
+            <h2 class="section-title">Дополните <em>ритуал</em></h2>
+        </div>
+        <div class="catalog-grid" style="margin-top:40px;">
+            <div class="product-card" data-category="face" data-price="93">
                 <div class="product-card__image-wrap">
-                    <a href="product-tonic?id=${p.id}" style="display:block;width:100%;height:100%;">
-                        <img src="${p.images[0]}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">
-                    </a>
-                    ${p.badge ? `<div class="product-card__badge">${p.badge}</div>` : ''}
-                    <button class="product-card__bookmark js-bookmark" data-id="${p.id}" data-name="${p.name}">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                    </button>
+                    <a href="product-tonic?id=pearl-03"><img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" alt="Tonic Youth Restoring"></a>
+                    <div class="product-card__badge">Хит</div>
+                    <button class="product-card__bookmark js-bookmark" data-id="pearl-03" data-name="Tonic Youth Restoring"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
                 </div>
                 <div class="product-card__info">
                     <span class="product-card__brand">Pearl by Tais</span>
-                    <a href="product-tonic?id=${p.id}" style="color:inherit;">
-                        <h3 class="product-card__title">${p.name}</h3>
-                    </a>
-                    <p class="product-card__desc">${p.desc}</p>
+                    <a href="product-tonic?id=pearl-03"><h3 class="product-card__title">Tonic Youth Restoring</h3></a>
+                    <p class="product-card__desc">Тоник-реставратор молодости.</p>
                     <div class="product-card__footer">
-                        <div>
-                            <span class="product-card__size">${p.size}</span>
-                            <span class="product-card__price">${p.price} BYN</span>
-                        </div>
-                        <button class="btn btn--dark btn--add-card js-add-to-cart"
-                            data-id="${p.id}" data-name="${p.name}"
-                            data-price="${p.price}" data-size="${p.size}" data-brand="Pearl by Tais">
-                            + В корзину
-                        </button>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">93 BYN</span></div>
+                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-03" data-name="Tonic Youth Restoring" data-price="93" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl3.jpg">+ В корзину</button>
                     </div>
                 </div>
             </div>
-        `).join('');
-    }
-
-    function switchImg(src, thumbEl) {
-        document.getElementById('prodMainImg').src = src;
-        document.querySelectorAll('.product-gallery-thumb').forEach(t => t.classList.remove('is-active'));
-        thumbEl.classList.add('is-active');
-    }
-
-    // Zoom overlay
-    document.getElementById('galleryMain').addEventListener('click', function() {
-        const src = document.getElementById('prodMainImg').src;
-        document.getElementById('zoomImg').src = src;
-        document.getElementById('zoomOverlay').classList.add('is-open');
-    });
-    document.getElementById('zoomOverlay').addEventListener('click', function() {
-        this.classList.remove('is-open');
-    });
-
-    // ────────────────────────────────────────────
-    //   ЗАГРУЗИТЬ ПРОДУКТ ИЗ URL-ПАРАМЕТРА
-    // ────────────────────────────────────────────
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id') || 'pearl-03';
-    renderProduct(PRODUCTS[productId]);
-
-    // Sticky bar
-    const stickyBar = document.getElementById('productStickyBar');
-    const detailsCol = document.getElementById('productDetailsCol');
-    if (stickyBar && detailsCol) {
-        const obs = new IntersectionObserver(([e]) => {
-            stickyBar.classList.toggle('is-visible', !e.isIntersecting);
-        }, { threshold: 0.1, rootMargin: '-80px 0px 0px 0px' });
-        const title = detailsCol.querySelector('h1');
-        if (title) obs.observe(title);
-    }
-    </script>
-</body>
-</html>TYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title id="pageTitle">Pearl by Tais — TSOK Boutique</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Montserrat:wght@200;300;400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        .product-page-wrapper { margin-top: 0; }
-
-        .product-sticky-bar {
-            position: fixed; top: var(--top-h); left: 0; width: 100%;
-            background: rgba(248,247,244,0.97); backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--color-fem-border);
-            z-index: 80;
-            padding: 12px var(--pad-x);
-            display: flex; justify-content: space-between; align-items: center;
-            transform: translateY(-100%);
-            transition: transform 0.4s var(--ease-smooth);
-        }
-        .product-sticky-bar.is-visible { transform: translateY(0); }
-        .product-sticky-bar__name { font-family: var(--font-display); font-size: 20px; font-weight: 400; font-style: italic; }
-        .product-sticky-bar__price { font-size: 16px; font-weight: 500; }
-        .product-sticky-bar__actions { display: flex; gap: 12px; }
-
-        .product-split {
-            display: grid; grid-template-columns: 55% 45%;
-            min-height: calc(100vh - var(--top-h));
-            border-top: 1px solid var(--color-fem-border);
-        }
-        @media (max-width: 1024px) { .product-split { grid-template-columns: 1fr; } }
-
-        .product-gallery-col { position: relative; background: var(--color-fem-card); }
-        .product-gallery-sticky {
-            position: sticky; top: var(--top-h);
-            height: calc(100vh - var(--top-h));
-            overflow: hidden;
-        }
-        .product-gallery-main {
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden; cursor: zoom-in;
-        }
-        .product-gallery-main img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.6s var(--ease-out);
-        }
-        .product-gallery-main:hover img { transform: scale(1.04); }
-
-        .product-gallery-thumbs {
-            position: absolute; bottom: 32px; left: 50%;
-            transform: translateX(-50%);
-            display: flex; gap: 10px; z-index: 5;
-        }
-        .product-gallery-thumb {
-            width: 56px; height: 70px;
-            background: rgba(255,255,255,0.5);
-            border: 2px solid transparent;
-            overflow: hidden; cursor: pointer;
-            transition: border-color 0.2s;
-        }
-        .product-gallery-thumb.is-active { border-color: var(--color-accent); }
-        .product-gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
-
-        @media (max-width: 1024px) {
-            .product-gallery-col { height: 70vw; min-height: 400px; }
-            .product-gallery-sticky { position: relative; top: 0; height: 100%; }
-        }
-
-        .product-details-col {
-            padding: 60px max(36px, 6vw) 100px;
-            border-left: 1px solid var(--color-fem-border);
-        }
-        @media (max-width: 1024px) {
-            .product-details-col { border-left: none; border-top: 1px solid var(--color-fem-border); padding: 48px var(--pad-x) 80px; }
-        }
-
-        .product-rating { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; }
-        .stars { display: flex; gap: 3px; }
-        .star { color: var(--color-accent); font-size: 14px; }
-        .star.empty { color: var(--color-fem-border); }
-        .rating-count { font-size: 12px; color: var(--color-fem-muted); }
-
-        .product-qty {
-            display: flex; align-items: center;
-            border: 1px solid var(--color-fem-border);
-            width: fit-content; margin-bottom: 16px;
-        }
-        .product-qty button {
-            width: 44px; height: 44px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 20px; transition: background 0.2s;
-        }
-        .product-qty button:hover { background: var(--color-fem-card); }
-        .product-qty span { width: 44px; text-align: center; font-size: 15px; font-weight: 500; }
-
-        .product-cta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px; }
-
-        .trust-badges {
-            display: grid; grid-template-columns: repeat(3, 1fr);
-            gap: 1px; background: var(--color-fem-border);
-            border: 1px solid var(--color-fem-border);
-            margin-bottom: 40px;
-        }
-        .trust-badge {
-            background: var(--color-off-white);
-            padding: 18px 12px; text-align: center;
-        }
-        .trust-badge svg { color: var(--color-accent); margin-bottom: 8px; }
-        .trust-badge__text { font-size: 11px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.4; }
-
-        .ingredient-card {
-            display: flex; gap: 16px; padding: 20px 0;
-            border-bottom: 1px solid var(--color-fem-border);
-        }
-        .ingredient-card:last-child { border-bottom: none; }
-        .ingredient-card__icon {
-            width: 44px; height: 44px; border-radius: 50%;
-            background: var(--color-fem-card);
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; font-size: 20px;
-        }
-        .ingredient-card__name { font-size: 13px; font-weight: 600; margin-bottom: 4px; letter-spacing: 0.06em; text-transform: uppercase; }
-        .ingredient-card__desc { font-size: 13px; font-weight: 300; line-height: 1.6; color: var(--color-fem-muted); }
-
-        .reviews-section {
-            padding: var(--section-y) var(--pad-x);
-            background: var(--color-fem-card);
-            border-top: 1px solid var(--color-fem-border);
-        }
-        .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-top: 60px; }
-        @media (max-width: 1024px) { .reviews-grid { grid-template-columns: 1fr; } }
-        .review-card { background: var(--color-off-white); padding: 32px; border: 1px solid var(--color-fem-border); }
-        .review-card__rating { display: flex; gap: 3px; margin-bottom: 16px; color: var(--color-accent); }
-        .review-card__text { font-size: 15px; font-weight: 300; line-height: 1.75; color: var(--color-fem-muted); margin-bottom: 20px; font-style: italic; }
-        .review-card__author { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-        .review-card__date { font-size: 11px; color: var(--color-fem-muted); margin-top: 4px; }
-
-        .related-section { padding: var(--section-y) var(--pad-x); border-top: 1px solid var(--color-fem-border); }
-
-        /* Beautiful product image gallery with zoom overlay */
-        .gallery-zoom-overlay {
-            display: none; position: fixed; inset: 0;
-            background: rgba(0,0,0,0.92); z-index: 999;
-            align-items: center; justify-content: center;
-            cursor: zoom-out;
-        }
-        .gallery-zoom-overlay.is-open { display: flex; }
-        .gallery-zoom-overlay img { max-width: 90vw; max-height: 90vh; object-fit: contain; }
-    </style>
-</head>
-<body>
-
-    <!-- ═══════════════════════════════════════════
-         SITE TOP — FIXED: promo bar + header
-         ═══════════════════════════════════════════ -->
-    {% include "_header.html" %}
-
-    <!-- STICKY BAR -->
-    <div class="product-sticky-bar" id="productStickyBar">
-        <div style="display:flex;align-items:center;gap:20px;">
-            <span class="product-sticky-bar__name" id="prodStickyName">Pearl by Tais</span>
-            <span class="product-sticky-bar__price js-dyn-price"></span>
-        </div>
-        <div class="product-sticky-bar__actions">
-            <button class="btn btn--outline-dark js-bookmark" id="stickyBookmarkBtn" style="padding:10px 20px;font-size:11px;">Сохранить</button>
-            <button class="btn btn--dark js-add-to-cart" id="stickyCartBtn" style="padding:10px 24px;font-size:11px;">В корзину</button>
-        </div>
-    </div>
-
-    <!-- PRODUCT PAGE -->
-    <div class="product-page-wrapper">
-
-        <!-- Breadcrumb -->
-        <div class="breadcrumb" style="padding: 20px var(--pad-x); border-bottom: 1px solid var(--color-fem-border);">
-            <a href="index">Главная</a><span>/</span>
-            <a href="catalog">Pearl by Tais</a><span>/</span>
-            <span id="breadcrumbCat" style="color:var(--color-fem-muted);"></span>
-            <span id="breadcrumbSep" style="color:var(--color-fem-muted);">/</span>
-            <span id="breadcrumbName" style="color:var(--color-fem-text);"></span>
-        </div>
-
-        <!-- Split product layout -->
-        <div class="product-split">
-
-            <!-- Gallery -->
-            <div class="product-gallery-col">
-                <div class="product-gallery-sticky">
-                    <div class="product-gallery-main" id="galleryMain">
-                        <img src="" id="prodMainImg" style="width:100%;height:100%;object-fit:cover;" alt="">
-                    </div>
-                    <div class="product-gallery-thumbs" id="galleryThumbs"></div>
-                </div>
-            </div>
-
-            <!-- Details -->
-            <div class="product-details-col" id="productDetailsCol">
-                <span class="product-info__brand">Pearl by Tais</span>
-                <h1 class="product-info__title" id="prodMainTitle"></h1>
-
-                <div class="product-rating">
-                    <div class="stars" id="prodStars"></div>
-                    <span class="rating-count" id="prodRatingCount"></span>
-                </div>
-
-                <p class="product-info__desc" id="prodMainDesc"></p>
-
-                <div class="product-meta-grid" id="prodMetaGrid"></div>
-
-                <!-- Qty + CTA -->
-                <div style="margin-bottom:24px;">
-                    <span style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-fem-muted);display:block;margin-bottom:10px;">Количество</span>
-                    <div class="product-qty">
-                        <button onclick="this.nextElementSibling.textContent=Math.max(1,+this.nextElementSibling.textContent-1)">−</button>
-                        <span id="qtyVal">1</span>
-                        <button onclick="this.previousElementSibling.textContent=+this.previousElementSibling.textContent+1">+</button>
-                    </div>
-                </div>
-
-                <div class="product-cta">
-                    <button class="btn btn--dark js-add-to-cart" id="mainCartBtn">
-                        Добавить в корзину
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6C8 4.9 8.9 4 10 4h4c1.1 0 2 .9 2 2v2"/></svg>
-                    </button>
-                    <button class="btn btn--outline-dark js-bookmark" id="mainBookmarkBtn">
-                        Сохранить в избранное
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                    </button>
-                </div>
-
-                <!-- Trust badges -->
-                <div class="trust-badges">
-                    <div class="trust-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="display:block;margin:0 auto 8px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                        <div class="trust-badge__text">Без парабенов</div>
-                    </div>
-                    <div class="trust-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="display:block;margin:0 auto 8px;"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-                        <div class="trust-badge__text">Доставка 1-3 дня</div>
-                    </div>
-                    <div class="trust-badge">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" style="display:block;margin:0 auto 8px;"><polyline points="20 6 9 17 4 12"/></svg>
-                        <div class="trust-badge__text">Клинически проверено</div>
-                    </div>
-                </div>
-
-                <!-- Accordions -->
-                <div class="accordions" id="prodAccordions"></div>
-
-            </div>
-        </div>
-
-        <!-- REVIEWS SECTION -->
-        <section class="reviews-section" id="reviewsSection">
-            <div style="max-width:1400px;margin:0 auto;">
-                <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:24px;" class="anim-fade-up">
-                    <div>
-                        <span class="label">Отзывы покупателей</span>
-                        <h2 class="section__title" id="reviewsTitle"></h2>
-                    </div>
-                    <div style="text-align:center;">
-                        <div id="reviewsScore" style="font-family:var(--font-brutal);font-size:72px;color:var(--color-accent);line-height:1;"></div>
-                        <div class="stars" style="justify-content:center;margin:8px 0;" id="reviewsStars"></div>
-                        <div style="font-size:12px;color:var(--color-fem-muted);">из 5 звёзд</div>
-                    </div>
-                </div>
-                <div class="reviews-grid" id="reviewsGrid"></div>
-                <div style="text-align:center;margin-top:48px;">
-                    <button class="btn btn--outline-dark" id="allReviewsBtn">Читать все отзывы</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- RELATED PRODUCTS -->
-        <section class="related-section" data-carousel>
-            <div class="section__header">
-                <div class="section__header-text">
-                    <span class="label">Дополни уход</span>
-                    <h2 class="section__title">С этим продуктом<br><em>берут</em></h2>
-                </div>
-                <div class="carousel-nav desktop-only">
-                    <button class="icon-btn" data-carousel-prev>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-                    </button>
-                    <button class="icon-btn" data-carousel-next>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </button>
-                </div>
-            </div>
-            <div class="carousel" id="relatedCarousel"></div>
-        </section>
-
-    </div><!-- .product-page-wrapper -->
-
-    <!-- ZOOM OVERLAY -->
-    <div class="gallery-zoom-overlay" id="zoomOverlay">
-        <img id="zoomImg" src="" alt="">
-    </div>
-
-    <!-- FOOTER -->
-    <footer class="footer">
-        <div class="footer__grid">
-            <div class="footer__logo-area">
-                <a href="index" class="footer__logo">TSOK<em style="font-style:italic;font-weight:300;font-size:0.65em;opacity:0.5;"> boutique</em></a>
-                <span class="footer__tagline">Pearl by Tais — женская коллекция</span>
-                <div class="footer__brands">
-                    <a href="catalog" class="footer__brand-link" style="color:white;">цок-цок / Pearl by Tais</a>
-                    <a href="catalog-homme" class="footer__brand-link">INTELEGENTOFF</a>
-                </div>
-                <form class="subscribe-form" onsubmit="return false;"><input type="email" placeholder="Email для новостей"><button>→</button></form>
-            </div>
-            <div><div class="footer__col-title">Pearl by Tais</div><nav class="footer__nav"><a href="catalog?category=face">Уход за лицом</a><a href="catalog?category=body">Тело</a><a href="catalog?category=hair">Волосы</a><a href="#">Наборы</a></nav></div>
-            <div><div class="footer__col-title">Информация</div><nav class="footer__nav"><a href="index#our-story">О бренде</a><a href="#">Доставка</a><a href="#">FAQ</a><a href="#">Сертификаты</a></nav></div>
-            <div><div class="footer__col-title">Бутик</div><nav class="footer__nav"><a href="index">О TSOK</a><a href="catalog-homme">INTELEGENTOFF</a><a href="#">Контакты</a></nav></div>
-        </div>
-        <div class="footer__bottom">
-            <span class="footer__copy">© 2025 TSOK Boutique</span>
-            <div class="footer__legal"><a href="#">Политика конфиденциальности</a><a href="#">Оферта</a></div>
-        </div>
-    </footer>
-
-    <!-- OVERLAYS & DRAWERS -->
-    <div class="global-overlay" id="globalOverlay"></div>
-    <div class="cart-drawer" id="cartDrawer">
-        <div class="cart-drawer__header"><h3>Корзина</h3><button class="close-btn" id="cartCloseBtn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-        <div class="cart-drawer__scroll"><div class="cart-drawer__body" id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div></div>
-        <div class="cart-drawer__footer"><div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div><a href="checkout" class="btn btn--dark">Оформить заказ</a></div>
-    </div>
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu__header">
-            <svg viewBox="0 0 180 50" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:36px;width:auto;">
-                <text x="90" y="25" font-family="'Cormorant Garamond', Georgia, serif" font-size="24" font-weight="400" letter-spacing="5" text-anchor="middle" fill="#2c2320">цок-цок</text>
-                <text x="90" y="43" font-family="'Cormorant Garamond', Georgia, serif" font-size="11" font-style="italic" letter-spacing="1.5" text-anchor="middle" fill="#6b5e56">Pearl by Tais</text>
-            </svg>
-            <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-            </button>
-        </div>
-        <div class="mobile-menu__body">
-            <nav class="mobile-nav">
-                <a href="index">Главная</a>
-                <a href="catalog">Все продукты Pearl</a>
-                <a href="catalog?category=face">— Уход за лицом</a>
-                <a href="catalog?category=body">— Тело</a>
-                <a href="catalog?category=hair">— Волосы</a>
-                <a href="catalog-homme">INTELEGENTOFF</a>
-                <a href="index#our-story">О бренде</a>
-            </nav>
-        </div>
-        <div class="mobile-menu__footer">
-            <div class="mobile-menu__footer brand-btns">
-                <a href="catalog" class="btn btn--dark">цок-цок / Pearl by Tais</a>
-                <a href="catalog-homme" class="btn btn--outline-dark">INTELEGENTOFF</a>
-            </div>
-        </div>
-    </div>
-    <div id="toastContainer" class="toast-container"></div>
-
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <script>
-    // ════════════════════════════════════════════
-    //   ПОЛНАЯ БАЗА ДАННЫХ ПРОДУКТОВ Pearl by Tais
-    // ════════════════════════════════════════════
-    const PRODUCTS = {
-        'pearl-01': {
-            id: 'pearl-01',
-            name: 'Foam Mousse Moisture',
-            titleHtml: 'Foam Mousse<br><em>Moisture</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Увлажняющая пенка-мусс для умывания. Бережное очищение без чувства стянутости и дискомфорта.',
-            size: '150 мл',
-            price: 96,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Сухая, нормальная',
-            usage: 'Утро и вечер',
-            images: ['{{ url_for("static", filename="img/Pearl1.jpg") }}'],
-            rating: 4.8,
-            ratingCount: 32,
-            badge: null,
-            ingredients: [
-                { icon: '🌸', name: 'Гидролат лаванды', desc: 'Успокаивает и снимает раздражение. Природный антисептик с нежным флоральным ароматом, поддерживает баланс микробиома кожи.' },
-                { icon: '🧴', name: 'Кокосовый ПАВ', desc: 'Мягкое пенообразующее вещество на растительной основе. Очищает без нарушения pH-баланса и защитного барьера кожи.' },
-                { icon: '💧', name: 'Глицерин', desc: 'Удерживает влагу в верхних слоях кожи, создаёт защитную плёнку, предотвращающую сухость после умывания.' },
-                { icon: '🌿', name: 'Пантенол (B5)', desc: 'Ускоряет регенерацию клеток, успокаивает раздражение, обеспечивает длительное увлажнение.' }
-            ],
-            composition: 'Aqua (Lavandula Angustifolia Flower Water), Cocamidopropyl Betaine, Glycerin, Panthenol, Allantoin, Niacinamide, Hydroxypropyl Methylcellulose, Phenoxyethanol, Ethylhexylglycerin, Citric Acid.',
-            howToUse: '<p><strong>Утро и вечер:</strong> Нанесите небольшое количество пенки на влажную кожу лица. Мягкими круговыми движениями распределите по всему лицу и шее, уделяя внимание Т-зоне. Смойте тёплой водой.</p><p>После умывания продолжите уход тоником для лучшего результата. Пенка подходит для ежедневного двойного очищения.</p>',
-            reviews: [
-                { rating: 5, text: '«Лучшая пенка, которую я когда-либо пробовала! После умывания кожа не стянутая, а мягкая и увлажнённая. Флакон заканчивается нескоро — расход очень экономный.»', author: 'Виктория М.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Моя кожа очень чувствительная, и я долго искала нежную пенку. Эта — просто находка. Никакого раздражения, прекрасно смывает загрязнения, запах нейтральный.»', author: 'Дарья П.', city: 'Гомель', date: 'апрель 2025' },
-                { rating: 5, text: '«Покупаю уже третий раз. Кожа у меня склонная к сухости, эта пенка — единственная, от которой нет дискомфорта. Рекомендую всем.»', author: 'Елена К.', city: 'Витебск', date: 'март 2025' }
-            ]
-        },
-        'pearl-02': {
-            id: 'pearl-02',
-            name: 'Face Tonic Toning',
-            titleHtml: 'Face Tonic<br><em>Toning</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Тоник для лица «Тонус». Устраняет следы усталости, мгновенно освежает и придаёт коже здоровое сияние.',
-            size: '150 мл',
-            price: 93,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Все типы',
-            usage: 'Утро и вечер',
-            images: ['{{ url_for("static", filename="img/Pearl2.jpg") }}'],
-            rating: 4.7,
-            ratingCount: 28,
-            badge: null,
-            ingredients: [
-                { icon: '🍊', name: 'Экстракт апельсина', desc: 'Выравнивает тон кожи, стимулирует выработку коллагена, придаёт свежесть и сияние.' },
-                { icon: '💧', name: 'Гиалуроновая кислота', desc: 'Удерживает влагу, разглаживает микрорельеф кожи, укрепляет защитный барьер.' },
-                { icon: '🌿', name: 'Ниацинамид (B3)', desc: 'Сужает поры, выравнивает тон, борется с пигментацией и жирным блеском.' },
-                { icon: '🌸', name: 'Гидролат ромашки', desc: 'Успокаивает, снимает покраснения, поддерживает здоровый pH-баланс кожи.' }
-            ],
-            composition: 'Aqua (Matricaria Chamomilla Flower Water), Glycerin, Niacinamide, Sodium Hyaluronate, Citrus Sinensis Fruit Extract, Allantoin, Betaine, Panthenol, Phenoxyethanol, Ethylhexylglycerin, Citric Acid.',
-            howToUse: '<p><strong>Утром и вечером:</strong> После умывания нанесите тоник на ватный диск или ладони и мягкими похлопывающими движениями распределите по коже лица.</p><p>Используйте как первый шаг после очищения — тоник подготавливает кожу к сыворотке и крему, усиливая их эффективность.</p>',
-            reviews: [
-                { rating: 5, text: '«Утром после него выгляжу отдохнувшей. Кожа реально приобретает тонус — не просто ощущение, а визуально заметно.»', author: 'Наталья Р.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Покупала на пробу, теперь это база моего утреннего ухода. Расход экономный, запах нейтральный — идеально.»', author: 'Ирина С.', city: 'Брест', date: 'апрель 2025' },
-                { rating: 4, text: '«Хороший тоник, кожа освежается. Хотелось бы чуть большего объёма, но качество отличное.»', author: 'Светлана Т.', city: 'Гродно', date: 'март 2025' }
-            ]
-        },
-        'pearl-03': {
-            id: 'pearl-03',
-            name: 'Tonic Youth Restoring',
-            titleHtml: 'Tonic Youth<br><em>Restoring</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Тоник-реставратор молодости. Восстанавливает pH-баланс после умывания, сужает поры и активирует процессы омоложения.',
-            size: '150 мл',
-            price: 93,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Все типы',
-            usage: 'Ежедневно',
-            images: ['{{ url_for("static", filename="img/Pearl3.jpg") }}'],
-            rating: 4.9,
-            ratingCount: 47,
-            badge: 'Хит',
-            ingredients: [
-                { icon: '🌹', name: 'Цветочная вода розы', desc: 'Тонизирует, омолаживает и освежает цвет лица. Природный антиоксидант с выраженным противовоспалительным действием.' },
-                { icon: '🌿', name: 'Экстракт саган-дайля', desc: 'Природный адаптоген, активирующий процессы омоложения на клеточном уровне. Защищает от свободных радикалов.' },
-                { icon: '🌾', name: 'Экстракт амаранта', desc: 'Богат скваленом — веществом, близким к кожному себуму. Восстанавливает гидролипидный барьер, разглаживает кожу.' },
-                { icon: '💧', name: 'Гиалуроновая кислота', desc: 'Низкомолекулярная форма для глубокого проникновения. Удерживает влагу на молекулярном уровне.' },
-                { icon: '🍵', name: 'Пантенол (B5)', desc: 'Успокаивает раздражённую кожу, ускоряет регенерацию, обеспечивает длительное увлажнение.' }
-            ],
-            composition: 'Aqua (Rosa Damascena Flower Water), Glycerin, Butylene Glycol, Amaranthus Cruentus Seed Extract, Ledum Palustre Extract, Sodium Hyaluronate, Panthenol, Allantoin, Niacinamide, Betaine, Hydroxyethylcellulose, Phenoxyethanol, Ethylhexylglycerin, Sodium PCA, Citric Acid.',
-            howToUse: '<p><strong>Утро и вечер:</strong> Нанесите небольшое количество тоника на ватный диск или в ладони. Мягкими похлопывающими движениями распределите по очищенной коже лица и шеи.</p><p><strong>Совет:</strong> Охладите флакон в холодильнике — прохладный тоник дополнительно тонизирует кожу и сужает поры.</p>',
-            reviews: [
-                { rating: 5, text: '«Пользуюсь уже три месяца. Кожа стала намного ровнее, поры визуально уменьшились. Запах нежный — розовая вода. Очень рада, что нашла этот тоник.»', author: 'Анастасия К.', city: 'Минск', date: 'апрель 2025' },
-                { rating: 5, text: '«После первого же применения почувствовала разницу. Кожа как будто «ожила». Использую утром и вечером, расход экономный.»', author: 'Марина Д.', city: 'Гродно', date: 'март 2025' },
-                { rating: 4, text: '«Отличный тоник для чувствительной кожи — не щиплет, не сушит. Заметила, что крем после него лучше впитывается.»', author: 'Ольга В.', city: 'Брест', date: 'май 2025' }
-            ]
-        },
-        'pearl-04': {
-            id: 'pearl-04',
-            name: 'Foam Mousse Cleansing',
-            titleHtml: 'Foam Mousse<br><em>Cleansing</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Пенка для умывания «Мягкое очищение». Деликатно очищает кожу, не нарушая её защитный барьер. Идеально для чувствительной и реактивной кожи.',
-            size: '150 мл',
-            price: 96,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Чувствительная, реактивная',
-            usage: 'Утро и вечер',
-            images: ['{{ url_for("static", filename="img/Pearl4.jpg") }}'],
-            rating: 4.8,
-            ratingCount: 39,
-            badge: null,
-            ingredients: [
-                { icon: '🌾', name: 'Гидролат овса', desc: 'Снимает зуд и раздражение, питает и смягчает кожу. Идеален для чувствительной и атопичной кожи.' },
-                { icon: '🧴', name: 'Мягкий ПАВ (Decyl Glucoside)', desc: 'Полностью растительный очищающий агент. Не нарушает pH, не раздражает, биоразлагаем.' },
-                { icon: '💧', name: 'Алоэ Вера', desc: 'Интенсивно увлажняет, ускоряет регенерацию, снимает воспаление. 99% чистый гель без добавок.' },
-                { icon: '🌿', name: 'Аллантоин', desc: 'Смягчает, разглаживает и защищает кожу. Стимулирует обновление клеток.' }
-            ],
-            composition: 'Aqua (Avena Sativa Kernel Extract), Aloe Barbadensis Leaf Juice, Decyl Glucoside, Glycerin, Allantoin, Panthenol, Hydroxyethylcellulose, Phenoxyethanol, Ethylhexylglycerin, Citric Acid.',
-            howToUse: '<p><strong>Утром и вечером:</strong> Нанесите пенку на влажную кожу. Массирующими движениями распределите по лицу и шее. Смойте прохладной водой.</p><p>Особенно рекомендуется для кожи с куперозом, атопическими реакциями и постакне.</p>',
-            reviews: [
-                { rating: 5, text: '«Наконец-то нашла пенку, которая не сушит кожу! У меня розацеа, и эта пенка — единственная, после которой нет покраснений.»', author: 'Татьяна Л.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Покупаю для дочери с атопическим дерматитом. Кожа не реагирует негативно, что само по себе — уже достижение.»', author: 'Людмила В.', city: 'Могилёв', date: 'апрель 2025' },
-                { rating: 5, text: '«Деликатная, эффективная, с приятной текстурой. Давно искала такую пенку без ароматизаторов.»', author: 'Юлия П.', city: 'Гомель', date: 'март 2025' }
-            ]
-        },
-        'pearl-05': {
-            id: 'pearl-05',
-            name: 'Hair Tonic Radiance',
-            titleHtml: 'Hair Tonic<br><em>Radiance</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Тоник для волос «Укрепляющий». Стимулирует рост, укрепляет корни и придаёт волосам зеркальный блеск.',
-            size: '200 мл',
-            price: 88,
-            category: 'hair',
-            categoryName: 'Уход за волосами',
-            skinType: 'Все типы волос',
-            usage: 'Ежедневно',
-            images: ['{{ url_for("static", filename="img/Pearl5.jpg") }}'],
-            rating: 4.8,
-            ratingCount: 24,
-            badge: null,
-            ingredients: [
-                { icon: '🌿', name: 'Экстракт крапивы', desc: 'Стимулирует кровообращение кожи головы, укрепляет волосяные фолликулы, снижает выпадение волос.' },
-                { icon: '🫒', name: 'Масло репейника', desc: 'Питает кожу головы, укрепляет структуру волоса, придаёт объём и блеск.' },
-                { icon: '🌹', name: 'Гидролат розы', desc: 'Увлажняет кожу головы, нормализует выработку себума, придаёт волосам шелковистость.' },
-                { icon: '💧', name: 'Кератин гидролизованный', desc: 'Проникает в структуру волоса, восстанавливает повреждённые участки, запечатывает кутикулу.' }
-            ],
-            composition: 'Aqua (Rosa Damascena Flower Water), Urtica Dioica Leaf Extract, Arctium Lappa Root Oil, Hydrolyzed Keratin, Panthenol, Biotin, Niacinamide, Zinc PCA, Phenoxyethanol, Ethylhexylglycerin.',
-            howToUse: '<p><strong>Нанесение:</strong> Распределите тоник по кожe головы, слегка массируя подушечками пальцев 2-3 минуты. Не смывайте.</p><p>Используйте ежедневно или через день после мытья головы, пока волосы ещё слегка влажные. Курс — не менее 4 недель для заметного результата.</p>',
-            reviews: [
-                { rating: 5, text: '«После месяца применения выпадение волос значительно уменьшилось! Волосы стали более густыми и блестящими.»', author: 'Кристина Б.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Использую как профилактику — волосы крепкие, не секутся, блестят. Запах лёгкий, ненавязчивый.»', author: 'Алина С.', city: 'Гродно', date: 'апрель 2025' },
-                { rating: 4, text: '«Хороший тоник, заметила укрепление волос. Немного липнет после нанесения, но после высыхания всё окей.»', author: 'Нина Ж.', city: 'Брест', date: 'март 2025' }
-            ]
-        },
-        'pearl-06': {
-            id: 'pearl-06',
-            name: 'Velvet Oil Blend',
-            titleHtml: 'Velvet Oil<br><em>Blend</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Микс масел для волос. Глубокое питание, восстановление структуры и защита секущихся кончиков.',
-            size: '60 мл',
-            price: 69,
-            category: 'hair',
-            categoryName: 'Уход за волосами',
-            skinType: 'Сухие, повреждённые волосы',
-            usage: 'По необходимости',
-            images: ['{{ url_for("static", filename="img/Pearl6.jpg") }}'],
-            rating: 4.9,
-            ratingCount: 18,
-            badge: null,
-            ingredients: [
-                { icon: '🥥', name: 'Масло кокоса', desc: 'Глубоко проникает в структуру волоса, питает изнутри, защищает от потери белка.' },
-                { icon: '🫒', name: 'Аргановое масло', desc: 'Жидкое золото для волос. Придаёт блеск, разглаживает кутикулу, защищает от термического воздействия.' },
-                { icon: '🌾', name: 'Масло жожоба', desc: 'По составу близко к кожному себуму. Балансирует увлажнение, не утяжеляет волосы.' },
-                { icon: '🌿', name: 'Витамин E', desc: 'Мощный антиоксидант, защищает от свободных радикалов, укрепляет структуру волоса.' }
-            ],
-            composition: 'Argania Spinosa Kernel Oil, Cocos Nucifera Oil, Simmondsia Chinensis Seed Oil, Tocopherol (Vitamin E), Parfum (натуральный).',
-            howToUse: '<p><strong>Для питания:</strong> Нанесите 3-5 капель на сухие кончики и среднюю длину волос. Не наносите на корни.</p><p><strong>Как маска:</strong> Нанесите на всю длину, заверните волосы в тёплое полотенце на 30 минут. Смойте шампунем.</p><p>Также отлично работает как термозащита перед укладкой.</p>',
-            reviews: [
-                { rating: 5, text: '«Мои кончики наконец-то перестали сечься! Масло лёгкое, не жирнит, впитывается быстро. Запах лёгкий и приятный.»', author: 'Полина Н.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Покупаю второй флакон. Использую как термозащиту и для питания кончиков. Волосы стали блестящими и живыми.»', author: 'Карина В.', city: 'Витебск', date: 'апрель 2025' },
-                { rating: 5, text: '«Для коротких волос хватает надолго — расход небольшой. Результат заметен сразу после первого применения.»', author: 'Алёна М.', city: 'Гомель', date: 'март 2025' }
-            ]
-        },
-        'pearl-07': {
-            id: 'pearl-07',
-            name: 'Micellar Water Extract Mix',
-            titleHtml: 'Micellar Water<br><em>Extract Mix</em>',
-            brand: 'Pearl by Tais',
-            desc: 'Мицеллярная вода «С экстрактами». Лёгкий и бережный демакияж глаз, губ и лица с тонизирующим эффектом.',
-            size: '200 мл',
-            price: 99,
-            category: 'face',
-            categoryName: 'Уход за лицом',
-            skinType: 'Все типы',
-            usage: 'Вечером',
-            images: ['{{ url_for("static", filename="img/Pearl7.jpg") }}'],
-            rating: 4.7,
-            ratingCount: 21,
-            badge: null,
-            ingredients: [
-                { icon: '🌼', name: 'Экстракт ромашки', desc: 'Снимает раздражение, успокаивает кожу после демакияжа, обладает противовоспалительным действием.' },
-                { icon: '🍀', name: 'Мицеллярный комплекс', desc: 'Захватывает и удаляет макияж, загрязнения и избыток себума без трения и агрессивного очищения.' },
-                { icon: '💧', name: 'Глицерин', desc: 'Поддерживает уровень увлажнения кожи в процессе очищения, предотвращает ощущение стянутости.' },
-                { icon: '🌸', name: 'Гидролат жасмина', desc: 'Тонизирует, придаёт коже сияние, обладает лёгким лифтинговым эффектом.' }
-            ],
-            composition: 'Aqua (Jasminum Officinale Flower Water), Hexylene Glycol, Glycerin, Matricaria Chamomilla Flower Extract, Polysorbate 20, Panthenol, Allantoin, Phenoxyethanol, Ethylhexylglycerin.',
-            howToUse: '<p><strong>Нанесение:</strong> Обильно смочите ватный диск мицеллярной водой. Приложите к закрытым глазам на 5-10 секунд, затем мягко снимите макияж одним движением.</p><p>Для стойкого макияжа повторите 2-3 раза. После демакияжа умываться не обязательно, но можно для ощущения свежести.</p>',
-            reviews: [
-                { rating: 5, text: '«Снимает водостойкую тушь с первого раза! Не щиплет глаза, не оставляет плёнки. Нашла свою мицеллярку навсегда.»', author: 'Марьяна К.', city: 'Минск', date: 'май 2025' },
-                { rating: 5, text: '«Нежная, бережная, с приятным запахом. Кожа после не требует умывания — остаётся чистой и увлажнённой.»', author: 'Юлия Д.', city: 'Гомель', date: 'апрель 2025' },
-                { rating: 4, text: '«Хорошая мицеллярка. Со стойким базовым макияжем нужно чуть больше времени, но в целом очень довольна.»', author: 'Елена С.', city: 'Брест', date: 'март 2025' }
-            ]
-        }
-    };
-
-    // ────────────────────────────────────────────
-    //   РЕНДЕР СТРАНИЦЫ ТОВАРА
-    // ────────────────────────────────────────────
-    function renderProduct(product) {
-        if (!product) {
-            document.getElementById('prodMainTitle').textContent = 'Товар не найден';
-            return;
-        }
-
-        // Заголовок страницы
-        document.getElementById('pageTitle').textContent = `${product.name} | Pearl by Tais — TSOK Boutique`;
-
-        // Хлебные крошки
-        document.getElementById('breadcrumbCat').textContent = product.categoryName;
-        document.getElementById('breadcrumbName').textContent = product.name;
-
-        // Стики-бар
-        document.getElementById('prodStickyName').textContent = product.name;
-        document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = product.price + ' BYN');
-
-        // Кнопки корзины (sticky + main)
-        [document.getElementById('stickyCartBtn'), document.getElementById('mainCartBtn')].forEach(btn => {
-            if (!btn) return;
-            btn.dataset.id = product.id;
-            btn.dataset.name = product.name;
-            btn.dataset.price = product.price;
-            btn.dataset.size = product.size;
-            btn.dataset.brand = product.brand;
-        });
-        [document.getElementById('stickyBookmarkBtn'), document.getElementById('mainBookmarkBtn')].forEach(btn => {
-            if (!btn) return;
-            btn.dataset.id = product.id;
-            btn.dataset.name = product.name;
-        });
-
-        // Галерея
-        const mainImg = document.getElementById('prodMainImg');
-        mainImg.src = product.images[0];
-        mainImg.alt = product.name;
-        const thumbsContainer = document.getElementById('galleryThumbs');
-        thumbsContainer.innerHTML = product.images.map((img, i) =>
-            `<div class="product-gallery-thumb ${i === 0 ? 'is-active' : ''}" onclick="switchImg('${img}', this)">
-                <img src="${img}" alt="${product.name}">
-            </div>`
-        ).join('');
-
-        // Заголовок и инфо
-        document.getElementById('prodMainTitle').innerHTML = product.titleHtml;
-
-        // Рейтинг
-        const fullStars = Math.floor(product.rating);
-        const hasHalf = product.rating % 1 >= 0.5;
-        let starsHtml = '';
-        for (let i = 0; i < 5; i++) {
-            if (i < fullStars) starsHtml += '<span class="star">★</span>';
-            else if (i === fullStars && hasHalf) starsHtml += '<span class="star" style="opacity:0.5;">★</span>';
-            else starsHtml += '<span class="star empty">★</span>';
-        }
-        document.getElementById('prodStars').innerHTML = starsHtml;
-        document.getElementById('prodRatingCount').textContent = `${product.rating} · ${product.ratingCount} отзывов`;
-
-        // Описание
-        document.getElementById('prodMainDesc').textContent = product.desc;
-
-        // Мета-блоки
-        document.getElementById('prodMetaGrid').innerHTML = `
-            <div class="meta-block"><span>Объём</span><strong class="js-dyn-size">${product.size}</strong></div>
-            <div class="meta-block"><span>Стоимость</span><strong class="js-dyn-price">${product.price} BYN</strong></div>
-            <div class="meta-block"><span>Тип кожи</span><strong>${product.skinType}</strong></div>
-            <div class="meta-block"><span>Применение</span><strong>${product.usage}</strong></div>
-        `;
-
-        // Аккордеоны
-        const ingredientsHtml = product.ingredients.map((ing, i) =>
-            `<div class="ingredient-card" ${i === product.ingredients.length - 1 ? 'style="border-bottom:none;"' : ''}>
-                <div class="ingredient-card__icon">${ing.icon}</div>
-                <div class="ingredient-card__info">
-                    <div class="ingredient-card__name">${ing.name}</div>
-                    <div class="ingredient-card__desc">${ing.desc}</div>
-                </div>
-            </div>`
-        ).join('');
-
-        document.getElementById('prodAccordions').innerHTML = `
-            <div class="accordion">
-                <button class="accordion__btn" aria-expanded="false">
-                    Как использовать <span class="accordion__icon"></span>
-                </button>
-                <div class="accordion__content">
-                    <div class="accordion__content-inner">${product.howToUse}</div>
-                </div>
-            </div>
-            <div class="accordion">
-                <button class="accordion__btn" aria-expanded="true">
-                    Ключевые ингредиенты <span class="accordion__icon"></span>
-                </button>
-                <div class="accordion__content is-open">
-                    <div class="accordion__content-inner">${ingredientsHtml}</div>
-                </div>
-            </div>
-            <div class="accordion">
-                <button class="accordion__btn" aria-expanded="false">
-                    Полный состав <span class="accordion__icon"></span>
-                </button>
-                <div class="accordion__content">
-                    <div class="accordion__content-inner">
-                        <p style="font-size:13px;line-height:1.9;color:var(--color-fem-muted);">${product.composition}</p>
-                        <p style="font-size:12px;color:var(--color-fem-muted);margin-top:12px;">*Не содержит парабенов, силиконов, синтетических красителей и агрессивных отдушек.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion">
-                <button class="accordion__btn" aria-expanded="false">
-                    Доставка и возврат <span class="accordion__icon"></span>
-                </button>
-                <div class="accordion__content">
-                    <div class="accordion__content-inner">
-                        <p><strong>Доставка по Беларуси:</strong> Почта Беларуси или курьером — 1-3 рабочих дня. Бесплатно при заказе от 80 BYN.</p>
-                        <p><strong>Самовывоз:</strong> Доступен в Минске — уточняйте при оформлении заказа.</p>
-                        <p><strong>Возврат:</strong> Принимаем обмен и возврат неоткрытых продуктов в течение 14 дней.</p>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        // Отзывы
-        document.getElementById('reviewsTitle').innerHTML = `${product.ratingCount} отзывов<br><em>о продукте</em>`;
-        document.getElementById('reviewsScore').textContent = product.rating;
-        document.getElementById('reviewsStars').innerHTML = starsHtml;
-        document.getElementById('allReviewsBtn').textContent = `Читать все отзывы (${product.ratingCount})`;
-        document.getElementById('reviewsGrid').innerHTML = product.reviews.map((r, i) =>
-            `<div class="review-card anim-fade-up anim-delay-${i+1}">
-                <div class="review-card__rating">${'★'.repeat(r.rating)}${'★'.repeat(5 - r.rating)}</div>
-                <p class="review-card__text">${r.text}</p>
-                <div class="review-card__author">${r.author}</div>
-                <div class="review-card__date">${r.city} · ${r.date}</div>
-            </div>`
-        ).join('');
-
-        // Похожие товары (остальные 3-4 товара из той же или другой категории)
-        const related = Object.values(PRODUCTS)
-            .filter(p => p.id !== product.id)
-            .slice(0, 4);
-        document.getElementById('relatedCarousel').innerHTML = related.map(p => `
-            <div class="product-card">
+            <div class="product-card" data-category="face" data-price="96">
                 <div class="product-card__image-wrap">
-                    <a href="product-tonic?id=${p.id}" style="display:block;width:100%;height:100%;">
-                        <img src="${p.images[0]}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover;">
-                    </a>
-                    ${p.badge ? `<div class="product-card__badge">${p.badge}</div>` : ''}
-                    <button class="product-card__bookmark js-bookmark" data-id="${p.id}" data-name="${p.name}">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-                    </button>
+                    <a href="product-tonic?id=pearl-01"><img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" alt="Foam Mousse Moisture"></a>
+                    <button class="product-card__bookmark js-bookmark" data-id="pearl-01" data-name="Foam Mousse Moisture"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
                 </div>
                 <div class="product-card__info">
                     <span class="product-card__brand">Pearl by Tais</span>
-                    <a href="product-tonic?id=${p.id}" style="color:inherit;">
-                        <h3 class="product-card__title">${p.name}</h3>
-                    </a>
-                    <p class="product-card__desc">${p.desc}</p>
+                    <a href="product-tonic?id=pearl-01"><h3 class="product-card__title">Foam Mousse Moisture</h3></a>
+                    <p class="product-card__desc">Увлажняющая пенка для лица.</p>
                     <div class="product-card__footer">
-                        <div>
-                            <span class="product-card__size">${p.size}</span>
-                            <span class="product-card__price">${p.price} BYN</span>
-                        </div>
-                        <button class="btn btn--dark btn--add-card js-add-to-cart"
-                            data-id="${p.id}" data-name="${p.name}"
-                            data-price="${p.price}" data-size="${p.size}" data-brand="Pearl by Tais">
-                            + В корзину
-                        </button>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">96 BYN</span></div>
+                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-01" data-name="Foam Mousse Moisture" data-price="96" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl1.jpg">+ В корзину</button>
                     </div>
                 </div>
             </div>
-        `).join('');
+            <div class="product-card" data-category="hair" data-price="88">
+                <div class="product-card__image-wrap">
+                    <a href="product-tonic?id=pearl-05"><img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" alt="Hair Tonic Radiance"></a>
+                    <button class="product-card__bookmark js-bookmark" data-id="pearl-05" data-name="Hair Tonic Radiance"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                </div>
+                <div class="product-card__info">
+                    <span class="product-card__brand">Pearl by Tais</span>
+                    <a href="product-tonic?id=pearl-05"><h3 class="product-card__title">Hair Tonic Radiance</h3></a>
+                    <p class="product-card__desc">Укрепляющий тоник для волос.</p>
+                    <div class="product-card__footer">
+                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">88 BYN</span></div>
+                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-05" data-name="Hair Tonic Radiance" data-price="88" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl5.jpg">+ В корзину</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__grid">
+            <div>
+                <a href="index" class="footer__logo">TSOK <span class="footer__logo-sub">boutique</span></a>
+                <span class="footer__tagline">Два бренда. Одна философия.</span>
+                <div class="footer__brand-links">
+                    <a href="catalog" class="footer__link">Pearl by Tais</a>
+                    <a href="catalog-homme" class="footer__link">INTELEGENTOFF</a>
+                    <a href="subscription" class="footer__link text-gold">TSOK BOX</a>
+                </div>
+            </div>
+            <div>
+                <div class="footer__col-title">Pearl by Tais</div>
+                <nav class="footer__nav">
+                    <a href="catalog">Все продукты</a>
+                    <a href="subscription">TSOK BOX</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">INTELEGENTOFF</div>
+                <nav class="footer__nav">
+                    <a href="catalog-homme">Все продукты</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">Бутик</div>
+                <nav class="footer__nav">
+                    <a href="index#our-story">О нас</a>
+                    <a href="#">Доставка</a>
+                    <a href="#">FAQ</a>
+                </nav>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <span>© 2026 TSOK Boutique</span>
+            <div class="footer__legal">
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Публичная оферта</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ОВЕРЛЕИ -->
+<div class="global-overlay" id="globalOverlay"></div>
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header">
+        <h3 class="cart-drawer__title">Корзина</h3>
+        <button class="close-btn" id="cartCloseBtn" aria-label="Закрыть"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="cart-drawer__scroll">
+        <div id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div>
+    </div>
+    <div class="cart-drawer__footer">
+        <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div>
+        <a href="checkout" class="btn btn--dark w-100">Оформить заказ</a>
+    </div>
+</div>
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu__header">
+        <div class="logo-main"><span class="logo-main__title">TSOK</span></div>
+        <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть меню"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="mobile-menu__body">
+        <nav class="mobile-nav">
+            <a href="index" class="mobile-nav__link">Главная</a>
+            <a href="catalog" class="mobile-nav__link">Pearl by Tais</a>
+            <a href="catalog-homme" class="mobile-nav__link">INTELEGENTOFF</a>
+            <a href="subscription" class="mobile-nav__link text-gold">TSOK BOX</a>
+        </nav>
+    </div>
+    <div class="mobile-menu__footer">
+        <div class="action-group-col">
+            <a href="catalog" class="btn btn--outline-dark w-100">Женская коллекция</a>
+            <a href="catalog-homme" class="btn btn--dark w-100">Мужская коллекция</a>
+        </div>
+    </div>
+</div>
+<div id="toastContainer" class="toast-container"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+// Дублируем имя продукта в хлебные крошки + показ плавающей панели при прокрутке
+document.addEventListener('DOMContentLoaded', () => {
+    const nameEl = document.getElementById('prodStickyName');
+    const crumb  = document.getElementById('prodStickyName2');
+    if (nameEl && crumb) {
+        const sync = () => { crumb.textContent = nameEl.textContent; };
+        sync();
+        new MutationObserver(sync).observe(nameEl, { childList: true, characterData: true, subtree: true });
     }
 
-    function switchImg(src, thumbEl) {
-        document.getElementById('prodMainImg').src = src;
-        document.querySelectorAll('.product-gallery-thumb').forEach(t => t.classList.remove('is-active'));
-        thumbEl.classList.add('is-active');
+    const bar = document.getElementById('productStickyBar');
+    const anchor = document.getElementById('mainCartBtn');
+    if (bar && anchor) {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                // когда основная кнопка ушла за экран вверх — показать панель
+                if (!e.isIntersecting && e.boundingClientRect.top < 0) {
+                    bar.classList.add('is-visible');
+                } else {
+                    bar.classList.remove('is-visible');
+                }
+            });
+        }, { threshold: 0 });
+        io.observe(anchor);
     }
-
-    // Zoom overlay
-    document.getElementById('galleryMain').addEventListener('click', function() {
-        const src = document.getElementById('prodMainImg').src;
-        document.getElementById('zoomImg').src = src;
-        document.getElementById('zoomOverlay').classList.add('is-open');
-    });
-    document.getElementById('zoomOverlay').addEventListener('click', function() {
-        this.classList.remove('is-open');
-    });
-
-    // ────────────────────────────────────────────
-    //   ЗАГРУЗИТЬ ПРОДУКТ ИЗ URL-ПАРАМЕТРА
-    // ────────────────────────────────────────────
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id') || 'pearl-03';
-    renderProduct(PRODUCTS[productId]);
-
-    // Sticky bar
-    const stickyBar = document.getElementById('productStickyBar');
-    const detailsCol = document.getElementById('productDetailsCol');
-    if (stickyBar && detailsCol) {
-        const obs = new IntersectionObserver(([e]) => {
-            stickyBar.classList.toggle('is-visible', !e.isIntersecting);
-        }, { threshold: 0.1, rootMargin: '-80px 0px 0px 0px' });
-        const title = detailsCol.querySelector('h1');
-        if (title) obs.observe(title);
-    }
-    </script>
+});
+</script>
 </body>
 </html>

@@ -3,109 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Оформление заказа — TSOK Boutique</title>
+    <title>Оформление заказа · TSOK Boutique</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=DM+Sans:opsz,wght@9,300;9,400;9,500;9,600;9,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    {% if yandex_maps_api_key %}
+    <script src="https://api-maps.yandex.ru/2.1/?apikey={{ yandex_maps_api_key }}&lang=ru_RU" type="text/javascript"></script>
+    {% endif %}
 </head>
-<body class="checkout-body">
-{% include "_header.html" %}
+<body class="checkout-page-body">
 
-<main class="checkout-page">
-    <div class="container checkout-layout">
-        <section class="checkout-panel checkout-form-panel">
+{% include "_header.html" %}
+<div class="page-offset"></div>
+
+<section class="checkout-page">
+    <div class="checkout-head">
+        <span class="label">Шаг оформления</span>
+        <h1 class="checkout-title">Оформление <em>заказа</em></h1>
+    </div>
+
+    <div class="checkout-layout">
+        <!-- Левая колонка: форма -->
+        <div>
             {% if payment_success %}
             <div class="checkout-success" id="paymentSuccessNotice">
-                <span class="label">Оплата</span>
-                <h1 class="section-title">Спасибо!<br><em>Платёж создан</em></h1>
-                <p>Если оплата прошла успешно, мы свяжемся с вами для подтверждения доставки. Корзина очищена в браузере.</p>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Оплата прошла успешно! Спасибо за заказ — мы свяжемся с вами для подтверждения доставки.
             </div>
+            {% else %}
+            <div class="checkout-success" id="paymentSuccessNotice" style="display:none;"></div>
             {% endif %}
-            <span class="label">Checkout</span>
-            <h1 class="section-title">Оформление<br><em>заказа</em></h1>
-            <p class="section-desc">Заполните контактные данные и адрес доставки. Выберите службу доставки и пункт выдачи на карте Яндекса — точки подгружаются в текущей области карты через API.</p>
 
             <form id="checkoutForm" class="checkout-form">
-                <div class="checkout-section">
-                    <h2>Получатель</h2>
+                <div>
+                    <div class="checkout-section-title">Контактные данные</div>
+                </div>
+                <div class="field-group">
                     <label class="field-label" for="customerFio">ФИО</label>
                     <input class="field-input" id="customerFio" name="fio" type="text" autocomplete="name" placeholder="Иванов Иван Иванович" required>
-                    <div class="field-grid">
-                        <div>
-                            <label class="field-label" for="customerPhone">Телефон</label>
-                            <input class="field-input" id="customerPhone" name="phone" type="tel" autocomplete="tel" placeholder="+7 999 000-00-00" required>
-                        </div>
-                        <div>
-                            <label class="field-label" for="customerEmail">Email</label>
-                            <input class="field-input" id="customerEmail" name="email" type="email" autocomplete="email" placeholder="mail@example.com" required>
-                        </div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label class="field-label" for="customerPhone">Телефон</label>
+                        <input class="field-input" id="customerPhone" name="phone" type="tel" autocomplete="tel" placeholder="+375 29 000-00-00" required>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="customerEmail">Email</label>
+                        <input class="field-input" id="customerEmail" name="email" type="email" autocomplete="email" placeholder="mail@example.com" required>
                     </div>
                 </div>
 
-                <div class="checkout-section">
-                    <h2>Доставка</h2>
-                    <div class="field-grid">
-                        <div>
-                            <label class="field-label" for="deliveryCity">Город</label>
-                            <input class="field-input" id="deliveryCity" name="city" type="text" autocomplete="address-level2" placeholder="Москва" required>
-                        </div>
-                        <div>
-                            <label class="field-label" for="deliveryZip">Индекс</label>
-                            <input class="field-input" id="deliveryZip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="101000">
-                        </div>
+                <div style="margin-top:12px;">
+                    <div class="checkout-section-title">Доставка</div>
+                </div>
+                <div class="field-row">
+                    <div class="field-group">
+                        <label class="field-label" for="deliveryCity">Город</label>
+                        <input class="field-input" id="deliveryCity" name="city" type="text" autocomplete="address-level2" placeholder="Минск" required>
                     </div>
+                    <div class="field-group">
+                        <label class="field-label" for="deliveryZip">Индекс</label>
+                        <input class="field-input" id="deliveryZip" name="zip" type="text" inputmode="numeric" autocomplete="postal-code" placeholder="220000">
+                    </div>
+                </div>
+                <div class="field-group">
                     <label class="field-label" for="deliveryAddress">Адрес доставки</label>
                     <input class="field-input" id="deliveryAddress" name="address" type="text" autocomplete="street-address" placeholder="улица, дом, квартира" required>
+                </div>
+                <div class="field-group">
                     <label class="field-label" for="deliveryComment">Комментарий</label>
                     <textarea class="field-input field-textarea" id="deliveryComment" name="comment" placeholder="Подъезд, домофон, удобное время доставки"></textarea>
                 </div>
 
-                <div class="checkout-section">
-                    <h2>Карта доставки</h2>
-                    <div class="checkout-pvz-switcher" role="group" aria-label="Выбор службы ПВЗ">
-                        <button class="checkout-pvz-switcher__btn is-active" type="button" data-pvz-provider="cdek">СДЭК</button>
-                        <button class="checkout-pvz-switcher__btn" type="button" data-pvz-provider="yandex">Яндекс Маркет</button>
-                        <button class="checkout-pvz-switcher__btn" type="button" data-pvz-provider="post">Почта России</button>
-                    </div>
-                    <div class="checkout-map" id="checkoutMap">
-                        <div class="checkout-yandex-map" id="checkoutYandexMap" role="application" aria-label="Карта пунктов выдачи"></div>
-                        <div class="checkout-map__hint" id="checkoutMapHint">Карта Яндекса загружается. Выберите службу доставки кнопками выше.</div>
-                    </div>
-                    <input type="hidden" id="deliveryPvzProvider" name="pvz_provider" value="cdek">
-                    <input type="hidden" id="deliveryPvzName" name="pvz_name" value="">
-                    <input type="hidden" id="deliveryPvzAddress" name="pvz_address" value="">
-                    <input type="hidden" id="deliveryPvzCoordinates" name="pvz_coordinates" value="">
+                <div style="margin-top:12px;">
+                    <div class="checkout-section-title">Пункт выдачи</div>
                 </div>
+                <div class="checkout-pvz-switcher">
+                    <button class="checkout-pvz-switcher__btn is-active" type="button" data-pvz-provider="cdek">СДЭК</button>
+                    <button class="checkout-pvz-switcher__btn" type="button" data-pvz-provider="yandex">Яндекс Маркет</button>
+                    <button class="checkout-pvz-switcher__btn" type="button" data-pvz-provider="post">Почта</button>
+                </div>
+                <div class="checkout-map" id="checkoutMap">
+                    <div class="checkout-yandex-map" id="checkoutYandexMap" role="application" aria-label="Карта пунктов выдачи"></div>
+                    <div class="checkout-map__hint" id="checkoutMapHint">Карта Яндекса загружается. Выберите службу доставки кнопками выше.</div>
+                </div>
+                <input type="hidden" id="deliveryPvzProvider" name="pvz_provider" value="cdek">
+                <input type="hidden" id="deliveryPvzName" name="pvz_name" value="">
+                <input type="hidden" id="deliveryPvzAddress" name="pvz_address" value="">
+                <input type="hidden" id="deliveryPvzCoordinates" name="pvz_coordinates" value="">
 
                 <button id="checkoutSubmitBtn" type="submit" class="btn btn--dark w-100 checkout-buy-btn">Купить</button>
-                <p class="checkout-policy">Нажимая «Купить», вы переходите на защищённую страницу оплаты ЮKassa.</p>
                 <p class="checkout-error" id="checkoutError" hidden></p>
             </form>
-        </section>
+        </div>
 
-        <aside class="checkout-panel checkout-summary">
-            <div class="checkout-summary__sticky">
-                <span class="label">Ваш заказ</span>
-                <div id="checkoutSummaryItems" class="checkout-summary__items"></div>
-                <p class="cart-empty" id="checkoutEmptyMessage">Корзина пуста. Вернитесь в каталог и добавьте товары.</p>
-                <div class="checkout-summary__total">
-                    <span>Итого</span>
-                    <strong id="checkoutSummaryTotal">0 BYN</strong>
-                </div>
-                <button class="btn btn--outline-dark w-100" type="button" id="checkoutEditCartBtn">Редактировать корзину</button>
+        <!-- Правая колонка: итог -->
+        <aside class="checkout-summary">
+            <div class="checkout-summary__title">Ваш заказ</div>
+            <div id="checkoutSummaryItems" class="checkout-summary__items"></div>
+            <p class="cart-empty" id="checkoutEmptyMessage">Корзина пуста. Вернитесь в каталог и добавьте товары.</p>
+            <div class="checkout-summary__total">
+                <span>Итого</span>
+                <strong id="checkoutSummaryTotal">0 BYN</strong>
             </div>
+            <button class="btn btn--outline-dark w-100" type="button" id="checkoutEditCartBtn">Редактировать корзину</button>
         </aside>
     </div>
-</main>
+</section>
 
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__grid">
+            <div>
+                <a href="index" class="footer__logo">TSOK <span class="footer__logo-sub">boutique</span></a>
+                <span class="footer__tagline">Два бренда. Одна философия.</span>
+                <div class="footer__brand-links">
+                    <a href="catalog" class="footer__link">Pearl by Tais</a>
+                    <a href="catalog-homme" class="footer__link">INTELEGENTOFF</a>
+                    <a href="subscription" class="footer__link text-gold">TSOK BOX</a>
+                </div>
+            </div>
+            <div>
+                <div class="footer__col-title">Pearl by Tais</div>
+                <nav class="footer__nav">
+                    <a href="catalog">Все продукты</a>
+                    <a href="subscription">TSOK BOX</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">INTELEGENTOFF</div>
+                <nav class="footer__nav">
+                    <a href="catalog-homme">Все продукты</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">Бутик</div>
+                <nav class="footer__nav">
+                    <a href="index#our-story">О нас</a>
+                    <a href="#">Доставка</a>
+                    <a href="#">FAQ</a>
+                </nav>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <span>© 2026 TSOK Boutique</span>
+            <div class="footer__legal">
+                <a href="#">Политика конфиденциальности</a>
+                <a href="#">Публичная оферта</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ОВЕРЛЕИ -->
 <div class="global-overlay" id="globalOverlay"></div>
 <div class="cart-drawer" id="cartDrawer">
     <div class="cart-drawer__header">
         <h3 class="cart-drawer__title">Корзина</h3>
-        <button class="close-btn" id="cartCloseBtn" aria-label="Закрыть">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
+        <button class="close-btn" id="cartCloseBtn" aria-label="Закрыть"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="cart-drawer__scroll">
         <div id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div>
@@ -115,13 +172,10 @@
         <a href="checkout" class="btn btn--dark w-100">Оформить заказ</a>
     </div>
 </div>
-
 <div class="mobile-menu" id="mobileMenu">
     <div class="mobile-menu__header">
-        <div class="logo-main"><span class="logo-main__title">TSOK</span><span class="logo-main__sub">Boutique</span></div>
-        <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть меню">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
+        <div class="logo-main"><span class="logo-main__title">TSOK</span></div>
+        <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть меню"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
     <div class="mobile-menu__body">
         <nav class="mobile-nav">
@@ -131,11 +185,15 @@
             <a href="subscription" class="mobile-nav__link text-gold">TSOK BOX</a>
         </nav>
     </div>
+    <div class="mobile-menu__footer">
+        <div class="action-group-col">
+            <a href="catalog" class="btn btn--outline-dark w-100">Женская коллекция</a>
+            <a href="catalog-homme" class="btn btn--dark w-100">Мужская коллекция</a>
+        </div>
+    </div>
 </div>
+<div id="toastContainer" class="toast-container"></div>
 
-{% if yandex_maps_api_key %}
-<script src="https://api-maps.yandex.ru/2.1/?apikey={{ yandex_maps_api_key }}&lang=ru_RU"></script>
-{% endif %}
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
