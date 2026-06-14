@@ -847,3 +847,19 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,.i
 .checkout-summary__total strong{font-family:var(--font-d);font-size:26px;color:var(--ink);font-weight:500}
 .checkout-success{background:var(--sage-pale);border:1px solid var(--sage);border-radius:var(--r);padding:20px 24px;margin-bottom:24px;font-size:14px;color:var(--sage-deep);display:flex;align-items:center;gap:12px}
 .checkout-buy-btn{margin-top:8px}
+
+/* ═══════════════ ФИКСЫ ПЕРЕПОЛНЕНИЯ НА МОБИЛЬНЫХ ═══════════════ */
+.sub-hero{overflow:hidden}              /* кольца-декор не выходят за экран */
+.constructor-section{overflow:hidden}
+@media(max-width:560px){
+  .constructor-product{gap:12px;padding:12px}
+  .constructor-product__img{width:50px;height:64px}
+  .constructor-product__name{font-size:14px}
+  .constructor-product__price{font-size:15px;margin-right:0}
+  .constructor-product__qty{gap:6px;padding:4px 7px}
+  .sub-hero__perks{grid-template-columns:1fr}
+  /* таблица сравнения — горизонтальная прокрутка вместо разрыва макета */
+  .comparison-table{display:block;overflow-x:auto;white-space:nowrap}
+}
+/* Бейдж счётчика корзины не должен растягивать шапку, если пусто */
+.cart-count:empty,.fav-count:empty{display:none!important}

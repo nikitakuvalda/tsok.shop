@@ -1,6 +1,25 @@
 <!-- ═══════════════════════════════════════════
      ЕДИНАЯ ШАПКА САЙТА — TSOK Boutique
      ═══════════════════════════════════════════ -->
+<script>
+/* reveal-safety: гарантируем, что контент станет видимым,
+   даже если IntersectionObserver не сработает */
+(function(){
+    function revealAll(){
+        document.querySelectorAll('.anim-fade-up,.anim-scale-up,.fi').forEach(function(el){
+            el.classList.add('is-visible');
+        });
+    }
+    // если что-то не раскрылось за 1.4с после загрузки — раскрываем принудительно
+    window.addEventListener('load', function(){ setTimeout(revealAll, 1400); });
+    // на случай отключённого JS-обсервера для прокрутки за пределами экрана
+    window.addEventListener('scroll', function onScroll(){
+        if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 4){
+            revealAll();
+        }
+    }, {passive:true});
+})();
+</script>
 <div class="site-top" id="siteTop">
     <div class="promo-bar">
         Бесплатная доставка от 80&nbsp;BYN &nbsp;·&nbsp;

@@ -352,3 +352,259 @@
 <div id="toastContainer" class="toast-container"></div>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+    // ════════════════════════════════════════════
+    //  JS: КОНСТРУКТОР БОКСА И РАСЧЕТ ПОДПИСОК
+    // ════════════════════════════════════════════
+    const PRODUCTS = [
+        { id:'pearl-01', name:'Foam Mousse Moisture',      size:'150 мл', price:96,  img:'img/Pearl1.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-02', name:'Face Tonic Toning',         size:'150 мл', price:93,  img:'img/Pearl2.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-03', name:'Tonic Youth Restoring',     size:'150 мл', price:93,  img:'img/Pearl3.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-04', name:'Foam Mousse Cleansing',     size:'150 мл', price:96,  img:'img/Pearl4.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-05', name:'Hair Tonic Radiance',       size:'200 мл', price:88,  img:'img/Pearl5.jpg', cat:'hair',  brand:'pearl' },
+        { id:'pearl-06', name:'Velvet Oil Blend',          size:'60 мл',  price:69,  img:'img/Pearl6.jpg', cat:'hair',  brand:'pearl' },
+        { id:'pearl-07', name:'Micellar Water Extract Mix',size:'200 мл', price:99,  img:'img/Pearl7.jpg', cat:'face',  brand:'pearl' },
+        { id:'homme-01', name:'Face Wash Intense',         size:'150 мл', price:110, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
+        { id:'homme-02', name:'Moisturizer Power',         size:'50 мл',  price:145, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
+        { id:'homme-03', name:'Beard Oil Brutal',          size:'30 мл',  price:120, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
+    ];
+
+    // ── Состояние ──
+    let boxQty = {};
+    let mode = 'sub'; // 'once', 'sub', 'split'
+    let curFilter = 'all';
+    const MIN_ITEMS = 3;
+
+    // ── Фильтр ──
+    function filterBox(cat) {
+        curFilter = cat;
+        ['all','face','hair','homme'].forEach(c => {
+            const btn = document.getElementById('boxFilter' + c.charAt(0).toUpperCase() + c.slice(1));
+            if (!btn) return;
+            const isActive = c === cat;
+            if (c === 'homme') {
+                btn.style.background = isActive ? '#c9956e' : '#0e0b09';
+                btn.style.color = isActive ? 'white' : 'rgba(255,255,255,0.6)';
+                btn.style.borderColor = isActive ? '#c9956e' : 'rgba(255,255,255,0.15)';
+            } else {
+                btn.style.background = isActive ? 'var(--color-fem-text)' : 'transparent';
+                btn.style.color = isActive ? 'white' : 'var(--color-fem-muted)';
+                btn.style.borderColor = isActive ? 'var(--color-fem-text)' : 'var(--color-fem-border)';
+            }
+        });
+        renderConstructor();
+    }
+
+    // ── Готовые боксы ──
+    function loadReadyBox(type) {
+        boxQty = {};
+        if (type === 'pearl') {
+            boxQty['pearl-03'] = 1;
+            boxQty['pearl-01'] = 1;
+            boxQty['pearl-05'] = 1;
+            boxQty['pearl-07'] = 1;
+        } else if (type === 'homme') {
+            boxQty['homme-01'] = 1;
+            boxQty['homme-02'] = 1;
+            boxQty['homme-03'] = 1;
+        }
+        filterBox('all');
+        updatePanel();
+        document.getElementById('constructor').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => showToast('Бокс добавлен — можешь изменить состав ниже', 'heart'), 600);
+    }
+
+    // ── Математика ──
+    function getCount() {
+        return Object.values(boxQty).reduce((s, q) => s + q, 0);
+    }
+    
+    function getBaseTotal() {
+        return PRODUCTS.reduce((sum, p) => sum + p.price * (boxQty[p.id] || 0), 0);
+    }
+
+    function getTotal() {
+        return PRODUCTS.reduce((sum, p) => {
+            let itemPrice = p.price;
+            if (mode === 'sub') itemPrice = Math.round(p.price * 0.85); // -15%
+            if (mode === 'split') itemPrice = Math.round(p.price * 0.80); // -20%
+            return sum + itemPrice * (boxQty[p.id] || 0);
+        }, 0);
+    }
+
+    function updatePanel() {
+        const count = getCount();
+        const total = getTotal();
+        const baseTotal = getBaseTotal();
+
+        // Прогресс-бар (макс 5)
+        const pct = Math.min(100, (count / 5) * 100);
+        document.getElementById('progressAmount').textContent = count;
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('itemCount').textContent = count;
+
+        // Майлстоуны
+        document.getElementById('milestone1').classList.toggle('is-unlocked', count >= 3);
+        document.getElementById('milestone2').classList.toggle('is-unlocked', count >= 4);
+        document.getElementById('milestone3').classList.toggle('is-unlocked', count >= 5);
+
+        // VIP Выбор подарка
+        const vipGiftDiv = document.getElementById('vipGiftSelection');
+        if (count >= 5 && mode !== 'once') {
+            vipGiftDiv.style.display = 'block';
+        } else {
+            vipGiftDiv.style.display = 'none';
+        }
+
+        // Доставка
+        document.getElementById('deliveryLine').innerHTML =
+            count >= 3 && mode !== 'once' ? '🚚 <span style="color:#2ecc71;">Бесплатно</span>' : '<span style="color:#c0392b;">Платная</span>';
+
+        // Итого сумма
+        let totalHtml = `<span style="font-family:var(--font-display); font-size: 28px;">${total} BYN</span>`;
+        if (mode === 'split') {
+            totalHtml = `<span style="font-size:14px;font-weight:400;color:var(--color-fem-muted);text-decoration:line-through;margin-right:8px;">${baseTotal}</span><span style="font-family:var(--font-display); font-size: 28px;">${total} BYN</span><br><span style="font-size:12px;color:#c9956e;font-weight:400;">в месяц (Долями на 1 год)</span>`;
+        } else if (mode === 'sub') {
+            totalHtml = `<span style="font-size:14px;font-weight:400;color:var(--color-fem-muted);text-decoration:line-through;margin-right:8px;">${baseTotal}</span><span style="font-family:var(--font-display); font-size: 28px;">${total} BYN</span>`;
+        }
+        document.getElementById('totalPrice').innerHTML = totalHtml;
+
+        // Блокировка кнопки
+        const btn = document.getElementById('checkoutBtn');
+        const warn = document.getElementById('minWarn');
+
+        if (mode !== 'once' && count > 0 && count < MIN_ITEMS) {
+            warn.textContent = `Добавьте еще ${MIN_ITEMS - count} товар(а) для активации подписки`;
+            warn.classList.add('is-visible');
+            btn.disabled = true;
+            btn.style.opacity = '0.4';
+            btn.innerHTML = 'Минимум 3 товара для подписки';
+        } else if (count === 0) {
+            warn.classList.remove('is-visible');
+            btn.disabled = true;
+            btn.style.opacity = '0.4';
+            btn.innerHTML = 'Добавьте товары';
+        } else {
+            warn.classList.remove('is-visible');
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            btn.innerHTML = mode === 'split' ? 'Оформить Долями <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>' : 'Оформить бокс <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+        }
+    }
+
+    function setQty(id, delta) {
+        const next = Math.max(0, (boxQty[id] || 0) + delta);
+        boxQty[id] = next;
+        const row = document.querySelector('[data-product-id="' + id + '"]');
+        if (row) {
+            row.querySelector('.qty-val').textContent = next;
+            row.querySelector('.qty-minus').disabled = next === 0;
+        }
+        updatePanel();
+    }
+
+    function setMode(m) {
+        mode = m;
+        document.getElementById('toggleOnce').classList.toggle('is-active', m === 'once');
+        document.getElementById('toggleSub').classList.toggle('is-active', m === 'sub');
+        document.getElementById('toggleSplit').classList.toggle('is-active', m === 'split');
+        
+        const discText = document.getElementById('subDiscount');
+        if(m === 'once') discText.innerHTML = '<span style="color:var(--color-fem-muted);">Базовая цена. Платная доставка. Без подарков.</span>';
+        else if(m === 'sub') discText.textContent = 'Скидка 15% каждый месяц + управление в ЛК';
+        else if(m === 'split') discText.textContent = 'Фиксация цены на год (-20%). Оплата частями раз в месяц.';
+
+        renderConstructor(); // Перерисовываем, чтобы обновить цены в карточках
+    }
+
+    function handleCheckout() {
+        const count = getCount();
+        const total = getTotal();
+        
+        if (count === 0) return;
+        if (mode !== 'once' && count < MIN_ITEMS) return;
+
+        let giftInfo = '';
+        if (mode !== 'once') {
+            if (count >= 5) {
+                const giftSelect = document.getElementById('vipGiftSelect');
+                giftInfo = '\n🎁 VIP Подарок: ' + giftSelect.options[giftSelect.selectedIndex].text;
+            } else if (count >= 4) {
+                giftInfo = '\n🎁 Подарок: Сюрприз от бренда!';
+            }
+        }
+
+        const items = PRODUCTS.filter(p => boxQty[p.id] > 0).map(p => p.name + ' x' + boxQty[p.id]).join('\n- ');
+        const modeText = mode === 'once' ? 'Разовая покупка' : (mode === 'split' ? 'Годовая подписка (Оплата Долями)' : 'Гибкая Подписка (-15%)');
+
+        alert(`✅ Создание заказа!\n\nФормат: ${modeText}\n\nСостав бокса:\n- ${items}${giftInfo}\n\nСумма: ${total} BYN${mode === 'split' ? ' / ежемесячно' : ''}\n\nДалее произойдет интеграция с ЮKassa (рекуррент) или BNPL (Долями) и СДЭК API.`);
+    }
+
+    // ── Мок отмены с удержанием ──
+    function mockCancelSub() {
+        if (confirm('Уверены, что хотите отменить подписку?\n\nОСТАНЬТЕСЬ С НАМИ, и в следующем месяце мы положим в ваш бокс ПРЕМИУМ-СКРАБ абсолютно бесплатно! 🎁\n\nНажмите Отмена, чтобы забрать подарок и остаться.')) {
+            alert('Подписка отменена. Возвращайтесь!');
+        } else {
+            alert('Отличный выбор! Скраб добавлен в ваш следующий бокс.');
+        }
+    }
+
+    // ── Рендер ──
+    function renderConstructor() {
+        const container = document.getElementById('constructorProducts');
+        const filtered = curFilter === 'all' ? PRODUCTS : PRODUCTS.filter(p =>
+            curFilter === 'homme' ? p.brand === 'homme' : p.cat === curFilter
+        );
+        container.innerHTML = filtered.map(p => {
+            const isHomme = p.brand === 'homme';
+            const bg = isHomme ? 'background:#0e0b09;' : '';
+            const textColor = isHomme ? 'color:rgba(255,255,255,0.85);' : '';
+            const metaColor = isHomme ? 'color:rgba(255,255,255,0.35);' : '';
+            const brandTag = isHomme
+                ? '<span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-accent);font-weight:700;">INTELEGENTOFF</span>'
+                : '<span style="font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--color-accent);font-weight:700;">Pearl by Tais</span>';
+            
+            let itemPrice = p.price;
+            if (mode === 'sub') itemPrice = Math.round(p.price * 0.85);
+            if (mode === 'split') itemPrice = Math.round(p.price * 0.80);
+
+            return `<div class="constructor-product" data-product-id="${p.id}" style="${bg}">
+                <div class="constructor-product__img"><img src="${p.img}" alt="${p.name}" onerror="this.parentElement.style.background='${isHomme ? '#1a1714' : '#f0ebe4'}';this.style.display='none';"></div>
+                <div class="constructor-product__info">${brandTag}
+                    <div class="constructor-product__name" style="${textColor}">${p.name}</div>
+                    <div class="constructor-product__meta" style="${metaColor}">${p.size}</div>
+                </div>
+                <div class="constructor-product__price" style="${textColor}">${itemPrice} BYN</div>
+                <div class="constructor-product__qty">
+                    <button class="qty-minus" onclick="setQty('${p.id}', -1)" disabled>−</button>
+                    <span class="qty-val">${boxQty[p.id] || 0}</span>
+                    <button onclick="setQty('${p.id}', 1)">+</button>
+                </div>
+            </div>`;
+        }).join('');
+        
+        // Восстановление счетчиков
+        filtered.forEach(p => {
+            if (boxQty[p.id] > 0) {
+                const row = document.querySelector(`[data-product-id="${p.id}"]`);
+                if (row) {
+                    row.querySelector('.qty-val').textContent = boxQty[p.id];
+                    row.querySelector('.qty-minus').disabled = false;
+                }
+            }
+        });
+        updatePanel();
+    }
+
+    // ── FAQ ──
+    function toggleFaq(btn) {
+        const expanded = btn.getAttribute('aria-expanded') === 'true';
+        btn.setAttribute('aria-expanded', !expanded);
+        btn.nextElementSibling.classList.toggle('is-open', !expanded);
+    }
+
+    // Инит
+    renderConstructor();
+    </script>
+</body>
+</html>

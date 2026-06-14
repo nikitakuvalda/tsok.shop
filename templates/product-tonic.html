@@ -243,27 +243,77 @@
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
-// Дублируем имя продукта в хлебные крошки + показ плавающей панели при прокрутке
-document.addEventListener('DOMContentLoaded', () => {
-    const nameEl = document.getElementById('prodStickyName');
-    const crumb  = document.getElementById('prodStickyName2');
-    if (nameEl && crumb) {
-        const sync = () => { crumb.textContent = nameEl.textContent; };
-        sync();
-        new MutationObserver(sync).observe(nameEl, { childList: true, characterData: true, subtree: true });
-    }
+// ── Данные товаров (с корректными статическими путями через url_for) ──
+const PRODUCTS = {
+    "pearl-01": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Moisture",  desc:"Увлажняющая пенка для лица. Бережное очищение без чувства стянутости.", price:96, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl1.jpg') }}" },
+    "pearl-02": { brand:"Pearl by Tais", t1:"Face Tonic",  t2:"Toning",    desc:"Тоник для лица «Тонус». Устраняет следы усталости и освежает кожу.", price:93, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl2.jpg') }}" },
+    "pearl-03": { brand:"Pearl by Tais", t1:"Tonic Youth", t2:"Restoring", desc:"Тоник-реставратор молодости. Восстанавливает pH-баланс после умывания и сужает поры. Первый шаг к живой коже.", price:93, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl3.jpg') }}" },
+    "pearl-04": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Cleansing", desc:"Пенка для умывания «Мягкое очищение». Идеально для чувствительной и реактивной кожи.", price:96, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl4.jpg') }}" },
+    "pearl-05": { brand:"Pearl by Tais", t1:"Hair Tonic",  t2:"Radiance",  desc:"Тоник для волос «Укрепляющий». Стимулирует рост, укрепляет корни и придаёт блеск.", price:88, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl5.jpg') }}" },
+    "pearl-06": { brand:"Pearl by Tais", t1:"Velvet Oil",  t2:"Blend",     desc:"Микс масел для волос. Глубокое питание и защита секущихся кончиков.", price:69, size:"60 мл", img:"{{ url_for('static', filename='img/Pearl6.jpg') }}" },
+    "pearl-07": { brand:"Pearl by Tais", t1:"Micellar Water", t2:"Extract Mix", desc:"Мицеллярная вода «С экстрактами». Лёгкий демакияж глаз и деликатное тонизирование.", price:99, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl7.jpg') }}" },
+    "homme-01": { brand:"INTELEGENTOFF", t1:"Face Wash",   t2:"Black",     desc:"Глубокое очищение для мужской кожи. Удаляет излишки себума и загрязнения.", price:78, size:"200 мл", img:"{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" },
+    "homme-02": { brand:"INTELEGENTOFF", t1:"Toner",       t2:"Control",   desc:"Тоник для контроля жирного блеска. Сужает поры и матирует кожу.", price:89, size:"150 мл", img:"{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" },
+    "homme-03": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Oil",       desc:"Масло для бороды. Смягчает жёсткий волос, питает кожу под бородой.", price:96, size:"50 мл", img:"{{ url_for('static', filename='img/INTELEGENT масло.png') }}" },
+    "homme-04": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Wax",       desc:"Воск для укладки бороды. Фиксация и матовый финиш на весь день.", price:82, size:"50 мл", img:"{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" },
+    "homme-05": { brand:"INTELEGENTOFF", t1:"Face Serum",  t2:"Black",     desc:"Концентрированная сыворотка для лица. Антивозрастной комплекс высокой концентрации.", price:134, size:"30 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}" },
+    "homme-06": { brand:"INTELEGENTOFF", t1:"After Shave", t2:"Balm",      desc:"Бальзам после бритья. Успокаивает раздражение и восстанавливает кожу.", price:82, size:"100 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}" },
+    "homme-kit-01": { brand:"INTELEGENTOFF", t1:"Starter", t2:"Kit",       desc:"Стартовый набор: 3 продукта для полного ритуала ухода. Выгоднее, чем по отдельности.", price:254, size:"Набор 3 продукта", img:"{{ url_for('static', filename='img/logoIntelegent.png') }}" },
+};
 
+function renderTsokProduct() {
+    const titleEl = document.getElementById('prodMainTitle');
+    if (!titleEl) return;
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id') || 'pearl-03';
+    const p = PRODUCTS[id];
+    if (!p) return;
+
+    // Картинки
+    document.getElementById('prodMainImg').src  = p.img;
+    document.getElementById('prodMainImg').alt  = p.t1 + ' ' + p.t2;
+    document.getElementById('prodThumbImg').src = p.img;
+
+    // Тексты
+    titleEl.innerHTML = p.t1 + '<br><em>' + p.t2 + '</em>';
+    document.getElementById('prodMainDesc').textContent = p.desc;
+
+    // Бренд в шапке информации (последний текстовый узел после линии-псевдоэлемента)
+    const brandEl = document.querySelector('.product-info__brand');
+    if (brandEl) brandEl.textContent = p.brand;
+
+    // Цены/объёмы
+    document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = p.price + ' BYN');
+    document.querySelectorAll('.js-dyn-size').forEach(el => el.textContent = p.size);
+
+    // Имя в плавающей панели + хлебных крошках
+    document.getElementById('prodStickyName').textContent  = p.t1 + ' ' + p.t2;
+    const crumb = document.getElementById('prodStickyName2');
+    if (crumb) crumb.textContent = p.t1 + ' ' + p.t2;
+    document.title = p.t1 + ' ' + p.t2 + ' · ' + p.brand + ' — TSOK Boutique';
+
+    // Кнопки корзины/избранного — правильный товар
+    document.querySelectorAll('.js-add-to-cart').forEach(btn => {
+        btn.dataset.id = id; btn.dataset.name = p.t1 + ' ' + p.t2;
+        btn.dataset.price = p.price; btn.dataset.size = p.size;
+        btn.dataset.brand = p.brand; btn.dataset.img = p.img;
+    });
+    document.querySelectorAll('.js-bookmark').forEach(btn => {
+        btn.dataset.id = id; btn.dataset.name = p.t1 + ' ' + p.t2;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    renderTsokProduct();
+
+    // Показ плавающей нижней панели, когда основная кнопка уходит за экран
     const bar = document.getElementById('productStickyBar');
     const anchor = document.getElementById('mainCartBtn');
     if (bar && anchor) {
         const io = new IntersectionObserver((entries) => {
             entries.forEach(e => {
-                // когда основная кнопка ушла за экран вверх — показать панель
-                if (!e.isIntersecting && e.boundingClientRect.top < 0) {
-                    bar.classList.add('is-visible');
-                } else {
-                    bar.classList.remove('is-visible');
-                }
+                if (!e.isIntersecting && e.boundingClientRect.top < 0) bar.classList.add('is-visible');
+                else bar.classList.remove('is-visible');
             });
         }, { threshold: 0 });
         io.observe(anchor);
