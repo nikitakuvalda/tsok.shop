@@ -64,7 +64,7 @@ function updateCartUI() {
     document.querySelectorAll('.cart-count').forEach(el => el.textContent = total);
     document.querySelectorAll('#cartTotalSum').forEach(el => {
         const sum = cart.reduce((s, i) => s + i.qty * i.price, 0);
-        el.textContent = sum.toFixed(0) + ' BYN';
+        el.textContent = sum.toFixed(0) + ' ₽';
     });
 }
 
@@ -102,7 +102,7 @@ function renderCartItems() {
                 <div class="cart-item__info">
                     <div class="cart-item__top">
                         <h4>${item.name}</h4>
-                        <span class="cart-item__price">${(item.price * item.qty).toFixed(0)} BYN</span>
+                        <span class="cart-item__price">${(item.price * item.qty).toFixed(0)} ₽</span>
                     </div>
                     <span class="cart-item__size">${item.size || ''}</span>
                     <div class="cart-item__controls">
@@ -307,7 +307,7 @@ function initCatalogFilter() {
     if (priceRange) {
         priceRange.addEventListener('input', () => {
             const max = parseInt(priceRange.value);
-            if (priceLabel) priceLabel.textContent = max + ' BYN';
+            if (priceLabel) priceLabel.textContent = max + ' ₽';
             cards.forEach(card => {
                 const priceEl = card.querySelector('.product-card__price');
                 if (!priceEl) return;
@@ -663,9 +663,9 @@ function renderCheckoutSummary() {
     if (!container && !totalEl && !submitBtn) return;
 
     const total = cartSubtotal();
-    if (totalEl) totalEl.textContent = `${total.toFixed(0)} BYN`;
+    if (totalEl) totalEl.textContent = `${total.toFixed(0)} ₽`;
     if (submitBtn) {
-        submitBtn.textContent = cart.length ? `Купить за ${total.toFixed(0)} BYN` : 'Купить';
+        submitBtn.textContent = cart.length ? `Купить за ${total.toFixed(0)} ₽` : 'Купить';
         submitBtn.disabled = cart.length === 0;
     }
     if (!container) return;
@@ -685,7 +685,7 @@ function renderCheckoutSummary() {
                 <div class="checkout-summary-item__name">${item.name}</div>
                 <span class="checkout-summary-item__meta">${item.brand || ''}${item.size ? ' · ' + item.size : ''} · ${item.qty} шт.</span>
             </div>
-            <div class="checkout-summary-item__price">${(item.price * item.qty).toFixed(0)} BYN</div>`;
+            <div class="checkout-summary-item__price">${(item.price * item.qty).toFixed(0)} ₽</div>`;
         container.appendChild(el);
     });
 }
@@ -860,7 +860,7 @@ function renderProductPage() {
     document.getElementById('prodMainDesc').textContent = product.desc;
     
     // Меняем цены и объемы
-    document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = `${product.price} BYN`);
+    document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = `${product.price} ₽`);
     document.querySelectorAll('.js-dyn-size').forEach(el => el.textContent = product.size);
     document.getElementById('prodStickyName').textContent = `${product.name1} ${product.name2}`;
 

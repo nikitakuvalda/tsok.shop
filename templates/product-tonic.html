@@ -96,7 +96,7 @@
                 <button class="btn btn--outline-dark js-bookmark" id="mainBookmarkBtn">В избранное</button>
             </div>
 
-            <a href="catalog" class="nav-link" style="color:var(--clay-deep);">← Вернуться в коллекцию Pearl</a>
+            <a href="catalog" class="nav-link" style="color:var(--clay-deep);display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Вернуться в коллекцию Pearl</a>
         </div>
     </div>
 </section>
@@ -120,7 +120,7 @@
                     <a href="product-tonic?id=pearl-03"><h3 class="product-card__title">Tonic Youth Restoring</h3></a>
                     <p class="product-card__desc">Тоник-реставратор молодости.</p>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">93 BYN</span></div>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">93 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-03" data-name="Tonic Youth Restoring" data-price="93" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl3.jpg">+ В корзину</button>
                     </div>
                 </div>
@@ -135,7 +135,7 @@
                     <a href="product-tonic?id=pearl-01"><h3 class="product-card__title">Foam Mousse Moisture</h3></a>
                     <p class="product-card__desc">Увлажняющая пенка для лица.</p>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">96 BYN</span></div>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">96 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-01" data-name="Foam Mousse Moisture" data-price="96" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl1.jpg">+ В корзину</button>
                     </div>
                 </div>
@@ -150,7 +150,7 @@
                     <a href="product-tonic?id=pearl-05"><h3 class="product-card__title">Hair Tonic Radiance</h3></a>
                     <p class="product-card__desc">Укрепляющий тоник для волос.</p>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">88 BYN</span></div>
+                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">88 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-05" data-name="Hair Tonic Radiance" data-price="88" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl5.jpg">+ В корзину</button>
                     </div>
                 </div>
@@ -215,7 +215,7 @@
         <div id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div>
     </div>
     <div class="cart-drawer__footer">
-        <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div>
+        <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 ₽</span></div>
         <a href="checkout" class="btn btn--dark w-100">Оформить заказ</a>
     </div>
 </div>
@@ -283,7 +283,7 @@ function renderTsokProduct() {
     if (brandEl) brandEl.textContent = p.brand;
 
     // Цены/объёмы
-    document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = p.price + ' BYN');
+    document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = p.price + ' ₽');
     document.querySelectorAll('.js-dyn-size').forEach(el => el.textContent = p.size);
 
     // Имя в плавающей панели + хлебных крошках

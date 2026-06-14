@@ -34,18 +34,20 @@
              onerror="this.parentElement.style.background='linear-gradient(150deg,#E7DBCB,#CBB09B)'">
     </div>
     <div class="catalog-hero__overlay"></div>
-    <div class="catalog-hero__content anim-fade-up">
-        <div class="catalog-hero__eyebrow">Pearl by Tais · Женская коллекция</div>
-        <h1 class="catalog-hero__title">Уход как <em>ритуал</em></h1>
-        <p class="catalog-hero__desc">Тоники, пенки, мицеллярная вода и масла на основе 100% натуральных гидролатов. pH 5.5 — для здорового сияния кожи.</p>
-        <div class="catalog-hero__cta">
-            <a href="#catalog-main" class="btn btn--accent">Смотреть продукты</a>
-            <a href="subscription" class="btn btn--outline-light">TSOK BOX</a>
+    <div class="catalog-hero__inner">
+        <div class="catalog-hero__content anim-fade-up">
+            <div class="catalog-hero__eyebrow">Pearl by Tais · Женская коллекция</div>
+            <h1 class="catalog-hero__title">Уход как <em>ритуал</em></h1>
+            <p class="catalog-hero__desc">Тоники, пенки, мицеллярная вода и масла на основе 100% натуральных гидролатов. pH 5.5 — для здорового сияния кожи.</p>
+            <div class="catalog-hero__cta">
+                <a href="#catalog-main" class="btn btn--accent">Смотреть продукты</a>
+                <a href="subscription" class="btn btn--outline-light">TSOK BOX</a>
+            </div>
         </div>
-    </div>
-    <div class="catalog-hero__badge">
-        <span class="catalog-hero__badge-num">7</span>
-        <span class="catalog-hero__badge-label">продуктов</span>
+        <div class="catalog-hero__badge">
+            <span class="catalog-hero__badge-num">7</span>
+            <span class="catalog-hero__badge-label">продуктов</span>
+        </div>
     </div>
 </section>
 
@@ -61,7 +63,7 @@
                 <h2 class="featured-banner__title">Tonic Youth<br><em>Restoring</em></h2>
                 <p class="featured-banner__desc">Тоник-реставратор молодости. Восстанавливает pH-баланс после умывания и сужает поры. Первый шаг к живой коже.</p>
                 <div class="featured-banner__row">
-                    <span class="featured-banner__price">93 BYN</span>
+                    <span class="featured-banner__price">93 ₽</span>
                     <button class="btn btn--dark js-add-to-cart"
                         data-id="pearl-03" data-name="Tonic Youth Restoring"
                         data-price="93" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl3.jpg">
@@ -76,21 +78,23 @@
 
 <!-- ═══════════════ TOOLBAR ═══════════════ -->
 <div class="catalog-toolbar" id="catalog-main">
-    <span class="catalog-count" id="catalogCount">7 продуктов</span>
-    <div class="catalog-filters">
-        <button class="filter-btn is-active" data-filter="all">Все</button>
-        <button class="filter-btn" data-filter="face">Лицо</button>
-        <button class="filter-btn" data-filter="hair">Волосы</button>
-        <button class="filter-btn" data-filter="body">Тело</button>
-        <button class="filter-btn" data-filter="new">Новинки</button>
-    </div>
-    <div class="catalog-sort desktop-only">
-        <span>Сортировка:</span>
-        <select id="sortSelect">
-            <option value="popular">По популярности</option>
-            <option value="price-asc">Сначала дешевле</option>
-            <option value="price-desc">Сначала дороже</option>
-        </select>
+    <div class="catalog-toolbar__inner">
+        <span class="catalog-count" id="catalogCount">7 продуктов</span>
+        <div class="catalog-filters">
+            <button class="filter-btn is-active" data-filter="all">Все</button>
+            <button class="filter-btn" data-filter="face">Лицо</button>
+            <button class="filter-btn" data-filter="hair">Волосы</button>
+            <button class="filter-btn" data-filter="body">Тело</button>
+            <button class="filter-btn" data-filter="new">Новинки</button>
+        </div>
+        <div class="catalog-sort desktop-only">
+            <span>Сортировка:</span>
+            <select id="sortSelect">
+                <option value="popular">По популярности</option>
+                <option value="price-asc">Сначала дешевле</option>
+                <option value="price-desc">Сначала дороже</option>
+            </select>
+        </div>
     </div>
 </div>
 
@@ -120,8 +124,8 @@
             <div class="sidebar-price-range">
                 <input type="range" min="20" max="200" value="200" id="priceRangeInput">
                 <div class="sidebar-price-range__labels">
-                    <span>от 69 BYN</span>
-                    <span>до <strong id="priceMax">200</strong> BYN</span>
+                    <span>от 69 ₽</span>
+                    <span>до <strong id="priceMax">200</strong> ₽</span>
                 </div>
             </div>
         </div>
@@ -157,10 +161,12 @@
                     <span class="product-card__brand">Pearl by Tais</span>
                     <a href="product-tonic?id=pearl-01"><h3 class="product-card__title">Foam Mousse Moisture</h3></a>
                     <p class="product-card__desc">Увлажняющая пенка для лица. Бережное очищение без чувства стянутости.</p>
+                    <div class="product-card__skin-row"><span class="skin-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s7 7.16 7 12a7 7 0 0 1-14 0c0-4.84 7-12 7-12z"/></svg>Сухая · Нормальная</span></div>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">96 BYN</span></div>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">96 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-01" data-name="Foam Mousse Moisture" data-price="96" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl1.jpg">+ В корзину</button>
                     </div>
+                    <button class="pcard-more" data-detail="pearl-01" type="button">Подробнее: состав и польза<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
                 </div>
             </div>
 
@@ -174,10 +180,12 @@
                     <span class="product-card__brand">Pearl by Tais</span>
                     <a href="product-tonic?id=pearl-02"><h3 class="product-card__title">Face Tonic Toning</h3></a>
                     <p class="product-card__desc">Тоник для лица «Тонус». Устраняет следы усталости и освежает кожу.</p>
+                    <div class="product-card__skin-row"><span class="skin-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s7 7.16 7 12a7 7 0 0 1-14 0c0-4.84 7-12 7-12z"/></svg>Все типы</span></div>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">93 BYN</span></div>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">93 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-02" data-name="Face Tonic Toning" data-price="93" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl2.jpg">+ В корзину</button>
                     </div>
+                    <button class="pcard-more" data-detail="pearl-02" type="button">Подробнее: состав и польза<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
                 </div>
             </div>
 
@@ -192,10 +200,12 @@
                     <span class="product-card__brand">Pearl by Tais</span>
                     <a href="product-tonic?id=pearl-03"><h3 class="product-card__title">Tonic Youth Restoring</h3></a>
                     <p class="product-card__desc">Тоник-реставратор молодости. Восстанавливает pH-баланс и сужает поры.</p>
+                    <div class="product-card__skin-row"><span class="skin-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s7 7.16 7 12a7 7 0 0 1-14 0c0-4.84 7-12 7-12z"/></svg>Зрелая · Тусклая</span></div>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">93 BYN</span></div>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">93 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-03" data-name="Tonic Youth Restoring" data-price="93" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl3.jpg">+ В корзину</button>
                     </div>
+                    <button class="pcard-more" data-detail="pearl-03" type="button">Подробнее: состав и польза<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
                 </div>
             </div>
 
@@ -209,10 +219,12 @@
                     <span class="product-card__brand">Pearl by Tais</span>
                     <a href="product-tonic?id=pearl-04"><h3 class="product-card__title">Foam Mousse Cleansing</h3></a>
                     <p class="product-card__desc">Мягкое очищение без нарушения защитного барьера кожи.</p>
+                    <div class="product-card__skin-row"><span class="skin-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s7 7.16 7 12a7 7 0 0 1-14 0c0-4.84 7-12 7-12z"/></svg>Чувствительная</span></div>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">96 BYN</span></div>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">96 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-04" data-name="Foam Mousse Cleansing" data-price="96" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl4.jpg">+ В корзину</button>
                     </div>
+                    <button class="pcard-more" data-detail="pearl-04" type="button">Подробнее: состав и польза<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
                 </div>
             </div>
 
@@ -226,10 +238,12 @@
                     <span class="product-card__brand">Pearl by Tais</span>
                     <a href="product-tonic?id=pearl-05"><h3 class="product-card__title">Hair Tonic Radiance</h3></a>
                     <p class="product-card__desc">Укрепляющий тоник для волос. Стимулирует рост и придаёт блеск.</p>
+                    <div class="product-card__skin-row"><span class="skin-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s7 7.16 7 12a7 7 0 0 1-14 0c0-4.84 7-12 7-12z"/></svg>Волосы</span></div>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">88 BYN</span></div>
+                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">88 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-05" data-name="Hair Tonic Radiance" data-price="88" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl5.jpg">+ В корзину</button>
                     </div>
+                    <button class="pcard-more" data-detail="pearl-05" type="button">Подробнее: состав и польза<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
                 </div>
             </div>
 
@@ -243,10 +257,12 @@
                     <span class="product-card__brand">Pearl by Tais</span>
                     <a href="product-tonic?id=pearl-06"><h3 class="product-card__title">Velvet Oil Blend</h3></a>
                     <p class="product-card__desc">Микс масел для волос. Глубокое питание и защита секущихся кончиков.</p>
+                    <div class="product-card__skin-row"><span class="skin-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s7 7.16 7 12a7 7 0 0 1-14 0c0-4.84 7-12 7-12z"/></svg>Сухие волосы</span></div>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">60 мл</span><span class="product-card__price">69 BYN</span></div>
+                        <div><span class="product-card__size">60 мл</span><span class="product-card__price">69 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-06" data-name="Velvet Oil Blend" data-price="69" data-size="60 мл" data-brand="Pearl by Tais" data-img="img/Pearl6.jpg">+ В корзину</button>
                     </div>
+                    <button class="pcard-more" data-detail="pearl-06" type="button">Подробнее: состав и польза<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
                 </div>
             </div>
 
@@ -260,10 +276,12 @@
                     <span class="product-card__brand">Pearl by Tais</span>
                     <a href="product-tonic?id=pearl-07"><h3 class="product-card__title">Micellar Water Extract Mix</h3></a>
                     <p class="product-card__desc">Мицеллярная вода с экстрактами. Лёгкий демакияж и деликатное тонизирование.</p>
+                    <div class="product-card__skin-row"><span class="skin-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s7 7.16 7 12a7 7 0 0 1-14 0c0-4.84 7-12 7-12z"/></svg>Все типы</span></div>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">99 BYN</span></div>
+                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">99 ₽</span></div>
                         <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-07" data-name="Micellar Water Extract Mix" data-price="99" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl7.jpg">+ В корзину</button>
                     </div>
+                    <button class="pcard-more" data-detail="pearl-07" type="button">Подробнее: состав и польза<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 12h14M12 5l7 7-7 7"/></svg></button>
                 </div>
             </div>
 
@@ -349,7 +367,7 @@
         <div id="cartItemsContainer"><p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p></div>
     </div>
     <div class="cart-drawer__footer">
-        <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 BYN</span></div>
+        <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 ₽</span></div>
         <a href="checkout" class="btn btn--dark w-100">Оформить заказ</a>
     </div>
 </div>
@@ -377,6 +395,112 @@
 </div>
 <div id="toastContainer" class="toast-container"></div>
 
+<!-- ═══════════════ МОДАЛКА ТОВАРА (раскрытие карточки) ═══════════════ -->
+<div class="pmodal-wrap" id="pmodalWrap">
+    <div class="pmodal" onclick="event.stopPropagation()">
+        <button class="pmodal__close" id="pmodalClose" aria-label="Закрыть">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div class="pmodal__media"><img id="pmImg" src="" alt=""></div>
+        <div class="pmodal__content">
+            <span class="pmodal__brand" id="pmBrand">Pearl by Tais</span>
+            <h3 class="pmodal__title" id="pmTitle"></h3>
+            <div class="pmodal__price-row">
+                <span class="pmodal__price" id="pmPrice"></span>
+                <span class="pmodal__size" id="pmSize"></span>
+                <span class="skin-chip" id="pmSkinChip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2s7 7.16 7 12a7 7 0 0 1-14 0c0-4.84 7-12 7-12z"/></svg><span id="pmSkin"></span></span>
+            </div>
+            <p class="pmodal__desc" id="pmDesc"></p>
+
+            <div class="pmodal__section-t">Состав</div>
+            <p class="pmodal__desc" id="pmComposition" style="margin-bottom:26px;"></p>
+
+            <div class="pmodal__section-t">Польза</div>
+            <ul class="pmodal__benefits" id="pmBenefits"></ul>
+
+            <div class="pmodal__specs" id="pmSpecs"></div>
+
+            <div class="pmodal__actions">
+                <button class="btn btn--dark" id="pmAddBtn" style="flex:1;">Добавить в корзину</button>
+                <a href="#" class="btn btn--outline-dark" id="pmDetailLink">На страницу</a>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+// ── Данные для раскрытия карточек (составы / польза / тип кожи) ──
+const PEARL_DETAILS = {
+  "pearl-01":{brand:"Pearl by Tais",t1:"Foam Mousse",t2:"Moisture",price:96,size:"150 мл",skin:"Сухая · Нормальная",img:"{{ url_for('static', filename='img/Pearl1.jpg') }}",
+    desc:"Воздушная пенка-мусс для деликатного очищения. Мягко удаляет загрязнения, сохраняя естественный гидробаланс кожи.",
+    composition:"Гидролат розы, пантенол (B5), глицерин растительного происхождения, экстракт алоэ вера, мягкие ПАВ кокосового происхождения. Без сульфатов, парабенов и силиконов.",
+    benefits:["Очищает без чувства стянутости","Удерживает влагу в коже","Подходит для ежедневного применения","pH 5.5 — физиологичный баланс"]},
+  "pearl-02":{brand:"Pearl by Tais",t1:"Face Tonic",t2:"Toning",price:93,size:"150 мл",skin:"Все типы",img:"{{ url_for('static', filename='img/Pearl2.jpg') }}",
+    desc:"Тонизирующий тоник «Тонус» возвращает коже свежесть и сияние, завершая этап очищения.",
+    composition:"Гидролаты василька и мяты, ниацинамид, аллантоин, экстракт зелёного чая, пантенол. Без спирта и отдушек.",
+    benefits:["Освежает и тонизирует","Сужает поры","Выравнивает микрорельеф","Готовит кожу к уходу"]},
+  "pearl-03":{brand:"Pearl by Tais",t1:"Tonic Youth",t2:"Restoring",price:93,size:"150 мл",skin:"Зрелая · Тусклая",img:"{{ url_for('static', filename='img/Pearl3.jpg') }}",
+    desc:"Тоник-реставратор молодости. Восстанавливает pH-баланс после умывания, сужает поры и запускает обновление кожи.",
+    composition:"Гидролат нероли, пептидный комплекс, гиалуроновая кислота, экстракт центеллы азиатской, ниацинамид, витамин E.",
+    benefits:["Восстанавливает pH-баланс","Повышает упругость","Сужает поры","Придаёт здоровое сияние"]},
+  "pearl-04":{brand:"Pearl by Tais",t1:"Foam Mousse",t2:"Cleansing",price:96,size:"150 мл",skin:"Чувствительная",img:"{{ url_for('static', filename='img/Pearl4.jpg') }}",
+    desc:"Пенка «Мягкое очищение» для реактивной и чувствительной кожи — без нарушения защитного барьера.",
+    composition:"Гидролат ромашки, бисаболол, пантенол, экстракт овса, мягкие аминокислотные ПАВ. Гипоаллергенная формула.",
+    benefits:["Успокаивает раздражения","Бережно очищает","Укрепляет защитный барьер","Без отдушек и красителей"]},
+  "pearl-05":{brand:"Pearl by Tais",t1:"Hair Tonic",t2:"Radiance",price:88,size:"200 мл",skin:"Для волос и кожи головы",img:"{{ url_for('static', filename='img/Pearl5.jpg') }}",
+    desc:"Укрепляющий тоник для волос. Стимулирует рост, укрепляет корни и придаёт зеркальный блеск.",
+    composition:"Гидролат крапивы и розмарина, кофеин, биотин, пантенол, экстракт хвоща полевого, ниацинамид.",
+    benefits:["Стимулирует рост волос","Укрепляет корни","Придаёт блеск","Освежает кожу головы"]},
+  "pearl-06":{brand:"Pearl by Tais",t1:"Velvet Oil",t2:"Blend",price:69,size:"60 мл",skin:"Сухие · Повреждённые волосы",img:"{{ url_for('static', filename='img/Pearl6.jpg') }}",
+    desc:"Бархатный микс масел для глубокого питания волос и защиты секущихся кончиков.",
+    composition:"Масла арганы, жожоба, авокадо и макадамии, витамин E, экстракт льняного семени. Несмываемая формула.",
+    benefits:["Глубоко питает","Запечатывает секущиеся кончики","Облегчает расчёсывание","Не утяжеляет"]},
+  "pearl-07":{brand:"Pearl by Tais",t1:"Micellar Water",t2:"Extract Mix",price:99,size:"200 мл",skin:"Все типы",img:"{{ url_for('static', filename='img/Pearl7.jpg') }}",
+    desc:"Мицеллярная вода с экстрактами для лёгкого демакияжа и деликатного тонизирования — без смывания.",
+    composition:"Мицеллы, гидролат лепестков розы, экстракты огурца и зелёного чая, пантенол, аллантоин.",
+    benefits:["Снимает макияж, включая стойкий","Не сушит кожу","Тонизирует","Подходит для области вокруг глаз"]}
+};
+
+(function(){
+  const wrap=document.getElementById('pmodalWrap');
+  if(!wrap) return;
+  const $=id=>document.getElementById(id);
+  function openModal(id){
+    const d=PEARL_DETAILS[id]; if(!d) return;
+    $('pmImg').src=d.img; $('pmImg').alt=d.t1+' '+d.t2;
+    $('pmBrand').textContent=d.brand;
+    $('pmTitle').innerHTML=d.t1+' <em>'+d.t2+'</em>';
+    $('pmPrice').textContent=d.price+' ₽';
+    $('pmSize').textContent=d.size;
+    $('pmSkin').textContent=d.skin;
+    $('pmDesc').textContent=d.desc;
+    $('pmComposition').textContent=d.composition;
+    const ul=$('pmBenefits'); ul.innerHTML='';
+    d.benefits.forEach(bn=>{ul.innerHTML+='<li><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg>'+bn+'</li>';});
+    $('pmSpecs').innerHTML=
+      '<div class="pmodal__spec"><div class="pmodal__spec-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2s7 7.16 7 12a7 7 0 0 1-14 0c0-4.84 7-12 7-12z"/></svg></div><div class="pmodal__spec-t">Тип кожи</div><div class="pmodal__spec-v">'+d.skin+'</div></div>'+
+      '<div class="pmodal__spec"><div class="pmodal__spec-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg></div><div class="pmodal__spec-t">Объём</div><div class="pmodal__spec-v">'+d.size+'</div></div>';
+    const addBtn=$('pmAddBtn');
+    addBtn.className='btn btn--dark'; addBtn.style.flex='1';
+    const imgRel=d.img.replace(/^.*\/static\//,'').replace(/^\//,'');
+    addBtn.onclick=function(){
+      if(typeof addToCart==='function'){ addToCart(id, d.t1+' '+d.t2, d.price, d.size, d.brand, imgRel); }
+    };
+    $('pmDetailLink').href='product-tonic?id='+id;
+    wrap.classList.add('is-open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){wrap.classList.remove('is-open');document.body.style.overflow='';}
+  wrap.addEventListener('click',closeModal);
+  $('pmodalClose').addEventListener('click',closeModal);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+  // навешиваем на все кнопки «подробнее»
+  document.querySelectorAll('.pcard-more[data-detail]').forEach(btn=>{
+    btn.addEventListener('click',e=>{e.preventDefault();openModal(btn.dataset.detail);});
+  });
+  window.openPearlModal=openModal;
+})();
+</script>
 </body>
 </html>
