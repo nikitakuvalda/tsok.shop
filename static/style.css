@@ -190,22 +190,37 @@ section{position:relative}
 /* ═══════════════════════════════════════════════════════════════
    ШАПКА  (site-top → promo-bar + header)
    ═══════════════════════════════════════════════════════════════ */
-.site-top{position:fixed;top:0;left:0;right:0;z-index:1000}
+.site-top{position:fixed;top:0;left:0;right:0;z-index:1000;
+  transition:transform .55s var(--ease);will-change:transform}
+/* при скролле вниз вся шапка (промо + хедер) плавно уезжает вверх */
+.site-top.is-hidden{transform:translateY(-100%)}
+
 .promo-bar{
-  background:var(--ink);color:var(--text-d);text-align:center;
+  background:rgba(21,20,15,.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  color:var(--text-d);text-align:center;
   font-size:12px;font-weight:300;letter-spacing:.06em;padding:11px 18px;position:relative;z-index:1001;
+  max-height:46px;overflow:hidden;
+  transition:max-height .5s var(--ease),padding .5s var(--ease),opacity .4s var(--ease);
 }
 .promo-bar a{color:var(--clay);font-weight:500;transition:color .25s}
 .promo-bar a:hover{color:var(--paper)}
+/* промо-полоса сворачивается, как только начали листать вниз */
+.site-top.promo-collapsed .promo-bar{max-height:0;padding-top:0;padding-bottom:0;opacity:0}
 
-.header-group{transition:background .4s var(--ease),backdrop-filter .4s,box-shadow .4s,border-color .4s;border-bottom:1px solid transparent}
+/* ПОСТОЯННАЯ стеклянная подложка — хедер читается на любом фоне */
+.header-group{
+  background:rgba(251,249,244,.62);
+  backdrop-filter:blur(20px) saturate(170%);-webkit-backdrop-filter:blur(20px) saturate(170%);
+  border-bottom:1px solid var(--line-soft);
+  transition:background .4s var(--ease),box-shadow .4s,border-color .4s;
+}
 .header-group.is-solid{
-  background:rgba(251,249,244,.72);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);
-  border-bottom:1px solid var(--line);box-shadow:0 8px 32px rgba(21,20,15,.04);
+  background:rgba(251,249,244,.82);
+  border-bottom:1px solid var(--line);box-shadow:0 8px 32px rgba(21,20,15,.06);
 }
 .header{padding:0 var(--pad-x)}
-.header__inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:18px 0;transition:padding .4s var(--ease)}
-.header-group.is-solid .header__inner{padding:13px 0}
+.header__inner{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:16px 0;transition:padding .4s var(--ease)}
+.header-group.is-solid .header__inner{padding:12px 0}
 .header__left{display:flex;align-items:center;gap:14px;justify-self:start}
 .header__center{justify-self:center}
 .header__right{display:flex;align-items:center;gap:6px;justify-self:end}
@@ -253,97 +268,167 @@ section{position:relative}
 
 /* ═══════════════════════════════════════════════════════════════
    ГЛАВНАЯ — SPLIT HERO (две линии: для неё / для него)
+   Палитра-референс: тёплое бордо слева, графитовый зелёный справа.
+   Без раздвигания — только спокойный параллакс и мягкое проявление.
    ═══════════════════════════════════════════════════════════════ */
 .split-hero{
-  display:flex;min-height:100vh;position:relative;overflow:hidden;
-  background:var(--ink);
+  display:flex;min-height:100vh;position:relative;overflow:hidden;background:var(--ink);
 }
 .split-hero__side{
-  flex:1;position:relative;display:flex;overflow:hidden;
-  transition:flex .8s var(--ease);min-height:60vh;
+  flex:1 1 0;position:relative;display:flex;overflow:hidden;min-height:62vh;
 }
-.split-hero__bg{position:absolute;inset:0;z-index:0}
-.split-hero__bg img{width:100%;height:100%;object-fit:cover}
-.split-hero__bg-fallback{position:absolute;inset:0}
-.split-hero__bg-fallback--fem{background:linear-gradient(150deg,#E7DBCB,#CBB09B 70%,#B5917E)}
-.split-hero__bg-fallback--homme{background:linear-gradient(210deg,#13150F,#21251C 50%,#3B4337)}
-.split-hero__overlay{
-  position:absolute;inset:0;z-index:1;
-  background:linear-gradient(to top,rgba(20,17,14,.82) 0%,rgba(20,17,14,.32) 45%,rgba(20,17,14,.15) 100%);
-  transition:background .6s;
-}
-.split-hero__side:nth-child(4) .split-hero__overlay{
-  background:linear-gradient(to top,rgba(8,9,6,.9) 0%,rgba(8,9,6,.45) 45%,rgba(8,9,6,.25) 100%);
-}
-.split-hero__bg{transition:transform 1.4s var(--ease)}
-.split-hero__side:hover .split-hero__bg{transform:scale(1.05)}
+/* Градиентная подложка как на референсе */
+.split-hero__grad{position:absolute;inset:0;z-index:0}
+.split-hero__side--fem   .split-hero__grad{background:linear-gradient(150deg,#1C1714 0%,#3E2C26 48%,#6B493C 100%)}
+.split-hero__side--homme .split-hero__grad{background:linear-gradient(210deg,#13150F 0%,#212A1E 48%,#3B4A37 100%)}
 
-.split-hero__divider{
-  position:absolute;top:0;bottom:0;left:50%;width:1px;z-index:3;transform:translateX(-50%);
-  background:linear-gradient(to bottom,transparent,var(--clay) 50%,transparent);
-  animation:seamPulse 4s ease-in-out infinite;
-}
+/* Фото поверх градиента — мягко вписано, с лёгким параллаксом/zoom */
+.split-hero__bg{position:absolute;inset:0;z-index:1;transition:transform 1.6s var(--ease)}
+.split-hero__bg img{width:100%;height:100%;object-fit:cover;opacity:.92}
+.split-hero__side--fem   .split-hero__bg{mix-blend-mode:luminosity;opacity:.5}
+.split-hero__side--homme .split-hero__bg{mix-blend-mode:luminosity;opacity:.42}
+.split-hero__side:hover .split-hero__bg{transform:scale(1.04)}
+.split-hero__bg-fallback{position:absolute;inset:0;z-index:1}
+.split-hero__bg-fallback--fem{background:linear-gradient(150deg,#3E2C26,#6B493C)}
+.split-hero__bg-fallback--homme{background:linear-gradient(210deg,#212A1E,#3B4A37)}
+
+/* Затемнение для читаемости текста */
+.split-hero__overlay{position:absolute;inset:0;z-index:2;
+  background:linear-gradient(105deg,rgba(20,14,12,.78) 0%,rgba(20,14,12,.42) 42%,transparent 80%)}
+.split-hero__side--homme .split-hero__overlay{
+  background:linear-gradient(255deg,rgba(8,11,8,.82) 0%,rgba(8,11,8,.46) 42%,transparent 80%)}
+
+/* Свечения-орбы (clay для неё, sage для него) — мягко пульсируют */
+.split-hero__glow{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:1;opacity:.7;
+  animation:glowBreath 9s ease-in-out infinite}
+.split-hero__side--fem   .split-hero__glow{width:440px;height:440px;background:radial-gradient(circle,rgba(201,168,118,.38),transparent 70%);top:-10%;left:6%}
+.split-hero__side--homme .split-hero__glow{width:440px;height:440px;background:radial-gradient(circle,rgba(130,140,112,.34),transparent 70%);bottom:-10%;right:6%;animation-delay:-4s}
+@keyframes glowBreath{0%,100%{transform:scale(1);opacity:.6}50%{transform:scale(1.16);opacity:.85}}
+
+/* Центральный шов с «вмятиной»-полукругом, как на референсе */
+.split-hero__seam{position:absolute;top:0;bottom:0;left:50%;width:clamp(60px,7vw,110px);transform:translateX(-50%);
+  z-index:4;display:flex;align-items:center;justify-content:center;pointer-events:none;
+  background:linear-gradient(to right,transparent,rgba(251,249,244,.06),transparent)}
+.split-hero__seam::before{content:'';position:absolute;top:0;bottom:0;left:50%;width:1px;transform:translateX(-50%);
+  background:linear-gradient(to bottom,transparent,var(--clay) 50%,transparent);animation:seamPulse 4s ease-in-out infinite}
+.split-hero__seam-dot{position:relative;width:clamp(64px,7vw,92px);height:clamp(64px,7vw,92px);border-radius:50%;
+  background:radial-gradient(circle at 50% 40%,rgba(251,249,244,.14),rgba(251,249,244,.02));
+  border:1px solid rgba(251,249,244,.16);backdrop-filter:blur(4px);
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:14px}
+.split-hero__seam-dot::after{content:'';width:26px;height:13px;border:1px solid rgba(251,249,244,.45);border-top:none;border-radius:0 0 40px 40px}
 @keyframes seamPulse{0%,100%{opacity:.35}50%{opacity:1}}
 
-.split-hero__content-aligner{position:relative;z-index:2;display:flex;align-items:flex-end;width:100%;padding:clamp(40px,6vw,84px) clamp(28px,4.5vw,76px)}
-.split-hero__content{max-width:420px}
-.split-hero__eyebrow{
-  font-size:11px;font-weight:500;letter-spacing:.34em;text-transform:uppercase;
-  color:var(--clay);margin-bottom:18px;display:inline-flex;align-items:center;gap:12px;
-}
-.split-hero__eyebrow::before{content:'';width:30px;height:1px;background:var(--clay)}
-.split-hero__side:nth-child(4) .split-hero__eyebrow{color:var(--sage-pale)}
-.split-hero__side:nth-child(4) .split-hero__eyebrow::before{background:var(--sage-pale)}
+.split-hero__content-aligner{position:relative;z-index:3;display:flex;align-items:center;width:100%;
+  padding:clamp(40px,6vw,90px) clamp(28px,5vw,90px)}
+.split-hero__side--fem   .split-hero__content-aligner{justify-content:flex-start;padding-right:clamp(70px,9vw,150px)}
+.split-hero__side--homme .split-hero__content-aligner{justify-content:flex-start;padding-left:clamp(70px,9vw,150px)}
+.split-hero__content{max-width:400px;width:100%}
 
-.hero-svg-logo{width:clamp(180px,22vw,300px);filter:brightness(0) invert(1);margin-bottom:6px}
-.split-hero__brand{margin-bottom:18px}
-.split-hero__sub-brand{
-  font-family:var(--font-d);font-style:italic;font-size:clamp(18px,2vw,26px);font-weight:400;
-  color:var(--clay);letter-spacing:.04em;margin-top:4px;
-}
-.split-hero__brand--brutal{
-  font-family:var(--font-d);font-size:clamp(40px,5.2vw,72px);font-weight:500;line-height:.92;
-  color:var(--paper);letter-spacing:.02em;
-}
-.split-hero__brand--brutal .text-accent{color:var(--sage-pale);font-style:italic;font-weight:400}
+.split-hero__content{max-width:400px;width:100%;display:flex;flex-direction:column;align-items:flex-start}
 
-.split-hero__desc{font-size:14.5px;line-height:1.8;font-weight:300;color:var(--text-d);margin-bottom:28px;max-width:340px}
-.split-hero__cta{
-  display:inline-flex;align-items:center;gap:11px;
-  font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--paper);
-  padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.3);transition:all .35s var(--ease);
-}
-.split-hero__cta svg{transition:transform .35s var(--ease)}
-.split-hero__side:hover .split-hero__cta{border-color:var(--clay);color:var(--clay)}
+.split-hero__eyebrow{font-size:11px;font-weight:600;letter-spacing:.32em;text-transform:uppercase;
+  color:var(--clay);margin-bottom:22px;display:inline-flex;align-items:center;gap:13px;white-space:nowrap}
+.split-hero__eyebrow::before{content:'';width:34px;height:1px;background:currentColor;opacity:.7}
+.split-hero__side--homme .split-hero__eyebrow{color:var(--sage)}
+
+/* Крупный заголовок «Женская / коллекция» с italic-акцентом снизу */
+.split-hero__title{font-family:var(--font-d);font-size:clamp(38px,4.8vw,66px);font-weight:600;line-height:1.05;
+  color:var(--paper);letter-spacing:-.01em;margin-bottom:16px;max-width:100%}
+.split-hero__title em{display:block;font-style:italic;font-weight:400;color:var(--clay)}
+.split-hero__side--homme .split-hero__title em{color:var(--sage-pale)}
+
+/* мелкая подпись-бренд (Pearl by Tais / INTELEGENTOFF) */
+.split-hero__brandline{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:rgba(251,249,244,.5);margin-bottom:18px;font-weight:500}
+
+.split-hero__desc{font-size:14px;line-height:1.85;font-weight:300;color:var(--text-d);margin-bottom:30px;max-width:330px}
+.split-hero__cta{display:inline-flex;align-items:center;gap:12px;
+  font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--paper);
+  padding:15px 26px;border:1px solid rgba(251,249,244,.28);border-radius:var(--r);
+  background:rgba(251,249,244,.04);backdrop-filter:blur(8px);
+  transition:background .45s var(--ease),border-color .45s var(--ease),color .45s var(--ease)}
+.split-hero__cta svg{transition:transform .45s var(--ease)}
+.split-hero__side--fem:hover .split-hero__cta{background:var(--clay);border-color:var(--clay);color:var(--ink)}
+.split-hero__side--homme:hover .split-hero__cta{background:var(--sage);border-color:var(--sage);color:var(--ink)}
 .split-hero__side:hover .split-hero__cta svg{transform:translateX(5px)}
 
-.split-hero:has(.split-hero__side:nth-child(2):hover) .split-hero__side:nth-child(2){flex:1.15}
-.split-hero:has(.split-hero__side:nth-child(2):hover) .split-hero__side:nth-child(4){flex:.85}
-.split-hero:has(.split-hero__side:nth-child(4):hover) .split-hero__side:nth-child(4){flex:1.15}
-.split-hero:has(.split-hero__side:nth-child(4):hover) .split-hero__side:nth-child(2){flex:.85}
+/* устаревшие хелперы оставлены для совместимости, но без раздвигания */
+.hero-svg-logo{width:clamp(170px,20vw,260px);filter:brightness(0) invert(1);margin-bottom:8px}
+.split-hero__brand{margin-bottom:18px}
+.split-hero__sub-brand{font-family:var(--font-d);font-style:italic;font-size:clamp(18px,2vw,26px);color:var(--clay);margin-top:4px}
+.split-hero__brand--brutal{font-family:var(--font-d);font-size:clamp(40px,5.2vw,72px);font-weight:600;line-height:.92;color:var(--paper)}
+.split-hero__brand--brutal .text-accent{color:var(--sage-pale);font-style:italic;font-weight:400}
 
-.hero-blur-orbs{position:absolute;inset:0;z-index:1;pointer-events:none}
-.hero-orb{position:absolute;border-radius:50%;filter:blur(80px)}
-.hero-orb--gold{width:380px;height:380px;background:radial-gradient(circle,rgba(201,168,118,.3),transparent 70%);top:10%;left:20%}
-.hero-orb--blue{width:380px;height:380px;background:radial-gradient(circle,rgba(130,140,112,.25),transparent 70%);bottom:10%;right:20%}
+.animate-breathe{animation:none}  /* убрали навязчивое «дыхание», параллакс только на hover */
 
-.animate-breathe{animation:breathe 14s ease-in-out infinite}
-@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
-
-.scroll-hint{
-  position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:4;
-  display:flex;flex-direction:column;align-items:center;gap:10px;transition:opacity .4s;
-}
+.scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:5;
+  display:flex;flex-direction:column;align-items:center;gap:10px;transition:opacity .5s}
 .scroll-hint__text{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,255,255,.6)}
-.scroll-hint__line{width:1px;height:40px;background:linear-gradient(to bottom,var(--clay),transparent);animation:scrollLine 2s ease-in-out infinite}
+.scroll-hint__line{width:1px;height:40px;background:linear-gradient(to bottom,var(--clay),transparent);animation:scrollLine 2.4s ease-in-out infinite}
 @keyframes scrollLine{0%,100%{opacity:.3;transform:scaleY(.6)}50%{opacity:1;transform:scaleY(1)}}
 
 @media(max-width:900px){
   .split-hero{flex-direction:column}
-  .split-hero__divider{top:50%;bottom:auto;left:0;right:0;width:100%;height:1px;transform:translateY(-50%);background:linear-gradient(to right,transparent,var(--clay) 50%,transparent)}
-  .split-hero:has(.split-hero__side:hover) .split-hero__side{flex:1}
+  .split-hero__seam{top:50%;bottom:auto;left:0;right:0;width:100%;height:clamp(60px,12vw,90px);transform:translateY(-50%);
+    background:linear-gradient(to bottom,transparent,rgba(251,249,244,.06),transparent)}
+  .split-hero__seam::before{top:50%;bottom:auto;left:0;right:0;width:100%;height:1px;transform:translateY(-50%);
+    background:linear-gradient(to right,transparent,var(--clay) 50%,transparent)}
+  .split-hero__side--homme .split-hero__content-aligner{justify-content:flex-start}
   .scroll-hint{display:none}
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   «ЖИВЫЕ КРАСКИ» — анимированный жидкий градиент для тёмных секций
+   Бордо ⟷ зелёный ⟷ глина дрейфуют как чернила в воде.
+   Реагируют на скролл через переменную --scroll (0..1), задаётся в JS.
+   ═══════════════════════════════════════════════════════════════ */
+.liquid-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.liquid-bg__blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;mix-blend-mode:screen;
+  will-change:transform}
+/* бордо */
+.liquid-bg__blob--wine{width:46vw;height:46vw;max-width:680px;max-height:680px;
+  background:radial-gradient(circle,rgba(150,60,52,.55),transparent 68%);
+  top:-12%;left:-8%;
+  transform:translate(calc(var(--scroll,0)*16vw), calc(var(--scroll,0)*-10vh));
+  animation:liquidDriftA 26s ease-in-out infinite}
+/* зелёный */
+.liquid-bg__blob--forest{width:50vw;height:50vw;max-width:720px;max-height:720px;
+  background:radial-gradient(circle,rgba(78,104,72,.55),transparent 68%);
+  bottom:-16%;right:-10%;
+  transform:translate(calc(var(--scroll,0)*-18vw), calc(var(--scroll,0)*12vh));
+  animation:liquidDriftB 30s ease-in-out infinite}
+/* глина/золото — тёплый акцент в центре */
+.liquid-bg__blob--clay{width:34vw;height:34vw;max-width:480px;max-height:480px;
+  background:radial-gradient(circle,rgba(201,168,118,.4),transparent 70%);
+  top:30%;left:42%;
+  transform:translate(calc(var(--scroll,0)*-8vw), calc(var(--scroll,0)*8vh));
+  animation:liquidDriftC 34s ease-in-out infinite}
+/* тёмная вуаль поверх — чтобы текст читался, краски остаются глубокими */
+.liquid-bg::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 40%,transparent,rgba(14,13,8,.45) 90%)}
+
+@keyframes liquidDriftA{
+  0%,100%{translate:0 0}
+  33%{translate:14vw 8vh}
+  66%{translate:6vw 18vh}
+}
+@keyframes liquidDriftB{
+  0%,100%{translate:0 0}
+  33%{translate:-12vw -10vh}
+  66%{translate:-18vw 4vh}
+}
+@keyframes liquidDriftC{
+  0%,100%{translate:0 0;scale:1}
+  50%{translate:10vw -12vh;scale:1.15}
+}
+@media(prefers-reduced-motion:reduce){
+  .liquid-bg__blob{animation:none}
+}
+
+/* контент тёмных секций — поверх жидкого фона */
+.section--dark .container,
+.box-promo__grid,
+.vision-statement .container{position:relative;z-index:2}
 
 /* ═══════════════ MARQUEE ═══════════════ */
 .marquee-section{background:var(--ink);padding:22px 0;overflow:hidden;position:relative}
@@ -614,7 +699,7 @@ section{position:relative}
 
 /* ═══════════════ КАТАЛОГ — мужской (тёмный) ═══════════════ */
 .homme-catalog-hero{background:var(--ink);color:var(--text-d);padding:clamp(120px,16vh,170px) var(--pad-x) clamp(50px,7vw,80px);position:relative;overflow:hidden}
-.homme-catalog-hero__watermark{position:absolute;top:50%;right:-2%;transform:translateY(-50%);font-family:var(--font-d);font-size:clamp(180px,30vw,420px);font-weight:500;color:rgba(255,255,255,.025);pointer-events:none;line-height:.8;z-index:0;letter-spacing:-.04em}
+.homme-catalog-hero__watermark{position:absolute;top:50%;right:-2%;transform:translateY(-50%);font-family:var(--font-d);font-size:clamp(180px,30vw,420px);font-weight:500;color:rgba(255,255,255,.025);pointer-events:none;line-height:.8;z-index:1;letter-spacing:-.04em}
 .homme-catalog-hero__grid{position:relative;z-index:2;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;max-width:var(--maxw);margin:0 auto}
 @media(max-width:1024px){.homme-catalog-hero__grid{grid-template-columns:1fr;gap:40px}}
 .homme-catalog-hero__title{font-family:var(--font-d);font-size:clamp(48px,7vw,104px);font-weight:500;line-height:.94;color:var(--paper);letter-spacing:-.01em}
@@ -863,3 +948,72 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,.i
 }
 /* Бейдж счётчика корзины не должен растягивать шапку, если пусто */
 .cart-count:empty,.fav-count:empty{display:none!important}
+
+/* ═══════════════════════════════════════════════════════════════
+   ВИТРИНА ТОВАРОВ НА ГЛАВНОЙ (premium showcase)
+   ═══════════════════════════════════════════════════════════════ */
+.showcase{padding:var(--section-y) 0;position:relative;overflow:hidden}
+.showcase--fem{background:var(--paper)}
+.showcase--homme{background:var(--ink);color:var(--text-d)}
+.showcase__head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:46px;flex-wrap:wrap}
+.showcase__head-link{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--clay-deep);
+  display:inline-flex;align-items:center;gap:9px;padding-bottom:5px;border-bottom:1px solid var(--clay-deep);
+  transition:gap .35s var(--ease),color .3s}
+.showcase--homme .showcase__head-link{color:var(--clay)}
+.showcase__head-link:hover{gap:14px}
+.showcase__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(16px,1.8vw,26px)}
+@media(max-width:1100px){.showcase__grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.showcase__grid{grid-template-columns:repeat(2,1fr);gap:12px}}
+
+/* премиум-карточка */
+.pcard{position:relative;display:flex;flex-direction:column;border-radius:var(--r);overflow:hidden;
+  background:var(--paper-deep);border:1px solid var(--line);
+  transition:transform .55s var(--ease),box-shadow .55s var(--ease),border-color .55s var(--ease)}
+.showcase--homme .pcard{background:var(--ink-card);border-color:var(--line-d-soft)}
+.pcard:hover{transform:translateY(-6px);box-shadow:0 26px 50px -28px rgba(21,20,15,.3)}
+.showcase--homme .pcard:hover{box-shadow:0 26px 50px -28px rgba(0,0,0,.6);border-color:rgba(201,168,118,.4)}
+.pcard__media{position:relative;aspect-ratio:3/4;overflow:hidden;background:var(--paper-edge);display:block}
+.showcase--homme .pcard__media{background:var(--ink-deep)}
+.pcard__media img{width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease)}
+.pcard:hover .pcard__media img{transform:scale(1.06)}
+.pcard__badge{position:absolute;top:12px;left:12px;z-index:2;background:var(--clay);color:var(--ink);
+  font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;border-radius:var(--r)}
+.pcard__fav{position:absolute;top:10px;right:10px;z-index:3;width:36px;height:36px;border-radius:var(--r);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  background:rgba(251,249,244,.82);backdrop-filter:blur(10px);border:1px solid var(--line);color:var(--ink-soft);
+  opacity:0;transform:translateY(-4px);transition:all .4s var(--ease)}
+.pcard:hover .pcard__fav{opacity:1;transform:translateY(0)}
+.pcard__fav:hover{background:var(--paper);border-color:var(--clay);color:var(--clay-deep)}
+.pcard__fav.is-saved{opacity:1;background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.pcard__fav.is-saved svg{fill:var(--clay);stroke:var(--clay)}
+.showcase--homme .pcard__fav{background:rgba(14,13,8,.6);border-color:var(--line-d);color:var(--text-d)}
+.showcase--homme .pcard__fav:hover,.showcase--homme .pcard__fav.is-saved{background:var(--clay);border-color:var(--clay);color:var(--ink)}
+/* всплывающая кнопка «в корзину» из-под низа медиа */
+.pcard__add{position:absolute;left:12px;right:12px;bottom:12px;z-index:2;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:13px;border:none;border-radius:var(--r);cursor:pointer;
+  font-family:var(--font-b);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  background:var(--ink);color:var(--paper);
+  opacity:0;transform:translateY(12px);transition:all .45s var(--ease)}
+.showcase--homme .pcard__add{background:var(--clay);color:var(--ink)}
+.pcard:hover .pcard__add{opacity:1;transform:translateY(0)}
+.pcard__add:hover{background:var(--clay-deep);color:var(--paper)}
+.showcase--homme .pcard__add:hover{background:var(--paper);color:var(--ink)}
+.pcard__info{padding:18px 16px 20px}
+.pcard__brand{font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--clay-deep);font-weight:600}
+.showcase--homme .pcard__brand{color:var(--clay)}
+.pcard__name{font-family:var(--font-d);font-size:18px;font-weight:500;color:var(--ink);margin:7px 0 0;line-height:1.25}
+.showcase--homme .pcard__name{color:var(--paper)}
+.pcard__row{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:12px;
+  padding-top:12px;border-top:1px solid var(--line)}
+.showcase--homme .pcard__row{border-top-color:var(--line-d-soft)}
+.pcard__size{font-size:11px;color:var(--muted)}
+.showcase--homme .pcard__size{color:var(--muted-d)}
+.pcard__price{font-family:var(--font-d);font-size:18px;color:var(--ink)}
+.showcase--homme .pcard__price{color:var(--paper)}
+@media(max-width:520px){
+  /* на узких экранах кнопка и избранное всегда видимы — тач-устройства */
+  .pcard__add{opacity:1;transform:none;position:static;margin-top:0;border-radius:0}
+  .pcard__fav{opacity:1;transform:none}
+  .pcard__media{aspect-ratio:1/1}
+}

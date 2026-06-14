@@ -18,6 +18,35 @@
             revealAll();
         }
     }, {passive:true});
+
+    /* промо-полоса сворачивается, как только пользователь чуть пролистал вниз
+       (сам хедер прячется/показывается логикой initHeaderScroll из script.js) */
+    window.addEventListener('scroll', function(){
+        var st = document.getElementById('siteTop');
+        if (!st) return;
+        st.classList.toggle('promo-collapsed', window.scrollY > 40);
+    }, {passive:true});
+
+    /* «живые краски»: для каждой секции с .liquid-bg обновляем --scroll (0..1)
+       в зависимости от того, как секция проходит через вьюпорт — краски «плывут» */
+    var liquidTicking = false;
+    function updateLiquid(){
+        document.querySelectorAll('.liquid-bg').forEach(function(bg){
+            var sec = bg.closest('section, div');
+            if (!sec) return;
+            var r = sec.getBoundingClientRect();
+            var vh = window.innerHeight || 1;
+            // прогресс от появления секснизу (0) до ухода вверх (1)
+            var p = 1 - (r.top + r.height/2) / (vh + r.height/2);
+            p = Math.max(0, Math.min(1, p));
+            bg.style.setProperty('--scroll', p.toFixed(3));
+        });
+        liquidTicking = false;
+    }
+    window.addEventListener('scroll', function(){
+        if (!liquidTicking){ requestAnimationFrame(updateLiquid); liquidTicking = true; }
+    }, {passive:true});
+    window.addEventListener('load', updateLiquid);
 })();
 </script>
 <div class="site-top" id="siteTop">

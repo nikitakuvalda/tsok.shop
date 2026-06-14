@@ -18,50 +18,52 @@
      HERO — СПЛИТ-ЭКРАН (для неё / для него)
      ═══════════════════════════════════════════ -->
 <section class="split-hero">
-    <div class="split-hero__divider"></div>
-
     <!-- Женская сторона -->
-    <a href="catalog" class="split-hero__side">
-        <div class="split-hero__bg animate-breathe">
+    <a href="catalog" class="split-hero__side split-hero__side--fem">
+        <div class="split-hero__grad"></div>
+        <div class="split-hero__bg">
             <img src="{{ url_for('static', filename='img/HeroFem.jpg') }}" alt="Pearl by Tais"
                  onerror="this.outerHTML='<div class=\'split-hero__bg-fallback split-hero__bg-fallback--fem\'></div>'">
         </div>
+        <div class="split-hero__glow"></div>
         <div class="split-hero__overlay"></div>
         <div class="split-hero__content-aligner">
             <div class="split-hero__content">
-                <span class="split-hero__eyebrow">Для неё</span>
-                <div class="split-hero__brand">
-                    <img src="{{ url_for('static', filename='img/цок-цок.svg') }}" alt="цок-цок" class="hero-svg-logo"
-                         onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-                    <span style="display:none;font-family:var(--font-display);font-size:clamp(34px,4.5vw,64px);font-weight:400;line-height:.9;color:white;">цок-цок</span>
-                    <div class="split-hero__sub-brand">Pearl by Tais</div>
-                </div>
-                <p class="split-hero__desc">Интеллектуальный уход на натуральных гидролатах — для женщин, которые ценят своё состояние.</p>
+                <span class="split-hero__eyebrow">TSOK · Femme</span>
+                <h2 class="split-hero__title">Женская<em>коллекция</em></h2>
+                <div class="split-hero__brandline">Pearl by Tais</div>
+                <p class="split-hero__desc">Тоники, пенки и масла на натуральных гидролатах — формулы для тонкой, чувствительной и комбинированной кожи.</p>
                 <span class="split-hero__cta">
-                    Женская коллекция
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    Смотреть уход
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
             </div>
         </div>
     </a>
 
+    <!-- Центральный шов с «вмятиной» -->
+    <div class="split-hero__seam" aria-hidden="true">
+        <div class="split-hero__seam-dot"></div>
+    </div>
+
     <!-- Мужская сторона -->
-    <a href="catalog-homme" class="split-hero__side">
-        <div class="split-hero__bg animate-breathe">
+    <a href="catalog-homme" class="split-hero__side split-hero__side--homme">
+        <div class="split-hero__grad"></div>
+        <div class="split-hero__bg">
             <img src="{{ url_for('static', filename='img/HeroHomme.jpg') }}" alt="INTELEGENTOFF"
                  onerror="this.outerHTML='<div class=\'split-hero__bg-fallback split-hero__bg-fallback--homme\'></div>'">
         </div>
+        <div class="split-hero__glow"></div>
         <div class="split-hero__overlay"></div>
         <div class="split-hero__content-aligner">
             <div class="split-hero__content">
-                <span class="split-hero__eyebrow">Для него</span>
-                <div class="split-hero__brand split-hero__brand--brutal">
-                    INTELEGENT<span class="text-accent">OFF</span>
-                </div>
-                <p class="split-hero__desc">Брутальный уход без компромиссов. Концентрированные формулы. Только результат.</p>
+                <span class="split-hero__eyebrow">TSOK · Homme</span>
+                <h2 class="split-hero__title">Мужская<em>коллекция</em></h2>
+                <div class="split-hero__brandline">INTELEGENTOFF</div>
+                <p class="split-hero__desc">Концентрированные мужские формулы для лица и бороды — плотные текстуры в тёмной эстетике. Без компромиссов.</p>
                 <span class="split-hero__cta">
-                    Мужская коллекция
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    Смотреть уход
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </span>
             </div>
         </div>
@@ -90,8 +92,11 @@
      TSOK BOX — тизер подписки (До / После)
      ═══════════════════════════════════════════ -->
 <section class="section box-promo">
-    <div class="grain"></div>
-    <div class="orb orb-clay"></div>
+    <div class="liquid-bg" aria-hidden="true">
+        <div class="liquid-bg__blob liquid-bg__blob--wine"></div>
+        <div class="liquid-bg__blob liquid-bg__blob--forest"></div>
+        <div class="liquid-bg__blob liquid-bg__blob--clay"></div>
+    </div>
     <div class="container grid-2 box-promo__grid">
 
         <div class="content-box anim-fade-up">
@@ -200,6 +205,155 @@
 </section>
 
 <!-- ═══════════════════════════════════════════
+     ВИТРИНА — ЖЕНСКАЯ КОЛЛЕКЦИЯ (Pearl)
+     ═══════════════════════════════════════════ -->
+<section class="showcase showcase--fem section--bordered-top">
+    <div class="container">
+        <div class="showcase__head anim-fade-up">
+            <div>
+                <span class="label">Pearl by Tais</span>
+                <h2 class="section-title">Женская <em>коллекция</em></h2>
+            </div>
+            <a href="catalog" class="showcase__head-link">Весь уход
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+        <div class="showcase__grid">
+            <!-- pearl-03 ХИТ -->
+            <div class="pcard anim-fade-up">
+                <a href="product-tonic?id=pearl-03" class="pcard__media">
+                    <img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" alt="Tonic Youth Restoring">
+                    <span class="pcard__badge">Хит</span>
+                </a>
+                <button class="pcard__fav js-bookmark" data-id="pearl-03" data-name="Tonic Youth Restoring" aria-label="В избранное"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="pcard__add js-add-to-cart" data-id="pearl-03" data-name="Tonic Youth Restoring" data-price="93" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl3.jpg">В корзину</button>
+                <div class="pcard__info">
+                    <span class="pcard__brand">Pearl by Tais</span>
+                    <a href="product-tonic?id=pearl-03"><h3 class="pcard__name">Tonic Youth Restoring</h3></a>
+                    <div class="pcard__row"><span class="pcard__size">150 мл</span><span class="pcard__price">93 BYN</span></div>
+                </div>
+            </div>
+            <!-- pearl-01 -->
+            <div class="pcard anim-fade-up anim-delay-1">
+                <a href="product-tonic?id=pearl-01" class="pcard__media">
+                    <img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" alt="Foam Mousse Moisture">
+                </a>
+                <button class="pcard__fav js-bookmark" data-id="pearl-01" data-name="Foam Mousse Moisture" aria-label="В избранное"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="pcard__add js-add-to-cart" data-id="pearl-01" data-name="Foam Mousse Moisture" data-price="96" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl1.jpg">В корзину</button>
+                <div class="pcard__info">
+                    <span class="pcard__brand">Pearl by Tais</span>
+                    <a href="product-tonic?id=pearl-01"><h3 class="pcard__name">Foam Mousse Moisture</h3></a>
+                    <div class="pcard__row"><span class="pcard__size">150 мл</span><span class="pcard__price">96 BYN</span></div>
+                </div>
+            </div>
+            <!-- pearl-05 -->
+            <div class="pcard anim-fade-up anim-delay-2">
+                <a href="product-tonic?id=pearl-05" class="pcard__media">
+                    <img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" alt="Hair Tonic Radiance">
+                </a>
+                <button class="pcard__fav js-bookmark" data-id="pearl-05" data-name="Hair Tonic Radiance" aria-label="В избранное"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="pcard__add js-add-to-cart" data-id="pearl-05" data-name="Hair Tonic Radiance" data-price="88" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl5.jpg">В корзину</button>
+                <div class="pcard__info">
+                    <span class="pcard__brand">Pearl by Tais</span>
+                    <a href="product-tonic?id=pearl-05"><h3 class="pcard__name">Hair Tonic Radiance</h3></a>
+                    <div class="pcard__row"><span class="pcard__size">200 мл</span><span class="pcard__price">88 BYN</span></div>
+                </div>
+            </div>
+            <!-- pearl-07 -->
+            <div class="pcard anim-fade-up anim-delay-3">
+                <a href="product-tonic?id=pearl-07" class="pcard__media">
+                    <img src="{{ url_for('static', filename='img/Pearl7.jpg') }}" alt="Micellar Water Extract Mix">
+                </a>
+                <button class="pcard__fav js-bookmark" data-id="pearl-07" data-name="Micellar Water Extract Mix" aria-label="В избранное"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="pcard__add js-add-to-cart" data-id="pearl-07" data-name="Micellar Water Extract Mix" data-price="99" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl7.jpg">В корзину</button>
+                <div class="pcard__info">
+                    <span class="pcard__brand">Pearl by Tais</span>
+                    <a href="product-tonic?id=pearl-07"><h3 class="pcard__name">Micellar Water Extract Mix</h3></a>
+                    <div class="pcard__row"><span class="pcard__size">200 мл</span><span class="pcard__price">99 BYN</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     ВИТРИНА — МУЖСКАЯ КОЛЛЕКЦИЯ (INTELEGENTOFF)
+     ═══════════════════════════════════════════ -->
+<section class="showcase showcase--homme">
+    <div class="liquid-bg" aria-hidden="true">
+        <div class="liquid-bg__blob liquid-bg__blob--forest"></div>
+        <div class="liquid-bg__blob liquid-bg__blob--wine"></div>
+        <div class="liquid-bg__blob liquid-bg__blob--clay"></div>
+    </div>
+    <div class="container" style="position:relative;z-index:2;">
+        <div class="showcase__head anim-fade-up">
+            <div>
+                <span class="label on-dark">INTELEGENTOFF</span>
+                <h2 class="section-title text-white">Мужская <em>коллекция</em></h2>
+            </div>
+            <a href="catalog-homme" class="showcase__head-link">Весь уход
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+        <div class="showcase__grid">
+            <!-- homme-03 Beard Oil (маркетинговый PNG) -->
+            <div class="pcard anim-fade-up">
+                <a href="catalog-homme" class="pcard__media">
+                    <img src="{{ url_for('static', filename='img/INTELEGENT масло.png') }}" alt="Beard Oil">
+                    <span class="pcard__badge">Бестселлер</span>
+                </a>
+                <button class="pcard__fav js-bookmark" data-id="homme-03" data-name="Beard Oil" aria-label="В избранное"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="pcard__add js-add-to-cart" data-id="homme-03" data-name="Beard Oil" data-price="96" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT масло.png">В корзину</button>
+                <div class="pcard__info">
+                    <span class="pcard__brand">INTELEGENTOFF</span>
+                    <h3 class="pcard__name">Beard Oil</h3>
+                    <div class="pcard__row"><span class="pcard__size">50 мл</span><span class="pcard__price">96 BYN</span></div>
+                </div>
+            </div>
+            <!-- homme-01 Face Wash -->
+            <div class="pcard anim-fade-up anim-delay-1">
+                <a href="catalog-homme" class="pcard__media">
+                    <img src="{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" alt="Face Wash Black">
+                </a>
+                <button class="pcard__fav js-bookmark" data-id="homme-01" data-name="Face Wash Black" aria-label="В избранное"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="pcard__add js-add-to-cart" data-id="homme-01" data-name="Face Wash Black" data-price="78" data-size="200 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT Пенка.png">В корзину</button>
+                <div class="pcard__info">
+                    <span class="pcard__brand">INTELEGENTOFF</span>
+                    <h3 class="pcard__name">Face Wash Black</h3>
+                    <div class="pcard__row"><span class="pcard__size">200 мл</span><span class="pcard__price">78 BYN</span></div>
+                </div>
+            </div>
+            <!-- homme-05 Face Serum -->
+            <div class="pcard anim-fade-up anim-delay-2">
+                <a href="catalog-homme" class="pcard__media">
+                    <img src="{{ url_for('static', filename='img/prod-photo-1.jpg') }}" alt="Face Serum Black">
+                </a>
+                <button class="pcard__fav js-bookmark" data-id="homme-05" data-name="Face Serum Black" aria-label="В избранное"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="pcard__add js-add-to-cart" data-id="homme-05" data-name="Face Serum Black" data-price="134" data-size="30 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-1.jpg">В корзину</button>
+                <div class="pcard__info">
+                    <span class="pcard__brand">INTELEGENTOFF</span>
+                    <h3 class="pcard__name">Face Serum Black</h3>
+                    <div class="pcard__row"><span class="pcard__size">30 мл</span><span class="pcard__price">134 BYN</span></div>
+                </div>
+            </div>
+            <!-- homme-04 Beard Wax -->
+            <div class="pcard anim-fade-up anim-delay-3">
+                <a href="catalog-homme" class="pcard__media">
+                    <img src="{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" alt="Beard Wax">
+                </a>
+                <button class="pcard__fav js-bookmark" data-id="homme-04" data-name="Beard Wax" aria-label="В избранное"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+                <button class="pcard__add js-add-to-cart" data-id="homme-04" data-name="Beard Wax" data-price="82" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT Воск.png">В корзину</button>
+                <div class="pcard__info">
+                    <span class="pcard__brand">INTELEGENTOFF</span>
+                    <h3 class="pcard__name">Beard Wax</h3>
+                    <div class="pcard__row"><span class="pcard__size">50 мл</span><span class="pcard__price">82 BYN</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
      ИСТОРИЯ БУТИКА — ДВА МИРА
      ═══════════════════════════════════════════ -->
 <section id="our-story" class="section section--cream">
@@ -249,8 +403,11 @@
      INTELEGENTOFF — История бренда
      ═══════════════════════════════════════════ -->
 <section class="section section--dark" id="homme-story">
-    <div class="grain"></div>
-    <div class="orb orb-sage" style="width:480px;height:480px;bottom:-15%;left:-10%"></div>
+    <div class="liquid-bg" aria-hidden="true">
+        <div class="liquid-bg__blob liquid-bg__blob--forest"></div>
+        <div class="liquid-bg__blob liquid-bg__blob--wine"></div>
+        <div class="liquid-bg__blob liquid-bg__blob--clay"></div>
+    </div>
     <div class="container grid-2 grid-2--reverse">
         <div class="content-box anim-fade-up">
             <span class="label on-dark">INTELEGENTOFF</span>
