@@ -1,12 +1,14 @@
 import os
 import time
 import uuid
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 
 import dotenv
-from flask import Flask, jsonify, render_template, request, url_for
+from flask import Flask, Response, jsonify, make_response, render_template, request, url_for
 from yookassa import Configuration, Payment
 
+from cache import PAGE_CACHE_TTL, cache_get_text, cache_set_text, is_rate_limited
 from db import get_products_by_ids, init_products_table
 
 
@@ -27,6 +29,13 @@ YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")
 YOOKASSA_CURRENCY = os.getenv("YOOKASSA_CURRENCY", "RUB")
 YOOKASSA_RETURN_URL = os.getenv("YOOKASSA_RETURN_URL", "")
 YANDEX_MAPS_API_KEY = os.getenv("YANDEX_MAPS_API_KEY", "14326938-97d2-483c-81c8-ada364bef9ed")
+CACHEABLE_TEMPLATE_ROUTES = {
+    "index": "index.html",
+    "catalog": "catalog.html",
+    "catalog_homme": "catalog-homme.html",
+    "product_tonic": "product-tonic.html",
+    "subscription": "subscription.html",
+}
 
 
 
@@ -88,6 +97,35 @@ def _payment_field(payment, field_name):
     if isinstance(payment, dict):
         return payment.get(field_name)
     return getattr(payment, field_name, None)
+
+
+def _client_rate_limit_key():
+    forwarded_for = request.headers.get("X-Forwarded-For", "")
+    client_ip = forwarded_for.split(",", 1)[0].strip() or request.remote_addr or "unknown"
+    return f"rate-limit:create-payment:{client_ip}"
+
+
+def _render_cached_template(template_name):
+    cache_key = f"page:v1:{template_name}"
+    cached_html = cache_get_text(cache_key)
+    if cached_html is not None:
+        return Response(cached_html, mimetype="text/html")
+
+    html = render_template(template_name)
+    cache_set_text(cache_key, html, PAGE_CACHE_TTL)
+    return html
+
+
+@application.after_request
+def add_performance_headers(response):
+    if request.path.startswith("/static/"):
+        response.cache_control.public = True
+        response.cache_control.max_age = 60 * 60 * 24 * 30
+        response.expires = datetime.now(timezone.utc) + timedelta(seconds=response.cache_control.max_age)
+    elif request.endpoint in CACHEABLE_TEMPLATE_ROUTES:
+        response.cache_control.public = True
+        response.cache_control.max_age = PAGE_CACHE_TTL
+    return response
 
 
 def _create_yookassa_payment(items, total, customer, delivery):
@@ -158,31 +196,31 @@ def init_db_command():
 @application.route("/index")
 @application.route("/index.html")
 def index():
-    return render_template("index.html")
+    return _render_cached_template("index.html")
 
 
 @application.route("/catalog")
 @application.route("/catalog.html")
 def catalog():
-    return render_template("catalog.html")
+    return _render_cached_template("catalog.html")
 
 
 @application.route("/catalog-homme")
 @application.route("/catalog-homme.html")
 def catalog_homme():
-    return render_template("catalog-homme.html")
+    return _render_cached_template("catalog-homme.html")
 
 
 @application.route("/product-tonic")
 @application.route("/product-tonic.html")
 def product_tonic():
-    return render_template("product-tonic.html")
+    return _render_cached_template("product-tonic.html")
 
 
 @application.route("/subscription")
 @application.route("/subscription.html")
 def subscription():
-    return render_template("subscription.html")
+    return _render_cached_template("subscription.html")
 
 
 @application.route("/checkout")
@@ -198,6 +236,9 @@ def payment_success():
 
 @application.post("/api/yookassa/create-payment")
 def create_yookassa_payment():
+    if is_rate_limited(_client_rate_limit_key()):
+        return make_response(jsonify({"error": "Слишком много запросов. Попробуйте позже."}), 429)
+
     payload = request.get_json(silent=True) or {}
     try:
         items, total, customer, delivery = _normalize_checkout_payload(payload)
