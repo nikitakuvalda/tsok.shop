@@ -9,6 +9,7 @@
    ============================================================ */
 let cart = JSON.parse(localStorage.getItem('tsok_cart') || '[]');
 let favorites = JSON.parse(localStorage.getItem('tsok_favs') || '[]');
+let boxMeta = JSON.parse(localStorage.getItem('tsok_box_meta') || 'null');
 
 function saveCart() {
     localStorage.setItem('tsok_cart', JSON.stringify(cart));
@@ -664,6 +665,11 @@ function renderCheckoutSummary() {
 
     const total = cartSubtotal();
     if (totalEl) totalEl.textContent = `${total.toFixed(0)} ₽`;
+    const boxNote = document.getElementById('checkoutBoxNote');
+    if (boxNote && boxMeta) {
+        boxNote.hidden = false;
+        boxNote.textContent = `${boxMeta.checkout_note}${boxMeta.bnpl_required ? ' · доступна оплата частями' : ''}`;
+    }
     if (submitBtn) {
         submitBtn.textContent = cart.length ? `Купить за ${total.toFixed(0)} ₽` : 'Купить';
         submitBtn.disabled = cart.length === 0;
@@ -702,6 +708,8 @@ function initCheckoutPage() {
     if (successNotice) {
         cart = [];
         localStorage.removeItem('tsok_cart');
+        localStorage.removeItem('tsok_box_meta');
+        boxMeta = null;
         updateCartUI();
     }
 
@@ -722,6 +730,7 @@ function initCheckoutPage() {
 
         const payload = {
             items: cart.map(item => ({ id: item.id, qty: item.qty })),
+            box: boxMeta ? { plan: boxMeta.plan, vip_gift: boxMeta.vip_gift } : null,
             customer: {
                 fio: document.getElementById('customerFio')?.value.trim() || '',
                 phone: document.getElementById('customerPhone')?.value.trim() || '',
