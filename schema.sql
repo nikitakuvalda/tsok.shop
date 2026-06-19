@@ -31,3 +31,45 @@ ON CONFLICT (id) DO UPDATE SET
     brand = EXCLUDED.brand,
     image = EXCLUDED.image,
     updated_at = NOW();
+
+CREATE TABLE IF NOT EXISTS customers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email TEXT UNIQUE NOT NULL,
+    loyalty_tier TEXT NOT NULL DEFAULT 'Silver' CHECK (loyalty_tier IN ('Silver', 'Gold', 'Platinum')),
+    tsok_coins NUMERIC(12, 2) NOT NULL DEFAULT 0 CHECK (tsok_coins >= 0),
+    referral_code TEXT UNIQUE,
+    last_activity_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS subscription_boxes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_id UUID REFERENCES customers(id),
+    plan_code TEXT NOT NULL CHECK (plan_code IN ('monthly', '3m', '6m', '12m')),
+    status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'paused', 'cancelled')),
+    next_charge_at TIMESTAMPTZ NOT NULL,
+    vip_gift TEXT NOT NULL DEFAULT '',
+    payment_token_id TEXT,
+    bnpl_provider TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS subscription_box_items (
+    subscription_id UUID REFERENCES subscription_boxes(id) ON DELETE CASCADE,
+    product_id TEXT REFERENCES products(id),
+    qty INTEGER NOT NULL CHECK (qty > 0),
+    PRIMARY KEY (subscription_id, product_id)
+);
+
+CREATE TABLE IF NOT EXISTS loyalty_events (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    customer_id UUID REFERENCES customers(id),
+    order_id TEXT,
+    event_type TEXT NOT NULL,
+    coins_delta NUMERIC(12, 2) NOT NULL,
+    available_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ,
+    anti_fraud_fingerprint TEXT,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

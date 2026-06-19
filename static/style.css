@@ -1110,3 +1110,14 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,.i
   .pmodal{grid-template-columns:1fr;max-height:90vh}
   .pmodal__media{min-height:240px;max-height:300px;position:relative}
 }
+
+.sub-toggle__options--plans{grid-template-columns:repeat(5,1fr)}
+.sub-toggle__option span{font-size:9px;color:var(--clay-deep);text-transform:none}
+.club-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.club-card,.routine-panel{background:var(--paper);border:1px solid var(--line);border-top:2px solid var(--clay);padding:24px;border-radius:var(--r)}
+.club-card h3,.routine-panel h3{font-family:var(--font-display);font-weight:500;margin-bottom:10px}
+.club-card p,.routine-panel p{color:var(--muted);font-size:14px;line-height:1.7}
+.routine-panel{margin-top:18px}
+@media(max-width:900px){.sub-toggle__options--plans,.club-grid{grid-template-columns:1fr}.sub-toggle__options--plans{display:grid}}
+
+.checkout-box-note{margin:10px 0 16px;padding:12px;border:1px solid var(--clay);background:var(--clay-pale);font-size:12px;line-height:1.5;color:var(--ink)}
