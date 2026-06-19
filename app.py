@@ -8,6 +8,13 @@ from flask import Flask, jsonify, render_template, request, url_for
 from yookassa import Configuration, Payment
 
 from db import get_products_by_ids, init_products_table
+from iot_devices import (
+    apply_command,
+    get_all_devices,
+    get_device,
+    get_mqtt_status,
+    toggle_device_online,
+)
 
 
 class StaticSiteFlask(Flask):
@@ -22,13 +29,16 @@ application = StaticSiteFlask(__name__)
 
 dotenv.load_dotenv(override=True)
 
-YOOKASSA_SHOP_ID = os.getenv("YOOKASSA_SHOP_ID", "")
+YOOKASSA_SHOP_ID   = os.getenv("YOOKASSA_SHOP_ID", "")
 YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")
-YOOKASSA_CURRENCY = os.getenv("YOOKASSA_CURRENCY", "RUB")
+YOOKASSA_CURRENCY   = os.getenv("YOOKASSA_CURRENCY", "RUB")
 YOOKASSA_RETURN_URL = os.getenv("YOOKASSA_RETURN_URL", "")
 YANDEX_MAPS_API_KEY = os.getenv("YANDEX_MAPS_API_KEY", "14326938-97d2-483c-81c8-ada364bef9ed")
 
 
+# ═══════════════════════════════════════════════════════════════════════
+#  YooKassa helpers (без изменений)
+# ═══════════════════════════════════════════════════════════════════════
 
 def _format_amount(amount):
     return f"{amount.quantize(Decimal('0.01'))}"
@@ -39,9 +49,9 @@ def _normalize_checkout_payload(payload):
     if not isinstance(items, list) or not items:
         raise ValueError("Корзина пуста.")
 
-    raw_items = [item for item in items if isinstance(item, dict)]
+    raw_items  = [item for item in items if isinstance(item, dict)]
     product_ids = [str(item.get("id") or "").strip() for item in raw_items]
-    products = get_products_by_ids([product_id for product_id in product_ids if product_id])
+    products   = get_products_by_ids([pid for pid in product_ids if pid])
 
     normalized_items = []
     total = Decimal("0")
@@ -54,9 +64,9 @@ def _normalize_checkout_payload(payload):
         except (TypeError, ValueError):
             qty = 1
         qty = max(1, min(qty, 99))
-        price = Decimal(str(product["price"]))
+        price      = Decimal(str(product["price"]))
         line_total = price * qty
-        total += line_total
+        total     += line_total
         normalized_items.append({"id": product_id, "qty": qty, **product, "price": price, "line_total": line_total})
 
     if total <= 0:
@@ -65,10 +75,10 @@ def _normalize_checkout_payload(payload):
     customer = payload.get("customer") if isinstance(payload.get("customer"), dict) else {}
     delivery = payload.get("delivery") if isinstance(payload.get("delivery"), dict) else {}
     required_fields = {
-        "fio": customer.get("fio"),
-        "phone": customer.get("phone"),
-        "email": customer.get("email"),
-        "city": delivery.get("city"),
+        "fio":     customer.get("fio"),
+        "phone":   customer.get("phone"),
+        "email":   customer.get("email"),
+        "city":    delivery.get("city"),
         "address": delivery.get("address"),
     }
     missing = [name for name, value in required_fields.items() if not str(value or "").strip()]
@@ -94,52 +104,52 @@ def _create_yookassa_payment(items, total, customer, delivery):
     if not YOOKASSA_SHOP_ID or not YOOKASSA_SECRET_KEY:
         raise RuntimeError("Не настроены YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY.")
 
-    order_number = f"TSOK-{int(time.time())}-{uuid.uuid4().hex[:6]}".upper()
+    order_number   = f"TSOK-{int(time.time())}-{uuid.uuid4().hex[:6]}".upper()
     description_lines = ", ".join(f"{item['name']} x{item['qty']}" for item in items)
-    description = f"Заказ {order_number}: {description_lines}"[:128]
+    description    = f"Заказ {order_number}: {description_lines}"[:128]
     metadata = {
-        "order_number": order_number,
-        "customer_fio": str(customer.get("fio", ""))[:120],
-        "customer_phone": str(customer.get("phone", ""))[:32],
-        "customer_email": str(customer.get("email", ""))[:120],
-        "delivery_city": str(delivery.get("city", ""))[:120],
-        "delivery_address": str(delivery.get("address", ""))[:255],
-        "delivery_comment": str(delivery.get("comment", ""))[:255],
-        "delivery_pvz_provider": str(delivery.get("pvz_provider", ""))[:32],
-        "delivery_pvz_name": str(delivery.get("pvz_name", ""))[:160],
-        "delivery_pvz_address": str(delivery.get("pvz_address", ""))[:255],
-        "delivery_pvz_coordinates": str(delivery.get("pvz_coordinates", ""))[:64],
+        "order_number":              order_number,
+        "customer_fio":              str(customer.get("fio", ""))[:120],
+        "customer_phone":            str(customer.get("phone", ""))[:32],
+        "customer_email":            str(customer.get("email", ""))[:120],
+        "delivery_city":             str(delivery.get("city", ""))[:120],
+        "delivery_address":          str(delivery.get("address", ""))[:255],
+        "delivery_comment":          str(delivery.get("comment", ""))[:255],
+        "delivery_pvz_provider":     str(delivery.get("pvz_provider", ""))[:32],
+        "delivery_pvz_name":         str(delivery.get("pvz_name", ""))[:160],
+        "delivery_pvz_address":      str(delivery.get("pvz_address", ""))[:255],
+        "delivery_pvz_coordinates":  str(delivery.get("pvz_coordinates", ""))[:64],
     }
-    payload = {
-        "amount": {"value": _format_amount(total), "currency": YOOKASSA_CURRENCY},
-        "capture": True,
+    payload_pay = {
+        "amount":       {"value": _format_amount(total), "currency": YOOKASSA_CURRENCY},
+        "capture":      True,
         "confirmation": {"type": "redirect", "return_url": _absolute_return_url()},
-        "description": description,
-        "metadata": metadata,
+        "description":  description,
+        "metadata":     metadata,
     }
     if os.getenv("YOOKASSA_SEND_RECEIPT", "false").lower() in {"1", "true", "yes", "on"}:
-        payload["receipt"] = {
+        payload_pay["receipt"] = {
             "customer": {
                 "email": str(customer.get("email", "")).strip(),
                 "phone": str(customer.get("phone", "")).strip(),
             },
             "items": [
                 {
-                    "description": item["name"][:128],
-                    "quantity": str(item["qty"]),
-                    "amount": {"value": _format_amount(item["price"]), "currency": YOOKASSA_CURRENCY},
-                    "vat_code": int(os.getenv("YOOKASSA_VAT_CODE", "1")),
+                    "description":    item["name"][:128],
+                    "quantity":       str(item["qty"]),
+                    "amount":         {"value": _format_amount(item["price"]), "currency": YOOKASSA_CURRENCY},
+                    "vat_code":       int(os.getenv("YOOKASSA_VAT_CODE", "1")),
                     "payment_subject": "commodity",
-                    "payment_mode": "full_payment",
+                    "payment_mode":   "full_payment",
                 }
                 for item in items
             ],
         }
     Configuration.account_id = YOOKASSA_SHOP_ID
-    Configuration.secret_key = YOOKASSA_SECRET_KEY
+    Configuration.secret_key  = YOOKASSA_SECRET_KEY
 
     try:
-        payment = Payment.create(payload, str(uuid.uuid4()))
+        payment = Payment.create(payload_pay, str(uuid.uuid4()))
     except Exception as error:
         message = getattr(error, "message", None) or getattr(error, "description", None) or str(error)
         raise RuntimeError(f"Ошибка ЮKassa: {message}") from error
@@ -147,12 +157,20 @@ def _create_yookassa_payment(items, total, customer, delivery):
     return payment, order_number
 
 
+# ═══════════════════════════════════════════════════════════════════════
+#  CLI
+# ═══════════════════════════════════════════════════════════════════════
+
 @application.cli.command("init-db")
 def init_db_command():
     """Create and seed PostgreSQL tables."""
     init_products_table()
     print("PostgreSQL products table is ready.")
 
+
+# ═══════════════════════════════════════════════════════════════════════
+#  Страницы — существующие
+# ═══════════════════════════════════════════════════════════════════════
 
 @application.route("/")
 @application.route("/index")
@@ -196,6 +214,20 @@ def payment_success():
     return render_template("checkout.html", yandex_maps_api_key=YANDEX_MAPS_API_KEY, payment_success=True)
 
 
+# ═══════════════════════════════════════════════════════════════════════
+#  Страница — IoT Dashboard (новая, курсовая)
+# ═══════════════════════════════════════════════════════════════════════
+
+@application.route("/iot")
+@application.route("/iot.html")
+def iot():
+    return render_template("iot.html")
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  API — YooKassa (без изменений)
+# ═══════════════════════════════════════════════════════════════════════
+
 @application.post("/api/yookassa/create-payment")
 def create_yookassa_payment():
     payload = request.get_json(silent=True) or {}
@@ -207,12 +239,75 @@ def create_yookassa_payment():
     except Exception as error:
         return jsonify({"error": str(error)}), 502
 
-    confirmation = _payment_field(payment, "confirmation")
+    confirmation     = _payment_field(payment, "confirmation")
     confirmation_url = _payment_field(confirmation, "confirmation_url")
     if not confirmation_url:
         return jsonify({"error": "ЮKassa не вернула ссылку на оплату."}), 502
-    return jsonify({"confirmation_url": confirmation_url, "payment_id": _payment_field(payment, "id"), "order_number": order_number})
+    return jsonify({
+        "confirmation_url": confirmation_url,
+        "payment_id":       _payment_field(payment, "id"),
+        "order_number":     order_number,
+    })
 
+
+# ═══════════════════════════════════════════════════════════════════════
+#  API — IoT (курсовая)
+# ═══════════════════════════════════════════════════════════════════════
+
+@application.get("/api/iot/devices")
+def api_iot_devices():
+    """GET /api/iot/devices — список всех устройств с текущим состоянием."""
+    return jsonify(get_all_devices())
+
+
+@application.get("/api/iot/devices/<device_id>")
+def api_iot_device(device_id):
+    """GET /api/iot/devices/<id> — одно устройство."""
+    device = get_device(device_id)
+    if device is None:
+        return jsonify({"error": "Устройство не найдено."}), 404
+    return jsonify(device)
+
+
+@application.post("/api/iot/devices/<device_id>/command")
+def api_iot_command(device_id):
+    """
+    POST /api/iot/devices/<id>/command
+    Body JSON: { "action": "on"|"off"|"toggle"|"set_brightness"|"set_temp"|..., "value": <optional> }
+    Применяет команду к симулятору и публикует новое состояние в MQTT.
+    """
+    payload = request.get_json(silent=True) or {}
+    try:
+        device, topic = apply_command(device_id, payload)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    return jsonify({"ok": True, "device": device, "mqtt_topic": topic})
+
+
+@application.post("/api/iot/devices/<device_id>/online")
+def api_iot_online(device_id):
+    """
+    POST /api/iot/devices/<id>/online
+    Body JSON: { "online": true|false }  — симулирует обрыв/восстановление связи.
+    """
+    payload = request.get_json(silent=True) or {}
+    online  = bool(payload.get("online", True))
+    try:
+        device = toggle_device_online(device_id, online)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
+    return jsonify({"ok": True, "device": device})
+
+
+@application.get("/api/iot/mqtt/status")
+def api_iot_mqtt_status():
+    """GET /api/iot/mqtt/status — статус подключения к MQTT-брокеру."""
+    return jsonify(get_mqtt_status())
+
+
+# ═══════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     application.run(debug=True)
