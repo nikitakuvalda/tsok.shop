@@ -1,12 +1,14 @@
 import os
 import time
 import uuid
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 
 import dotenv
-from flask import Flask, jsonify, render_template, request, url_for
+from flask import Flask, Response, jsonify, make_response, render_template, request, url_for
 from yookassa import Configuration, Payment
 
+from cache import PAGE_CACHE_TTL, cache_get_text, cache_set_text, is_rate_limited
 from db import get_products_by_ids, init_products_table
 from iot_devices import (
     apply_command,
@@ -34,6 +36,70 @@ YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")
 YOOKASSA_CURRENCY   = os.getenv("YOOKASSA_CURRENCY", "RUB")
 YOOKASSA_RETURN_URL = os.getenv("YOOKASSA_RETURN_URL", "")
 YANDEX_MAPS_API_KEY = os.getenv("YANDEX_MAPS_API_KEY", "14326938-97d2-483c-81c8-ada364bef9ed")
+
+SUBSCRIPTION_PLANS = {
+    "once": {"label": "Разовая покупка", "discount": Decimal("0"), "months": 0, "bnpl_required": False},
+    "monthly": {"label": "Рекуррент ежемесячно", "discount": Decimal("0.10"), "months": 1, "bnpl_required": False},
+    "3m": {"label": "Подписка 3 месяца", "discount": Decimal("0.15"), "months": 3, "bnpl_required": True},
+    "6m": {"label": "Подписка 6 месяцев", "discount": Decimal("0.20"), "months": 6, "bnpl_required": True},
+    "12m": {"label": "VIP 12 месяцев", "discount": Decimal("0.30"), "months": 12, "bnpl_required": True},
+}
+VIP_GIFTS = {"body-scrub", "mask-set", "quartz-roller"}
+DELIVERY_FEE = Decimal("700")
+MIN_BOX_ITEMS = 3
+
+def _selected_count(items):
+    return sum(item["qty"] for item in items)
+
+def _calculate_box_quote(items, plan_code="once", vip_gift=""):
+    plan = SUBSCRIPTION_PLANS.get(plan_code) or SUBSCRIPTION_PLANS["once"]
+    count = _selected_count(items)
+    if count < MIN_BOX_ITEMS:
+        raise ValueError("Минимальный состав TSOK BOX — 3 товара.")
+    base_total = sum(item["line_total"] for item in items)
+    discount_amount = (base_total * plan["discount"]).quantize(Decimal("0.01"))
+    discounted_total = base_total - discount_amount
+    free_delivery = count >= 4 or plan_code in {"6m", "12m"}
+    delivery_fee = Decimal("0") if free_delivery else DELIVERY_FEE
+    gift_enabled = count >= 5
+    gift = vip_gift if gift_enabled and vip_gift in VIP_GIFTS else ""
+    payable_total = discounted_total + delivery_fee
+    months = max(1, plan["months"] or 1)
+    monthly_payment = (payable_total / months).quantize(Decimal("0.01"))
+    bnpl = None
+    if plan["bnpl_required"]:
+        bnpl = {
+            "provider": os.getenv("BNPL_PROVIDER", "split/dolyami"),
+            "installments": 4,
+            "today_payment": _format_amount((payable_total / Decimal("4")).quantize(Decimal("0.01"))),
+            "settlement": "Магазин получает всю сумму на следующий день после авторизации BNPL.",
+        }
+    return {
+        "plan_code": plan_code,
+        "plan_label": plan["label"],
+        "item_count": count,
+        "base_total": base_total,
+        "discount_percent": int(plan["discount"] * 100),
+        "discount_amount": discount_amount,
+        "delivery_fee": delivery_fee,
+        "free_delivery": free_delivery,
+        "gift_enabled": gift_enabled,
+        "vip_gift": gift,
+        "payable_total": payable_total,
+        "monthly_payment": monthly_payment,
+        "bnpl": bnpl,
+    }
+
+def _quote_to_json(quote):
+    return {k: (_format_amount(v) if isinstance(v, Decimal) else v) for k, v in quote.items()}
+
+CACHEABLE_TEMPLATE_ROUTES = {
+    "index": "index.html",
+    "catalog": "catalog.html",
+    "catalog_homme": "catalog-homme.html",
+    "product_tonic": "product-tonic.html",
+    "subscription": "subscription.html",
+}
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -100,7 +166,36 @@ def _payment_field(payment, field_name):
     return getattr(payment, field_name, None)
 
 
-def _create_yookassa_payment(items, total, customer, delivery):
+def _client_rate_limit_key():
+    forwarded_for = request.headers.get("X-Forwarded-For", "")
+    client_ip = forwarded_for.split(",", 1)[0].strip() or request.remote_addr or "unknown"
+    return f"rate-limit:create-payment:{client_ip}"
+
+
+def _render_cached_template(template_name):
+    cache_key = f"page:v1:{template_name}"
+    cached_html = cache_get_text(cache_key)
+    if cached_html is not None:
+        return Response(cached_html, mimetype="text/html")
+
+    html = render_template(template_name)
+    cache_set_text(cache_key, html, PAGE_CACHE_TTL)
+    return html
+
+
+@application.after_request
+def add_performance_headers(response):
+    if request.path.startswith("/static/"):
+        response.cache_control.public = True
+        response.cache_control.max_age = 60 * 60 * 24 * 30
+        response.expires = datetime.now(timezone.utc) + timedelta(seconds=response.cache_control.max_age)
+    elif request.endpoint in CACHEABLE_TEMPLATE_ROUTES:
+        response.cache_control.public = True
+        response.cache_control.max_age = PAGE_CACHE_TTL
+    return response
+
+
+def _create_yookassa_payment(items, total, customer, delivery, quote=None):
     if not YOOKASSA_SHOP_ID or not YOOKASSA_SECRET_KEY:
         raise RuntimeError("Не настроены YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY.")
 
@@ -120,9 +215,20 @@ def _create_yookassa_payment(items, total, customer, delivery):
         "delivery_pvz_address":      str(delivery.get("pvz_address", ""))[:255],
         "delivery_pvz_coordinates":  str(delivery.get("pvz_coordinates", ""))[:64],
     }
-    payload_pay = {
-        "amount":       {"value": _format_amount(total), "currency": YOOKASSA_CURRENCY},
-        "capture":      True,
+
+    if quote:
+        metadata.update({
+            "box_plan": quote["plan_code"],
+            "box_plan_label": quote["plan_label"],
+            "box_item_count": str(quote["item_count"]),
+            "box_discount_percent": str(quote["discount_percent"]),
+            "box_free_delivery": str(quote["free_delivery"]).lower(),
+            "box_vip_gift": quote.get("vip_gift", ""),
+        })
+    payment_total = quote["payable_total"] if quote else total
+    payload = {
+        "amount": {"value": _format_amount(payment_total), "currency": YOOKASSA_CURRENCY},
+        "capture": True,
         "confirmation": {"type": "redirect", "return_url": _absolute_return_url()},
         "description":  description,
         "metadata":     metadata,
@@ -176,31 +282,31 @@ def init_db_command():
 @application.route("/index")
 @application.route("/index.html")
 def index():
-    return render_template("index.html")
+    return _render_cached_template("index.html")
 
 
 @application.route("/catalog")
 @application.route("/catalog.html")
 def catalog():
-    return render_template("catalog.html")
+    return _render_cached_template("catalog.html")
 
 
 @application.route("/catalog-homme")
 @application.route("/catalog-homme.html")
 def catalog_homme():
-    return render_template("catalog-homme.html")
+    return _render_cached_template("catalog-homme.html")
 
 
 @application.route("/product-tonic")
 @application.route("/product-tonic.html")
 def product_tonic():
-    return render_template("product-tonic.html")
+    return _render_cached_template("product-tonic.html")
 
 
 @application.route("/subscription")
 @application.route("/subscription.html")
 def subscription():
-    return render_template("subscription.html")
+    return _render_cached_template("subscription.html")
 
 
 @application.route("/checkout")
@@ -230,10 +336,17 @@ def iot():
 
 @application.post("/api/yookassa/create-payment")
 def create_yookassa_payment():
+    if is_rate_limited(_client_rate_limit_key()):
+        return make_response(jsonify({"error": "Слишком много запросов. Попробуйте позже."}), 429)
+
     payload = request.get_json(silent=True) or {}
     try:
         items, total, customer, delivery = _normalize_checkout_payload(payload)
-        payment, order_number = _create_yookassa_payment(items, total, customer, delivery)
+        quote = None
+        if payload.get("box"):
+            box_payload = payload.get("box") if isinstance(payload.get("box"), dict) else {}
+            quote = _calculate_box_quote(items, box_payload.get("plan", "once"), box_payload.get("vip_gift", ""))
+        payment, order_number = _create_yookassa_payment(items, total, customer, delivery, quote)
     except (ValueError, InvalidOperation) as error:
         return jsonify({"error": str(error)}), 400
     except Exception as error:
@@ -250,64 +363,32 @@ def create_yookassa_payment():
     })
 
 
-# ═══════════════════════════════════════════════════════════════════════
-#  API — IoT (курсовая)
-# ═══════════════════════════════════════════════════════════════════════
-
-@application.get("/api/iot/devices")
-def api_iot_devices():
-    """GET /api/iot/devices — список всех устройств с текущим состоянием."""
-    return jsonify(get_all_devices())
-
-
-@application.get("/api/iot/devices/<device_id>")
-def api_iot_device(device_id):
-    """GET /api/iot/devices/<id> — одно устройство."""
-    device = get_device(device_id)
-    if device is None:
-        return jsonify({"error": "Устройство не найдено."}), 404
-    return jsonify(device)
-
-
-@application.post("/api/iot/devices/<device_id>/command")
-def api_iot_command(device_id):
-    """
-    POST /api/iot/devices/<id>/command
-    Body JSON: { "action": "on"|"off"|"toggle"|"set_brightness"|"set_temp"|..., "value": <optional> }
-    Применяет команду к симулятору и публикует новое состояние в MQTT.
-    """
+@application.post("/api/subscription-box/quote")
+def subscription_box_quote():
     payload = request.get_json(silent=True) or {}
     try:
-        device, topic = apply_command(device_id, payload)
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-    return jsonify({"ok": True, "device": device, "mqtt_topic": topic})
+        items, _total, _customer, _delivery = _normalize_checkout_payload({
+            "items": payload.get("items", []),
+            "customer": {"fio": "quote", "phone": "+70000000000", "email": "quote@example.com"},
+            "delivery": {"city": "quote", "address": "quote"},
+        })
+        quote = _calculate_box_quote(items, payload.get("plan", "once"), payload.get("vip_gift", ""))
+    except (ValueError, InvalidOperation) as error:
+        return jsonify({"error": str(error)}), 400
+    return jsonify(_quote_to_json(quote))
 
-
-@application.post("/api/iot/devices/<device_id>/online")
-def api_iot_online(device_id):
-    """
-    POST /api/iot/devices/<id>/online
-    Body JSON: { "online": true|false }  — симулирует обрыв/восстановление связи.
-    """
+@application.post("/api/subscription-box/anti-churn")
+def subscription_anti_churn():
     payload = request.get_json(silent=True) or {}
-    online  = bool(payload.get("online", True))
-    try:
-        device = toggle_device_online(device_id, online)
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 404
-    return jsonify({"ok": True, "device": device})
+    tier = str(payload.get("loyalty_tier") or "Silver")
+    step = str(payload.get("step") or "loss")
+    offers = {
+        "loss": f"При отмене подписки статус {tier} будет понижен до Silver, а повышенный кэшбек TSOK Coins отключится.",
+        "offer": "Останьтесь — добавим премиум-скраб за 0 ₽ в следующий бокс или поставим подписку на паузу на 30 дней.",
+        "final": "Карта будет отвязана в платёжном шлюзе, подписка отменена, loyalty_tier станет Silver.",
+    }
+    return jsonify({"step": step, "message": offers.get(step, offers["loss"])})
 
-
-@application.get("/api/iot/mqtt/status")
-def api_iot_mqtt_status():
-    """GET /api/iot/mqtt/status — статус подключения к MQTT-брокеру."""
-    return jsonify(get_mqtt_status())
-
-
-# ═══════════════════════════════════════════════════════════════════════
 
 if __name__ == "__main__":
     application.run(debug=True)

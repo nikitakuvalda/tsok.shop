@@ -9,6 +9,8 @@ except ImportError:  # pragma: no cover - local environments install requirement
     psycopg = None
     dict_row = None
 
+from cache import PRODUCT_CACHE_TTL, cache_get_json, cache_set_json
+
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL") or os.getenv("POSTGRES_DSN")
 
 PRODUCT_SEED = {
@@ -85,8 +87,15 @@ def get_products_by_ids(product_ids):
     if not unique_ids:
         return {}
 
+    cache_key = "products:v1:" + ",".join(sorted(unique_ids))
+    cached_products = cache_get_json(cache_key)
+    if cached_products is not None:
+        return {product_id: {**product, "price": Decimal(str(product["price"]))} for product_id, product in cached_products.items()}
+
     if not DATABASE_URL:
-        return {product_id: PRODUCT_SEED[product_id] for product_id in unique_ids if product_id in PRODUCT_SEED}
+        products = {product_id: PRODUCT_SEED[product_id] for product_id in unique_ids if product_id in PRODUCT_SEED}
+        cache_set_json(cache_key, products, PRODUCT_CACHE_TTL)
+        return products
 
     with get_connection() as conn:
         with conn.cursor() as cur:
@@ -99,4 +108,6 @@ def get_products_by_ids(product_ids):
                 (unique_ids,),
             )
             rows = cur.fetchall()
-    return {row["id"]: row for row in rows}
+    products = {row["id"]: row for row in rows}
+    cache_set_json(cache_key, products, PRODUCT_CACHE_TTL)
+    return products
