@@ -9,6 +9,17 @@ from flask import Flask, Response, jsonify, make_response, render_template, requ
 from yookassa import Configuration, Payment
 
 from cache import PAGE_CACHE_TTL, cache_get_text, cache_set_text, is_rate_limited
+from d2c import (
+    COINS_REDEEM_LIMIT,
+    LOYALTY_TIERS,
+    REFERRAL_FIRST_ORDER_DISCOUNT,
+    build_loyalty_event,
+    build_subscription_notification,
+    calculate_checkout_benefits,
+    determine_loyalty_tier,
+    money,
+    referral_is_suspicious,
+)
 from db import get_products_by_ids, init_products_table
 from iot_devices import (
     apply_command,
@@ -45,6 +56,11 @@ SUBSCRIPTION_PLANS = {
     "12m": {"label": "VIP 12 месяцев", "discount": Decimal("0.30"), "months": 12, "bnpl_required": True},
 }
 VIP_GIFTS = {"body-scrub", "mask-set", "quartz-roller"}
+GIFT_LABELS = {
+    "body-scrub": "Премиальный скраб для тела",
+    "mask-set": "Набор тканевых масок",
+    "quartz-roller": "Массажный роллер из кварца",
+}
 DELIVERY_FEE = Decimal("700")
 MIN_BOX_ITEMS = 3
 
@@ -100,6 +116,35 @@ CACHEABLE_TEMPLATE_ROUTES = {
     "product_tonic": "product-tonic.html",
     "subscription": "subscription.html",
 }
+
+DEMO_CUSTOMER = {
+    "email": "client@tsok.shop",
+    "name": "Клиент TSOK",
+    "loyalty_tier": "Gold",
+    "tsok_coins": 1850,
+    "referral_code": "TSOK-CLUB-500",
+    "annual_spend": 18400,
+    "subscription_months": 3,
+}
+
+DEMO_SUBSCRIPTION = {
+    "id": "demo-subscription",
+    "plan_code": "3m",
+    "status": "active",
+    "next_charge_at": (datetime.now(timezone.utc) + timedelta(days=12)).isoformat(),
+    "vip_gift": "body-scrub",
+    "items": [
+        {"id": "pearl-01", "qty": 1},
+        {"id": "pearl-03", "qty": 1},
+        {"id": "pearl-05", "qty": 1},
+        {"id": "pearl-07", "qty": 1},
+    ],
+    "payment_token_id": "tok_demo_yookassa",
+}
+
+DEMO_NOTIFICATIONS = []
+DEMO_LOYALTY_EVENTS = []
+DEMO_REFERRAL_CLAIMS = []
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -195,7 +240,24 @@ def add_performance_headers(response):
     return response
 
 
-def _create_yookassa_payment(items, total, customer, delivery, quote=None):
+
+def _checkout_benefits_from_payload(payload, subtotal, is_subscription_box=False):
+    loyalty = payload.get("loyalty") if isinstance(payload.get("loyalty"), dict) else {}
+    return calculate_checkout_benefits(
+        subtotal=subtotal,
+        current_coins=DEMO_CUSTOMER["tsok_coins"],
+        loyalty_tier=DEMO_CUSTOMER["loyalty_tier"],
+        referral_code=loyalty.get("referral_code"),
+        valid_referral_code=DEMO_CUSTOMER["referral_code"],
+        use_coins=bool(loyalty.get("use_coins")),
+        is_subscription_box=is_subscription_box,
+    )
+
+
+def _benefits_to_json(benefits):
+    return {k: (_format_amount(v) if isinstance(v, Decimal) else v) for k, v in benefits.items()}
+
+def _create_yookassa_payment(items, total, customer, delivery, quote=None, benefits=None):
     if not YOOKASSA_SHOP_ID or not YOOKASSA_SECRET_KEY:
         raise RuntimeError("Не настроены YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY.")
 
@@ -224,8 +286,19 @@ def _create_yookassa_payment(items, total, customer, delivery, quote=None):
             "box_discount_percent": str(quote["discount_percent"]),
             "box_free_delivery": str(quote["free_delivery"]).lower(),
             "box_vip_gift": quote.get("vip_gift", ""),
+            "box_vip_gift_label": GIFT_LABELS.get(quote.get("vip_gift", ""), ""),
         })
-    payment_total = quote["payable_total"] if quote else total
+    if benefits:
+        metadata.update({
+            "loyalty_tier": benefits["loyalty_tier"],
+            "loyalty_cashback_percent": str(benefits["cashback_percent"]),
+            "loyalty_referral_code": benefits.get("referral_code", ""),
+            "loyalty_referral_status": benefits["referral_status"],
+            "loyalty_referral_discount": _format_amount(benefits["referral_discount"]),
+            "loyalty_coins_redeemed": _format_amount(benefits["coins_redeemed"]),
+            "loyalty_coins_pending": _format_amount(benefits["coins_pending"]),
+        })
+    payment_total = benefits["payable_total"] if benefits else (quote["payable_total"] if quote else total)
     payload = {
         "amount": {"value": _format_amount(payment_total), "currency": YOOKASSA_CURRENCY},
         "capture": True,
@@ -234,7 +307,7 @@ def _create_yookassa_payment(items, total, customer, delivery, quote=None):
         "metadata":     metadata,
     }
     if os.getenv("YOOKASSA_SEND_RECEIPT", "false").lower() in {"1", "true", "yes", "on"}:
-        payload_pay["receipt"] = {
+        payload["receipt"] = {
             "customer": {
                 "email": str(customer.get("email", "")).strip(),
                 "phone": str(customer.get("phone", "")).strip(),
@@ -255,7 +328,7 @@ def _create_yookassa_payment(items, total, customer, delivery, quote=None):
     Configuration.secret_key  = YOOKASSA_SECRET_KEY
 
     try:
-        payment = Payment.create(payload_pay, str(uuid.uuid4()))
+        payment = Payment.create(payload, str(uuid.uuid4()))
     except Exception as error:
         message = getattr(error, "message", None) or getattr(error, "description", None) or str(error)
         raise RuntimeError(f"Ошибка ЮKassa: {message}") from error
@@ -315,6 +388,12 @@ def checkout():
     return render_template("checkout.html", yandex_maps_api_key=YANDEX_MAPS_API_KEY)
 
 
+@application.route("/account")
+@application.route("/account.html")
+def account():
+    return render_template("account.html")
+
+
 @application.route("/payment/success")
 def payment_success():
     return render_template("checkout.html", yandex_maps_api_key=YANDEX_MAPS_API_KEY, payment_success=True)
@@ -346,7 +425,9 @@ def create_yookassa_payment():
         if payload.get("box"):
             box_payload = payload.get("box") if isinstance(payload.get("box"), dict) else {}
             quote = _calculate_box_quote(items, box_payload.get("plan", "once"), box_payload.get("vip_gift", ""))
-        payment, order_number = _create_yookassa_payment(items, total, customer, delivery, quote)
+        subtotal_for_benefits = quote["payable_total"] if quote else total
+        benefits = _checkout_benefits_from_payload(payload, subtotal_for_benefits, is_subscription_box=bool(quote))
+        payment, order_number = _create_yookassa_payment(items, total, customer, delivery, quote, benefits)
     except (ValueError, InvalidOperation) as error:
         return jsonify({"error": str(error)}), 400
     except Exception as error:
@@ -363,6 +444,59 @@ def create_yookassa_payment():
     })
 
 
+
+def _subscription_items_with_products(subscription):
+    products = get_products_by_ids([item["id"] for item in subscription["items"]])
+    return [{"id": item["id"], "qty": item["qty"], **products[item["id"]]} for item in subscription["items"] if item["id"] in products]
+
+
+def _current_subscription_state():
+    items = _subscription_items_with_products(DEMO_SUBSCRIPTION)
+    quote = _calculate_box_quote(items, DEMO_SUBSCRIPTION["plan_code"], DEMO_SUBSCRIPTION.get("vip_gift", ""))
+    next_charge = datetime.fromisoformat(DEMO_SUBSCRIPTION["next_charge_at"])
+    return {
+        "customer": DEMO_CUSTOMER,
+        "subscription": {
+            **DEMO_SUBSCRIPTION,
+            "next_charge_date": next_charge.strftime("%d.%m.%Y"),
+            "items": _quote_items_to_json(items),
+            "quote": _quote_to_json(quote),
+            "vip_gift_label": GIFT_LABELS.get(DEMO_SUBSCRIPTION.get("vip_gift", ""), ""),
+        },
+        "loyalty_rules": {
+            "coins_rate": "1 Coin = 1 ₽",
+            "coins_available_after_days": 14,
+            "one_time_order_redeem_limit_percent": 30,
+            "expires_after_inactive_months": 6,
+            "referral_reward": 500,
+            "tiers": {
+                tier: {**rules, "cashback": int(rules["cashback"] * 100)}
+                for tier, rules in LOYALTY_TIERS.items()
+            },
+        },
+        "loyalty_events": DEMO_LOYALTY_EVENTS,
+        "referral_claims": DEMO_REFERRAL_CLAIMS,
+        "notifications": DEMO_NOTIFICATIONS,
+        "anti_churn_steps": ["loss", "offer", "final"],
+        "notification": "CRON-уведомление будет отправлено за 72 часа до списания; у клиента есть 48 часов на swap/pause.",
+    }
+
+
+def _quote_items_to_json(items):
+    return [
+        {
+            "id": item["id"],
+            "name": item["name"],
+            "qty": item["qty"],
+            "price": _format_amount(item["price"]),
+            "line_total": _format_amount(item["line_total"]),
+            "brand": item.get("brand", ""),
+            "size": item.get("size", ""),
+            "image": item.get("image", ""),
+        }
+        for item in items
+    ]
+
 @application.post("/api/subscription-box/quote")
 def subscription_box_quote():
     payload = request.get_json(silent=True) or {}
@@ -377,6 +511,73 @@ def subscription_box_quote():
         return jsonify({"error": str(error)}), 400
     return jsonify(_quote_to_json(quote))
 
+
+@application.post("/api/checkout/preview")
+def checkout_preview():
+    payload = request.get_json(silent=True) or {}
+    try:
+        items, total, _customer, _delivery = _normalize_checkout_payload({
+            "items": payload.get("items", []),
+            "customer": {"fio": "preview", "phone": "+70000000000", "email": "preview@example.com"},
+            "delivery": {"city": "preview", "address": "preview"},
+        })
+        quote = None
+        if payload.get("box"):
+            box_payload = payload.get("box") if isinstance(payload.get("box"), dict) else {}
+            quote = _calculate_box_quote(items, box_payload.get("plan", "once"), box_payload.get("vip_gift", ""))
+        subtotal = quote["payable_total"] if quote else total
+        benefits = _checkout_benefits_from_payload(payload, subtotal, is_subscription_box=bool(quote))
+    except (ValueError, InvalidOperation) as error:
+        return jsonify({"error": str(error)}), 400
+    return jsonify({
+        "subtotal": _format_amount(subtotal),
+        "quote": _quote_to_json(quote) if quote else None,
+        "benefits": _benefits_to_json(benefits),
+    })
+
+
+@application.post("/api/account/referral/apply")
+def account_referral_apply():
+    payload = request.get_json(silent=True) or {}
+    code = str(payload.get("referral_code") or "").strip().upper()
+    fingerprint = str(payload.get("fingerprint") or request.headers.get("X-Forwarded-For") or request.remote_addr or "unknown")[:120]
+    if code != DEMO_CUSTOMER["referral_code"]:
+        return jsonify({"status": "rejected", "error": "Промокод не найден."}), 400
+    suspicious = referral_is_suspicious(DEMO_CUSTOMER.get("email"), fingerprint, payload.get("card_fingerprint", ""))
+    claim = {
+        "referral_code": code,
+        "reward_coins": 500,
+        "anti_fraud_fingerprint": fingerprint,
+        "status": "rejected" if suspicious else "pending_delivery",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    DEMO_REFERRAL_CLAIMS.append(claim)
+    return jsonify({"status": "accepted", "claim": claim, "message": "Referral принят: новичку −10%, пригласившему 500 Coins после доставки."})
+
+
+@application.post("/api/account/loyalty/accrue")
+def account_loyalty_accrue():
+    payload = request.get_json(silent=True) or {}
+    delivered_total = money(payload.get("delivered_total", "0"))
+    event = build_loyalty_event(delivered_total, DEMO_CUSTOMER["loyalty_tier"])
+    event = {
+        **event,
+        "coins_delta": _format_amount(event["coins_delta"]),
+        "available_at": event["available_at"].isoformat(),
+        "expires_at": event["expires_at"].isoformat(),
+    }
+    DEMO_LOYALTY_EVENTS.append(event)
+    return jsonify({"message": "Coins запланированы к начислению через 14 дней после доставки.", "event": event})
+
+
+@application.post("/api/account/notifications/schedule")
+def account_notifications_schedule():
+    notification = build_subscription_notification(DEMO_SUBSCRIPTION["id"], DEMO_SUBSCRIPTION["next_charge_at"])
+    notification = {**notification, "send_at": notification["send_at"].isoformat()}
+    DEMO_NOTIFICATIONS.append(notification)
+    return jsonify({"message": "Уведомление за 72 часа поставлено в демо-очередь.", "notification": notification})
+
+
 @application.post("/api/subscription-box/anti-churn")
 def subscription_anti_churn():
     payload = request.get_json(silent=True) or {}
@@ -388,6 +589,75 @@ def subscription_anti_churn():
         "final": "Карта будет отвязана в платёжном шлюзе, подписка отменена, loyalty_tier станет Silver.",
     }
     return jsonify({"step": step, "message": offers.get(step, offers["loss"])})
+
+
+@application.get("/api/account/subscription")
+def account_subscription():
+    return jsonify(_current_subscription_state())
+
+
+@application.post("/api/account/subscription/swap")
+def account_subscription_swap():
+    payload = request.get_json(silent=True) or {}
+    raw_items = payload.get("items")
+    if not isinstance(raw_items, list):
+        return jsonify({"error": "Передайте items для нового состава подписки."}), 400
+    try:
+        candidate_items = []
+        for raw in raw_items:
+            if not isinstance(raw, dict):
+                continue
+            product_id = str(raw.get("id") or "").strip()
+            qty = int(raw.get("qty", 0))
+            if product_id and qty > 0:
+                candidate_items.append({"id": product_id, "qty": min(qty, 99)})
+        products = get_products_by_ids([item["id"] for item in candidate_items])
+        items = [{"id": item["id"], "qty": item["qty"], **products[item["id"]]} for item in candidate_items if item["id"] in products]
+        for item in items:
+            item["price"] = Decimal(str(item["price"]))
+            item["line_total"] = item["price"] * item["qty"]
+        quote = _calculate_box_quote(items, DEMO_SUBSCRIPTION["plan_code"], DEMO_SUBSCRIPTION.get("vip_gift", ""))
+    except (ValueError, InvalidOperation, TypeError) as error:
+        return jsonify({"error": str(error)}), 400
+    DEMO_SUBSCRIPTION["items"] = [{"id": item["id"], "qty": item["qty"]} for item in items]
+    return jsonify({"message": "Состав обновлён, сумма следующего автосписания пересчитана.", "quote": _quote_to_json(quote), "state": _current_subscription_state()})
+
+
+@application.post("/api/account/subscription/pause")
+def account_subscription_pause():
+    next_charge = datetime.fromisoformat(DEMO_SUBSCRIPTION["next_charge_at"]) + timedelta(days=30)
+    DEMO_SUBSCRIPTION["next_charge_at"] = next_charge.isoformat()
+    DEMO_SUBSCRIPTION["status"] = "paused"
+    return jsonify({"message": "Подписка поставлена на паузу, следующее списание сдвинуто на 30 дней.", "state": _current_subscription_state()})
+
+
+@application.post("/api/account/loyalty/recalculate-tier")
+def account_loyalty_recalculate_tier():
+    DEMO_CUSTOMER["loyalty_tier"] = determine_loyalty_tier(
+        DEMO_CUSTOMER.get("subscription_months", 0),
+        DEMO_CUSTOMER.get("annual_spend", 0),
+        DEMO_SUBSCRIPTION.get("status", "active"),
+    )
+    return jsonify({"message": "loyalty_tier пересчитан по стажу подписки и годовой сумме покупок.", "state": _current_subscription_state()})
+
+
+@application.post("/api/account/subscription/resume")
+def account_subscription_resume():
+    DEMO_SUBSCRIPTION["status"] = "active"
+    DEMO_CUSTOMER["loyalty_tier"] = determine_loyalty_tier(
+        DEMO_CUSTOMER.get("subscription_months", 0),
+        DEMO_CUSTOMER.get("annual_spend", 0),
+        DEMO_SUBSCRIPTION.get("status", "active"),
+    )
+    return jsonify({"message": "Подписка возобновлена, tier пересчитан автоматически.", "state": _current_subscription_state()})
+
+
+@application.post("/api/account/subscription/cancel")
+def account_subscription_cancel():
+    DEMO_SUBSCRIPTION["status"] = "cancelled"
+    DEMO_SUBSCRIPTION["payment_token_id"] = ""
+    DEMO_CUSTOMER["loyalty_tier"] = "Silver"
+    return jsonify({"message": "Карта отвязана в демо-шлюзе, подписка отменена, loyalty_tier понижен до Silver.", "state": _current_subscription_state()})
 
 
 if __name__ == "__main__":

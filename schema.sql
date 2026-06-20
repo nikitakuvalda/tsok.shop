@@ -73,3 +73,27 @@ CREATE TABLE IF NOT EXISTS loyalty_events (
     anti_fraud_fingerprint TEXT,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS referral_claims (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    referrer_customer_id UUID REFERENCES customers(id),
+    referred_customer_id UUID REFERENCES customers(id),
+    referral_code TEXT NOT NULL,
+    reward_coins NUMERIC(12, 2) NOT NULL DEFAULT 500,
+    anti_fraud_fingerprint TEXT,
+    ip_hash TEXT,
+    card_fingerprint_hash TEXT,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    approved_at TIMESTAMPTZ
+);
+
+CREATE TABLE IF NOT EXISTS subscription_notifications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    subscription_id UUID REFERENCES subscription_boxes(id) ON DELETE CASCADE,
+    channel TEXT NOT NULL CHECK (channel IN ('email', 'telegram')),
+    send_at TIMESTAMPTZ NOT NULL,
+    sent_at TIMESTAMPTZ,
+    payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

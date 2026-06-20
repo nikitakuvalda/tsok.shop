@@ -197,9 +197,9 @@
                 <div id="vipGiftSelection" style="display:none; margin-top:16px; padding:16px; border:1px solid var(--clay-deep); background:rgba(201,168,118,.06); border-radius:var(--r);">
                     <div class="vip-gift-note">Выберите ваш VIP-подарок</div>
                     <select id="vipGiftSelect" style="width:100%; padding:11px; border:1px solid var(--line); background:var(--paper); font-size:13px; outline:none; cursor:pointer; border-radius:var(--r); font-family:var(--font-body);">
-                        <option>Премиальный скраб для тела</option>
-                        <option>Набор тканевых масок</option>
-                        <option>Массажный роллер из кварца</option>
+                        <option value="body-scrub">Премиальный скраб для тела</option>
+                        <option value="mask-set">Набор тканевых масок</option>
+                        <option value="quartz-roller">Массажный роллер из кварца</option>
                     </select>
                 </div>
 
@@ -216,6 +216,7 @@
 
                 <div class="panel-line"><span>Товаров в боксе:</span><strong id="itemCount">0</strong></div>
                 <div class="panel-line"><span>Доставка:</span><strong id="deliveryLine"><span style="color:#c0392b;">Платная</span></strong></div>
+                <p class="panel-warn is-visible" id="progressHint">Добавьте 3 товара, чтобы активировать TSOK BOX</p>
                 <div class="panel-line"><span>TSOK Coins:</span><strong id="coinsLine">Silver · 3%</strong></div>
                 <div class="panel-line"><span>BNPL:</span><strong id="bnplLine">—</strong></div>
 
@@ -501,16 +502,24 @@
         document.getElementById('coinsLine').textContent = (mode === '12m' || mode === '6m') ? 'Platinum · 10%' : (mode === '3m' ? 'Gold · 5%' : 'Silver · 3%');
         document.getElementById('bnplLine').textContent = plan.bnpl ? `Сегодня ${(total / 4).toFixed(0)} ₽ в Сплит на 4 платежа` : 'Недоступно для этого тарифа';
 
+        const hint = document.getElementById('progressHint');
+        if (hint) {
+            if (count < 3) hint.textContent = `Добавьте еще ${3 - count} товар(а), чтобы активировать TSOK BOX`;
+            else if (count === 3 && !deliveryFree) hint.textContent = 'Добавьте еще 1 продукт для бесплатной курьерской доставки (экономия 700 ₽)';
+            else if (count === 4) hint.textContent = 'Добавьте 5-й продукт и откройте доступ к VIP-подаркам';
+            else hint.textContent = 'Премиум-уровень открыт: бесплатная доставка и VIP-подарок за 0 ₽';
+        }
+
         // Блокировка кнопки
         const btn = document.getElementById('checkoutBtn');
         const warn = document.getElementById('minWarn');
 
-        if (mode !== 'once' && count > 0 && count < MIN_ITEMS) {
+        if (count > 0 && count < MIN_ITEMS) {
             warn.textContent = `Добавьте еще ${MIN_ITEMS - count} товар(а) для активации подписки`;
             warn.classList.add('is-visible');
             btn.disabled = true;
             btn.style.opacity = '0.4';
-            btn.innerHTML = 'Минимум 3 товара для подписки';
+            btn.innerHTML = 'Минимум 3 товара для TSOK BOX';
         } else if (count === 0) {
             warn.classList.remove('is-visible');
             btn.disabled = true;
@@ -556,7 +565,7 @@
         const total = getTotal();
         
         if (count === 0) return;
-        if (mode !== 'once' && count < MIN_ITEMS) return;
+        if (count < MIN_ITEMS) return;
 
         let giftInfo = '';
         if (mode !== 'once') {

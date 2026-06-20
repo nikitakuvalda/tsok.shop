@@ -10,6 +10,7 @@
 let cart = JSON.parse(localStorage.getItem('tsok_cart') || '[]');
 let favorites = JSON.parse(localStorage.getItem('tsok_favs') || '[]');
 let boxMeta = JSON.parse(localStorage.getItem('tsok_box_meta') || 'null');
+let checkoutPreview = null;
 
 function saveCart() {
     localStorage.setItem('tsok_cart', JSON.stringify(cart));
@@ -656,6 +657,35 @@ function cartSubtotal() {
     return cart.reduce((sum, item) => sum + item.qty * item.price, 0);
 }
 
+function checkoutLoyaltyPayload() {
+    return {
+        referral_code: document.getElementById('referralCodeInput')?.value.trim() || '',
+        use_coins: !!document.getElementById('useCoinsInput')?.checked,
+    };
+}
+
+async function refreshCheckoutPreview() {
+    if (!document.getElementById('checkoutForm') || !cart.length) {
+        checkoutPreview = null;
+        return null;
+    }
+    const payload = {
+        items: cart.map(item => ({ id: item.id, qty: item.qty })),
+        box: boxMeta ? { plan: boxMeta.plan, vip_gift: boxMeta.vip_gift } : null,
+        loyalty: checkoutLoyaltyPayload(),
+    };
+    const response = await fetch('/api/checkout/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Не удалось пересчитать бонусы.');
+    checkoutPreview = data;
+    renderCheckoutSummary();
+    return data;
+}
+
 function renderCheckoutSummary() {
     const container = document.getElementById('checkoutSummaryItems');
     const totalEl = document.getElementById('checkoutSummaryTotal');
@@ -663,8 +693,17 @@ function renderCheckoutSummary() {
     const submitBtn = document.getElementById('checkoutSubmitBtn');
     if (!container && !totalEl && !submitBtn) return;
 
-    const total = cartSubtotal();
+    const total = checkoutPreview?.benefits ? Number(checkoutPreview.benefits.payable_total) : cartSubtotal();
     if (totalEl) totalEl.textContent = `${total.toFixed(0)} ₽`;
+    const benefitsLine = document.getElementById('checkoutBenefitsLine');
+    if (benefitsLine && checkoutPreview?.benefits) {
+        const benefits = checkoutPreview.benefits;
+        const parts = [];
+        if (Number(benefits.referral_discount) > 0) parts.push(`реферальная скидка −${Number(benefits.referral_discount).toFixed(0)} ₽`);
+        if (Number(benefits.coins_redeemed) > 0) parts.push(`Coins −${Number(benefits.coins_redeemed).toFixed(0)} ₽`);
+        parts.push(`начислим ${Number(benefits.coins_pending).toFixed(0)} Coins через 14 дней`);
+        benefitsLine.textContent = parts.join(' · ');
+    }
     const boxNote = document.getElementById('checkoutBoxNote');
     if (boxNote && boxMeta) {
         boxNote.hidden = false;
@@ -714,7 +753,10 @@ function initCheckoutPage() {
     }
 
     editCartBtn?.addEventListener('click', openCart);
+    document.getElementById('referralCodeInput')?.addEventListener('input', () => refreshCheckoutPreview().catch(() => {}));
+    document.getElementById('useCoinsInput')?.addEventListener('change', () => refreshCheckoutPreview().catch(() => {}));
     renderCheckoutSummary();
+    refreshCheckoutPreview().catch(() => {});
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -728,6 +770,8 @@ function initCheckoutPage() {
             submitBtn.textContent = 'Создаём платёж…';
         }
 
+        try { await refreshCheckoutPreview(); } catch (error) { /* payment endpoint will validate again */ }
+
         const payload = {
             items: cart.map(item => ({ id: item.id, qty: item.qty })),
             box: boxMeta ? { plan: boxMeta.plan, vip_gift: boxMeta.vip_gift } : null,
@@ -736,6 +780,7 @@ function initCheckoutPage() {
                 phone: document.getElementById('customerPhone')?.value.trim() || '',
                 email: document.getElementById('customerEmail')?.value.trim() || '',
             },
+            loyalty: checkoutLoyaltyPayload(),
             delivery: {
                 city: document.getElementById('deliveryCity')?.value.trim() || '',
                 zip: document.getElementById('deliveryZip')?.value.trim() || '',
