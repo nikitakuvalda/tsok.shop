@@ -93,6 +93,23 @@
                 <input type="hidden" id="deliveryPvzAddress" name="pvz_address" value="">
                 <input type="hidden" id="deliveryPvzCoordinates" name="pvz_coordinates" value="">
 
+                <div style="margin-top:12px;">
+                    <div class="checkout-section-title">TSOK CLUB</div>
+                </div>
+                <div class="checkout-loyalty-box">
+                    <div class="field-row">
+                        <div class="field-group">
+                            <label class="field-label" for="referralCodeInput">Реферальный код</label>
+                            <input class="field-input" id="referralCodeInput" name="referral_code" type="text" placeholder="TSOK-CLUB-500">
+                        </div>
+                        <label class="checkout-checkbox">
+                            <input id="useCoinsInput" name="use_coins" type="checkbox">
+                            <span>Списать TSOK Coins до 30% разового заказа</span>
+                        </label>
+                    </div>
+                    <p class="checkout-benefits" id="checkoutBenefitsLine">Введите код друга или примените Coins — пересчитаем итог перед оплатой.</p>
+                </div>
+
                 <button id="checkoutSubmitBtn" type="submit" class="btn btn--dark w-100 checkout-buy-btn">Купить</button>
                 <p class="checkout-error" id="checkoutError" hidden></p>
             </form>

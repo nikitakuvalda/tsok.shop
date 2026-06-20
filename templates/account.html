@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет TSOK CLUB · TSOK Boutique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400&family=DM+Sans:opsz,wght@9,300;9,400;9,500;9,600;9,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="account-page-body">
+{% include "_header.html" %}
+
+<main class="account-page">
+    <section class="account-hero">
+        <div>
+            <span class="label">TSOK CLUB</span>
+            <h1 class="account-title">Личный кабинет<br><em>гибкой рутины</em></h1>
+            <p class="account-lead">Управляйте активной подпиской: меняйте состав, переносите списание, следите за TSOK Coins и проходите anti-churn сценарий без звонков менеджеру.</p>
+        </div>
+        <div class="account-status-card">
+            <span>Статус</span>
+            <strong id="accountTier">—</strong>
+            <p id="accountCoins">— Coins</p>
+        </div>
+    </section>
+
+    <section class="account-grid">
+        <article class="account-card account-card--wide">
+            <div class="account-card__head">
+                <div>
+                    <span class="label">Подписка</span>
+                    <h2>Следующая сборка</h2>
+                </div>
+                <strong class="account-pill" id="subscriptionStatus">—</strong>
+            </div>
+            <div class="account-metrics">
+                <div><span>Дата списания</span><strong id="nextChargeDate">—</strong></div>
+                <div><span>Тариф</span><strong id="planLabel">—</strong></div>
+                <div><span>К оплате</span><strong id="payableTotal">—</strong></div>
+                <div><span>BNPL</span><strong id="bnplInfo">—</strong></div>
+            </div>
+            <p class="account-note" id="cronNote">—</p>
+        </article>
+
+        <article class="account-card">
+            <span class="label">Referral</span>
+            <h2>Refer-a-Friend</h2>
+            <p>Новый клиент получает −10% на первый заказ, а вы — 500 TSOK Coins после успешной доставки. Anti-fraud проверяет IP, device fingerprint и карту.</p>
+            <div class="ref-code" id="referralCode">—</div>
+        </article>
+    </section>
+
+    <section class="account-grid account-grid--main">
+        <article class="account-card account-card--wide">
+            <div class="account-card__head">
+                <div>
+                    <span class="label">Swap</span>
+                    <h2>Состав активного бокса</h2>
+                </div>
+                <button class="btn btn--outline-dark" type="button" id="saveSwapBtn">Сохранить состав</button>
+            </div>
+            <div class="account-items" id="accountItems"></div>
+            <p class="account-note">Нельзя опустить состав ниже 3 товаров. После сохранения сумма следующего автосписания пересчитывается на backend.</p>
+        </article>
+
+        <aside class="account-card">
+            <span class="label">Anti-churn</span>
+            <h2>Удержание</h2>
+            <ol class="churn-list">
+                <li>Показываем потерю статуса и кэшбэка.</li>
+                <li>Предлагаем премиум-скраб или паузу на 30 дней.</li>
+                <li>При финальном отказе отвязываем карту и понижаем tier до Silver.</li>
+            </ol>
+            <button class="btn btn--dark w-100" type="button" id="pauseBtn">Пропустить месяц</button>
+            <button class="btn btn--outline-dark w-100" type="button" id="resumeBtn" style="margin-top:10px;">Возобновить подписку</button>
+            <button class="btn btn--outline-dark w-100" type="button" id="recalcTierBtn" style="margin-top:10px;">Пересчитать грейд</button>
+            <button class="btn btn--outline-dark w-100" type="button" id="scheduleNotifyBtn" style="margin-top:10px;">Запланировать 72h уведомление</button>
+            <button class="btn btn--outline-dark w-100" type="button" id="accrueCoinsBtn" style="margin-top:10px;">Смоделировать доставку и Coins</button>
+            <button class="btn btn--outline-dark w-100" type="button" id="cancelBtn" style="margin-top:10px;">Отменить подписку</button>
+            <p class="account-result" id="accountResult"></p>
+        </aside>
+    </section>
+</main>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+'use strict';
+const accountState = { items: [] };
+
+function money(value) { return `${Number(value || 0).toFixed(0)} ₽`; }
+
+async function api(path, options = {}) {
+    const response = await fetch(path, { headers: { 'Content-Type': 'application/json' }, ...options });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Ошибка запроса');
+    return data;
+}
+
+function renderAccount(state) {
+    const customer = state.customer;
+    const subscription = state.subscription;
+    accountState.items = subscription.items.map(item => ({ id: item.id, qty: item.qty }));
+
+    document.getElementById('accountTier').textContent = customer.loyalty_tier;
+    document.getElementById('accountCoins').textContent = `${customer.tsok_coins} TSOK Coins`;
+    document.getElementById('subscriptionStatus').textContent = subscription.status;
+    document.getElementById('nextChargeDate').textContent = subscription.next_charge_date;
+    document.getElementById('planLabel').textContent = subscription.quote.plan_label;
+    document.getElementById('payableTotal').textContent = money(subscription.quote.payable_total);
+    document.getElementById('bnplInfo').textContent = subscription.quote.bnpl ? `сегодня ${subscription.quote.bnpl.today_payment} ₽` : '—';
+    document.getElementById('cronNote').textContent = state.notification;
+    document.getElementById('referralCode').textContent = customer.referral_code;
+    if (state.loyalty_events?.length) document.getElementById('accountResult').textContent = `Последнее начисление: ${state.loyalty_events.at(-1).coins_delta} Coins будет доступно через 14 дней.`;
+    if (state.notifications?.length) document.getElementById('cronNote').textContent = `${state.notification} Следующая отправка: ${new Date(state.notifications.at(-1).send_at).toLocaleString('ru-RU')}`;
+
+    document.getElementById('accountItems').innerHTML = subscription.items.map(item => `
+        <div class="account-item" data-id="${item.id}">
+            <div class="account-item__img">${item.image ? `<img src="/static/${item.image}" alt="${item.name}">` : ''}</div>
+            <div class="account-item__body">
+                <strong>${item.name}</strong>
+                <span>${item.brand} · ${item.size} · ${money(item.price)}</span>
+            </div>
+            <div class="quantity-selector">
+                <button type="button" data-delta="-1">−</button>
+                <span>${item.qty}</span>
+                <button type="button" data-delta="1">+</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function loadAccount() {
+    const state = await api('/api/account/subscription');
+    renderAccount(state);
+}
+
+document.addEventListener('click', async event => {
+    const qtyBtn = event.target.closest('.account-item .quantity-selector button');
+    if (qtyBtn) {
+        const row = qtyBtn.closest('.account-item');
+        const item = accountState.items.find(entry => entry.id === row.dataset.id);
+        item.qty = Math.max(0, item.qty + Number(qtyBtn.dataset.delta));
+        row.querySelector('.quantity-selector span').textContent = item.qty;
+        return;
+    }
+
+    if (event.target.id === 'saveSwapBtn') {
+        try {
+            const data = await api('/api/account/subscription/swap', { method: 'POST', body: JSON.stringify({ items: accountState.items }) });
+            document.getElementById('accountResult').textContent = data.message;
+            renderAccount(data.state);
+        } catch (error) { document.getElementById('accountResult').textContent = error.message; }
+    }
+
+    if (event.target.id === 'pauseBtn') {
+        const data = await api('/api/account/subscription/pause', { method: 'POST', body: '{}' });
+        document.getElementById('accountResult').textContent = data.message;
+        renderAccount(data.state);
+    }
+
+    if (event.target.id === 'resumeBtn') {
+        const data = await api('/api/account/subscription/resume', { method: 'POST', body: '{}' });
+        document.getElementById('accountResult').textContent = data.message;
+        renderAccount(data.state);
+    }
+
+    if (event.target.id === 'recalcTierBtn') {
+        const data = await api('/api/account/loyalty/recalculate-tier', { method: 'POST', body: '{}' });
+        document.getElementById('accountResult').textContent = data.message;
+        renderAccount(data.state);
+    }
+
+    if (event.target.id === 'scheduleNotifyBtn') {
+        const data = await api('/api/account/notifications/schedule', { method: 'POST', body: '{}' });
+        document.getElementById('accountResult').textContent = data.message;
+        await loadAccount();
+    }
+
+    if (event.target.id === 'accrueCoinsBtn') {
+        const total = document.getElementById('payableTotal').textContent.replace(/[^0-9.]/g, '') || '0';
+        const data = await api('/api/account/loyalty/accrue', { method: 'POST', body: JSON.stringify({ delivered_total: total }) });
+        document.getElementById('accountResult').textContent = data.message;
+        await loadAccount();
+    }
+
+    if (event.target.id === 'cancelBtn') {
+        const loss = await api('/api/subscription-box/anti-churn', { method: 'POST', body: JSON.stringify({ step: 'loss', loyalty_tier: document.getElementById('accountTier').textContent }) });
+        if (!confirm(`${loss.message}\n\nПродолжить отмену?`)) return;
+        const offer = await api('/api/subscription-box/anti-churn', { method: 'POST', body: JSON.stringify({ step: 'offer' }) });
+        if (!confirm(`${offer.message}\n\nОтказаться от оффера и отменить?`)) return;
+        const data = await api('/api/account/subscription/cancel', { method: 'POST', body: '{}' });
+        document.getElementById('accountResult').textContent = data.message;
+        renderAccount(data.state);
+    }
+});
+
+loadAccount().catch(error => { document.getElementById('accountResult').textContent = error.message; });
+</script>
+</body>
+</html>
