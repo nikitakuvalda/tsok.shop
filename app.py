@@ -21,13 +21,6 @@ from d2c import (
     referral_is_suspicious,
 )
 from db import get_products_by_ids, init_products_table
-from iot_devices import (
-    apply_command,
-    get_all_devices,
-    get_device,
-    get_mqtt_status,
-    toggle_device_online,
-)
 
 
 class StaticSiteFlask(Flask):
