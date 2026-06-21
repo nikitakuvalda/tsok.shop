@@ -1122,39 +1122,106 @@ a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,.i
 
 .checkout-box-note{margin:10px 0 16px;padding:12px;border:1px solid var(--clay);background:var(--clay-pale);font-size:12px;line-height:1.5;color:var(--ink)}
 
-/* Account / TSOK CLUB dashboard */
-.account-page-body{background:var(--paper);color:var(--ink)}
-.account-page{padding:clamp(120px,12vw,170px) var(--pad-x) var(--section-y);max-width:var(--maxw);margin:0 auto}
-.account-hero{display:grid;grid-template-columns:1.4fr .6fr;gap:clamp(24px,4vw,56px);align-items:end;margin-bottom:42px}
-.account-title{font-family:var(--font-d);font-size:clamp(42px,6vw,82px);font-weight:400;line-height:.98;margin:14px 0;color:var(--ink)}
-.account-title em{color:var(--clay-deep);font-style:italic}
-.account-lead{max-width:720px;color:var(--muted);font-size:17px;line-height:1.7}
-.account-status-card,.account-card{border:1px solid var(--line);border-radius:var(--r);background:var(--paper-deep);padding:clamp(22px,3vw,32px)}
-.account-status-card span,.account-card .label{display:block;margin-bottom:10px}
-.account-status-card strong{display:block;font-family:var(--font-d);font-size:44px;font-weight:400;color:var(--clay-deep)}
-.account-status-card p{margin-top:8px;color:var(--muted)}
-.account-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:22px;margin-bottom:22px}
-.account-grid--main{align-items:start}
-.account-card h2{font-family:var(--font-d);font-size:28px;font-weight:400;margin:0 0 18px;color:var(--ink)}
-.account-card__head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;margin-bottom:20px}
-.account-pill{padding:8px 13px;border-radius:999px;background:var(--sage-pale);color:var(--sage-deep);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
-.account-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.account-metrics div{border:1px solid var(--line);background:var(--paper);border-radius:var(--r);padding:16px}
-.account-metrics span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px}
-.account-metrics strong{font-family:var(--font-d);font-size:22px;font-weight:500;color:var(--ink)}
-.account-note{margin-top:18px;color:var(--muted);font-size:13px;line-height:1.6}
-.ref-code{margin-top:18px;padding:14px;border:1px dashed var(--clay-deep);border-radius:var(--r);font-weight:700;letter-spacing:.12em;text-align:center;color:var(--clay-deep);background:var(--clay-pale)}
-.account-items{display:flex;flex-direction:column;gap:12px}
-.account-item{display:grid;grid-template-columns:58px 1fr auto;gap:14px;align-items:center;border:1px solid var(--line);border-radius:var(--r);background:var(--paper);padding:12px}
-.account-item__img{width:58px;height:70px;background:var(--paper-edge);border-radius:var(--r);overflow:hidden}
-.account-item__img img{width:100%;height:100%;object-fit:cover}
-.account-item__body strong{display:block;font-size:14px;color:var(--ink);margin-bottom:5px}
-.account-item__body span{font-size:12px;color:var(--muted)}
-.churn-list{padding-left:18px;color:var(--muted);line-height:1.7;font-size:14px;margin:0 0 20px}
-.account-result{margin-top:14px;color:var(--clay-deep);font-size:13px;line-height:1.5;min-height:20px}
-@media(max-width:900px){.account-hero,.account-grid{grid-template-columns:1fr}.account-metrics{grid-template-columns:1fr 1fr}.account-card__head{flex-direction:column}.account-item{grid-template-columns:48px 1fr}.account-item .quantity-selector{grid-column:2}}
-@media(max-width:560px){.account-metrics{grid-template-columns:1fr}}
-.checkout-loyalty-box{padding:16px;border:1px solid var(--line);background:var(--paper-deep);border-radius:var(--r)}
-.checkout-checkbox{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid var(--line);border-radius:var(--r);font-size:13px;color:var(--ink);line-height:1.45;cursor:pointer;background:var(--paper)}
-.checkout-checkbox input{margin-top:2px;accent-color:var(--clay-deep)}
-.checkout-benefits{margin-top:10px;font-size:12px;color:var(--muted);line-height:1.5}
+/* ═══════════════════════════════════════════════════════════════════════
+   REFINEMENT LAYER — «по линейке»: единая сетка, выравнивание, ритм.
+   Добавлено при доводке до коммерческого уровня (TSOK · Voile).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.section__header{margin-bottom:0}
+.catalog-grid,.catalog-grid-dark,.showcase__grid{align-items:stretch}
+
+.product-card{display:flex;flex-direction:column;height:100%}
+.product-card__info{display:flex;flex-direction:column;flex:1}
+.product-card__title{min-height:2.5em;margin:7px 0 6px}
+.product-card__desc{flex:0 0 auto}
+.product-card__footer{margin-top:auto}
+.product-card .pcard-more{margin-top:14px}
+
+.product-card-homme{display:flex;flex-direction:column;height:100%}
+.product-card-homme__info{display:flex;flex-direction:column;flex:1}
+.product-card-homme__title{min-height:2.5em}
+.product-card-homme__footer{margin-top:auto}
+
+.pcard{height:100%}
+.pcard__info{display:flex;flex-direction:column;flex:1}
+.pcard__name{min-height:2.5em}
+.pcard__row{margin-top:auto}
+
+@media(min-width:901px){
+  .split-hero__content-aligner{padding-left:var(--pad-x);padding-right:var(--pad-x)}
+  .split-hero__side--fem   .split-hero__content-aligner{justify-content:flex-start}
+  .split-hero__side--homme .split-hero__content-aligner{justify-content:flex-end}
+  .split-hero__content{max-width:420px}
+  .split-hero__side--homme .split-hero__content{align-items:flex-start;text-align:left}
+}
+
+.cart-item__top h4,.cart-item__name{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.3;margin:0}
+
+/* ═══════════════ ИНГРЕДИЕНТЫ / ФИЛОСОФИЯ (главная) ═══════════════ */
+.ingredients{background:var(--paper-deep)}
+.ingredients__grid{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(40px,6vw,84px);align-items:center;max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x)}
+@media(max-width:900px){.ingredients__grid{grid-template-columns:1fr;gap:44px}}
+.ingredients__media{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:4/5;background:var(--paper-edge)}
+.ingredients__media img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
+.ingredients__media:hover img{transform:scale(1.05)}
+.ingredients__media-cap{position:absolute;left:18px;bottom:18px;z-index:2;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--paper);background:rgba(20,17,14,.5);backdrop-filter:blur(8px);border:1px solid rgba(251,249,244,.2);padding:8px 14px;border-radius:var(--r)}
+.ingredients__list{margin-top:30px;border-top:1px solid var(--line)}
+.ingredient-row{display:grid;grid-template-columns:26px 160px 1fr;gap:18px;align-items:baseline;padding:18px 0;border-bottom:1px solid var(--line)}
+.ingredient-row__num{font-family:var(--font-d);font-size:14px;color:var(--clay-deep)}
+.ingredient-row__name{font-family:var(--font-d);font-size:18px;font-weight:500;color:var(--ink);line-height:1.2}
+.ingredient-row__desc{font-size:13px;line-height:1.7;color:var(--muted);font-weight:300}
+@media(max-width:560px){.ingredient-row{grid-template-columns:22px 1fr;gap:6px 14px}.ingredient-row__desc{grid-column:2}}
+
+/* ═══════════════ LOOKBOOK (мужская витрина брендовых постеров) ═══════════════ */
+.lookbook{background:var(--ink);color:var(--text-d);padding:var(--section-y) 0;position:relative;overflow:hidden}
+.lookbook__head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin:0 auto 40px;max-width:var(--maxw);padding:0 var(--pad-x)}
+.lookbook__grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(12px,1.4vw,20px);max-width:var(--maxw);margin:0 auto;padding:0 var(--pad-x)}
+@media(max-width:900px){.lookbook__grid{grid-template-columns:repeat(2,1fr)}}
+.lookbook__item{position:relative;border-radius:var(--r);overflow:hidden;aspect-ratio:3/4;background:var(--ink-deep);border:1px solid var(--line-d-soft);transition:transform .55s var(--ease),box-shadow .55s var(--ease)}
+.lookbook__item img{width:100%;height:100%;object-fit:cover;transition:transform .9s var(--ease)}
+.lookbook__item:hover{transform:translateY(-5px);box-shadow:0 26px 50px -28px rgba(0,0,0,.6)}
+.lookbook__item:hover img{transform:scale(1.05)}
+.lookbook__cap{position:absolute;left:14px;bottom:14px;z-index:2;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--paper);font-weight:500}
+
+.brand-feature{position:relative;min-height:62vh;display:flex;align-items:flex-end;overflow:hidden;background:var(--ink-deep)}
+.brand-feature__bg{position:absolute;inset:0;z-index:0}
+.brand-feature__bg img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.brand-feature__overlay{position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(8,9,6,.85) 0%,rgba(8,9,6,.45) 45%,transparent 80%)}
+.brand-feature__inner{position:relative;z-index:2;max-width:var(--maxw);margin:0 auto;width:100%;padding:clamp(50px,8vw,110px) var(--pad-x)}
+.brand-feature__content{max-width:480px}
+.brand-feature__quote{font-family:var(--font-d);font-style:italic;font-size:clamp(22px,3vw,38px);line-height:1.25;color:var(--paper);margin-top:18px}
+.brand-feature__quote em{color:var(--sage-pale);font-style:italic}
+.brand-feature__by{margin-top:22px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-d)}
+
+/* ═══════════════ ГАЛЕРЕЯ ТОВАРА ═══════════════ */
+.product-gallery__thumbs{flex-wrap:wrap}
+.product-gallery__thumb{transition:border-color .25s,transform .25s}
+.product-gallery__thumb:hover{transform:translateY(-2px)}
+
+.product-detail-band{background:var(--paper-deep);border-top:1px solid var(--line)}
+.product-detail-band__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,80px);max-width:var(--maxw);margin:0 auto;padding:var(--section-y) var(--pad-x);align-items:start}
+@media(max-width:900px){.product-detail-band__grid{grid-template-columns:1fr;gap:40px}}
+.product-detail-band__media{border-radius:var(--r);overflow:hidden;aspect-ratio:4/5;background:var(--paper-edge)}
+.product-detail-band__media img{width:100%;height:100%;object-fit:cover}
+.product-detail-card{background:var(--paper);border:1px solid var(--line);border-top:2px solid var(--clay);border-radius:var(--r);padding:clamp(24px,3vw,36px)}
+.product-detail-card + .product-detail-card{margin-top:20px}
+.product-detail-card__t{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.product-detail-card__t::before{content:'';width:22px;height:1px;background:var(--clay)}
+.product-detail-card__text{font-size:14px;line-height:1.85;color:var(--ink-soft);font-weight:300}
+.ritual-step{display:grid;grid-template-columns:26px 1fr;gap:16px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line-soft)}
+.ritual-step:last-child{border-bottom:none}
+.ritual-step__n{font-family:var(--font-d);font-size:16px;color:var(--clay-deep)}
+.ritual-step__txt{font-size:13.5px;line-height:1.6;color:var(--ink-soft)}
+
+/* ═══════════════ READY-BOX с фото-подложкой ═══════════════ */
+.ready-box{position:relative}
+.ready-box__bg{position:absolute;inset:0;z-index:0;opacity:.22}
+.ready-box__bg img{width:100%;height:100%;object-fit:cover}
+.ready-box--homme .ready-box__bg{opacity:.34;mix-blend-mode:luminosity}
+.ready-box > *:not(.ready-box__bg){position:relative;z-index:1}
+
+.sub-hero__preview img{border:1px solid var(--line-d-soft)}
+
+.featured-banner__img img{transition:transform 1.1s var(--ease)}
+.featured-banner__inner:hover .featured-banner__img img{transform:scale(1.04)}
+.footer__legal a,.footer__nav a{text-underline-offset:3px}

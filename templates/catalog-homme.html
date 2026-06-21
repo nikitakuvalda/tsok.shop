@@ -16,9 +16,6 @@
         .homme-stat__lbl{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted-d);margin-top:8px;display:block}
         .marquee-section.dark{background:var(--ink-deep);border-top:1px solid var(--line-d-soft);border-bottom:1px solid var(--line-d-soft)}
         .catalog-count-dark{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted-d)}
-        /* full-bleed маркетинговые карточки для PNG с готовым фоном */
-        .product-card-homme--marketing .product-card-homme__image-wrap{aspect-ratio:3/4}
-        .product-card-homme--marketing .product-card-homme__image-wrap img{object-fit:cover;object-position:center}
     </style>
 </head>
 <body class="homme-page">
@@ -89,73 +86,74 @@
 <div class="catalog-grid-dark" id="catalogGridHomme">
 
     <!-- homme-01 Face Wash Black -->
-    <div class="product-card-homme product-card-homme--marketing" data-category="face">
+    <div class="product-card-homme" data-category="face">
         <div class="product-card-homme__image-wrap">
-            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" alt="Face Wash Black"
+            <a href="product-tonic?id=homme-01"><img src="{{ url_for('static', filename='img/prod-photo-2.jpg') }}" alt="Face Wash Black"
                 onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
             <button class="product-card-homme__bookmark js-bookmark" data-id="homme-01" data-name="Face Wash Black"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <h3 class="product-card-homme__title">Face Wash Black</h3>
+            <a href="product-tonic?id=homme-01"><h3 class="product-card-homme__title">Face Wash Black</h3></a>
             <p class="product-card-homme__desc">Глубокое очищение для мужской кожи. Удаляет излишки себума и загрязнения.</p>
             <div class="product-card-homme__footer">
                 <div><span class="product-card-homme__size">200 мл</span><span class="product-card-homme__price">78 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-01" data-name="Face Wash Black" data-price="78" data-size="200 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT Пенка.png">+ В корзину</button>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-01" data-name="Face Wash Black" data-price="78" data-size="200 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-2.jpg">+ В корзину</button>
             </div>
         </div>
     </div>
 
     <!-- homme-02 Toner Control -->
-    <div class="product-card-homme product-card-homme--marketing" data-category="face">
+    <div class="product-card-homme" data-category="face">
         <div class="product-card-homme__image-wrap">
-            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" alt="Toner Control"
+            <a href="product-tonic?id=homme-02"><img src="{{ url_for('static', filename='img/prod-photo-4.jpg') }}" alt="Toner Control"
                 onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
             <button class="product-card-homme__bookmark js-bookmark" data-id="homme-02" data-name="Toner Control"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <h3 class="product-card-homme__title">Toner Control</h3>
+            <a href="product-tonic?id=homme-02"><h3 class="product-card-homme__title">Toner Control</h3></a>
             <p class="product-card-homme__desc">Тоник для контроля жирного блеска. Сужает поры и матирует кожу.</p>
             <div class="product-card-homme__footer">
                 <div><span class="product-card-homme__size">150 мл</span><span class="product-card-homme__price">89 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-02" data-name="Toner Control" data-price="89" data-size="150 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT тоник.png">+ В корзину</button>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-02" data-name="Toner Control" data-price="89" data-size="150 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-4.jpg">+ В корзину</button>
             </div>
         </div>
     </div>
 
     <!-- homme-03 Beard Oil -->
-    <div class="product-card-homme product-card-homme--marketing" data-category="beard">
+    <div class="product-card-homme" data-category="beard">
         <div class="product-card-homme__image-wrap">
-            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/INTELEGENT масло.png') }}" alt="Beard Oil"
+            <a href="product-tonic?id=homme-03"><img src="{{ url_for('static', filename='img/prod-photo-1.jpg') }}" alt="Beard Oil"
                 onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
+            <div class="product-card-homme__badge">Бестселлер</div>
             <button class="product-card-homme__bookmark js-bookmark" data-id="homme-03" data-name="Beard Oil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <h3 class="product-card-homme__title">Beard Oil</h3>
+            <a href="product-tonic?id=homme-03"><h3 class="product-card-homme__title">Beard Oil</h3></a>
             <p class="product-card-homme__desc">Масло для бороды. Смягчает жёсткий волос, питает кожу под бородой.</p>
             <div class="product-card-homme__footer">
                 <div><span class="product-card-homme__size">50 мл</span><span class="product-card-homme__price">96 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-03" data-name="Beard Oil" data-price="96" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT масло.png">+ В корзину</button>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-03" data-name="Beard Oil" data-price="96" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-1.jpg">+ В корзину</button>
             </div>
         </div>
     </div>
 
     <!-- homme-04 Beard Wax -->
-    <div class="product-card-homme product-card-homme--marketing" data-category="beard">
+    <div class="product-card-homme" data-category="beard">
         <div class="product-card-homme__image-wrap">
-            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" alt="Beard Wax"
+            <a href="product-tonic?id=homme-04"><img src="{{ url_for('static', filename='img/prod-photo-3.jpg') }}" alt="Beard Wax"
                 onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
             <button class="product-card-homme__bookmark js-bookmark" data-id="homme-04" data-name="Beard Wax"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <h3 class="product-card-homme__title">Beard Wax</h3>
+            <a href="product-tonic?id=homme-04"><h3 class="product-card-homme__title">Beard Wax</h3></a>
             <p class="product-card-homme__desc">Воск для укладки бороды. Фиксация и матовый финиш на весь день.</p>
             <div class="product-card-homme__footer">
                 <div><span class="product-card-homme__size">50 мл</span><span class="product-card-homme__price">82 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-04" data-name="Beard Wax" data-price="82" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT Воск.png">+ В корзину</button>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-04" data-name="Beard Wax" data-price="82" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-3.jpg">+ В корзину</button>
             </div>
         </div>
     </div>
@@ -163,14 +161,14 @@
     <!-- homme-05 Face Serum Black -->
     <div class="product-card-homme" data-category="face">
         <div class="product-card-homme__image-wrap">
-            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/prod-photo-1.jpg') }}" alt="Face Serum Black"
+            <a href="product-tonic?id=homme-05"><img src="{{ url_for('static', filename='img/prod-photo-1.jpg') }}" alt="Face Serum Black"
                 onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
             <div class="product-card-homme__badge">Хит</div>
             <button class="product-card-homme__bookmark js-bookmark" data-id="homme-05" data-name="Face Serum Black"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <h3 class="product-card-homme__title">Face Serum Black</h3>
+            <a href="product-tonic?id=homme-05"><h3 class="product-card-homme__title">Face Serum Black</h3></a>
             <p class="product-card-homme__desc">Концентрированная сыворотка для лица. Антивозрастной комплекс высокой концентрации.</p>
             <div class="product-card-homme__footer">
                 <div><span class="product-card-homme__size">30 мл</span><span class="product-card-homme__price">134 ₽</span></div>
@@ -182,13 +180,13 @@
     <!-- homme-06 After Shave Balm -->
     <div class="product-card-homme" data-category="face">
         <div class="product-card-homme__image-wrap">
-            <a href="catalog-homme#catalog-main"><img src="{{ url_for('static', filename='img/prod-photo-2.jpg') }}" alt="After Shave Balm"
+            <a href="product-tonic?id=homme-06"><img src="{{ url_for('static', filename='img/prod-photo-2.jpg') }}" alt="After Shave Balm"
                 onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
             <button class="product-card-homme__bookmark js-bookmark" data-id="homme-06" data-name="After Shave Balm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <h3 class="product-card-homme__title">After Shave Balm</h3>
+            <a href="product-tonic?id=homme-06"><h3 class="product-card-homme__title">After Shave Balm</h3></a>
             <p class="product-card-homme__desc">Бальзам после бритья. Успокаивает раздражение и восстанавливает кожу.</p>
             <div class="product-card-homme__footer">
                 <div><span class="product-card-homme__size">100 мл</span><span class="product-card-homme__price">82 ₽</span></div>
@@ -216,6 +214,53 @@
     </div>
 
 </div>
+
+<!-- ═══════════════ LIFESTYLE / БРЕНД ═══════════════ -->
+<section class="brand-feature">
+    <div class="brand-feature__bg">
+        <img src="{{ url_for('static', filename='img/IntelegentSergay.png') }}" alt="INTELEGENTOFF"
+             onerror="this.parentElement.style.background='linear-gradient(120deg,#0d0d0d,#1c1c24)'">
+    </div>
+    <div class="brand-feature__overlay"></div>
+    <div class="brand-feature__inner">
+        <div class="brand-feature__content anim-fade-up">
+            <span class="label on-dark">INTELEGENTOFF · Codex</span>
+            <p class="brand-feature__quote">«Уход — это не про тщеславие.<br>Это про <em>уважение к себе.</em>»</p>
+            <div class="brand-feature__by">Философия мужской линии TSOK</div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ LOOKBOOK (брендовые постеры) ═══════════════ -->
+<section class="lookbook">
+    <div class="lookbook__head anim-fade-up">
+        <div>
+            <span class="label on-dark">Lookbook</span>
+            <h2 class="section-title text-white" style="margin-top:14px;">Линия <em>для&nbsp;бороды</em></h2>
+        </div>
+        <a href="#catalog-main" class="showcase__head-link">Весь уход
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+    </div>
+    <div class="lookbook__grid">
+        <a href="product-tonic?id=homme-02" class="lookbook__item anim-fade-up">
+            <img src="{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" alt="Тоник для бороды">
+            <span class="lookbook__cap">Тоник</span>
+        </a>
+        <a href="product-tonic?id=homme-03" class="lookbook__item anim-fade-up anim-delay-1">
+            <img src="{{ url_for('static', filename='img/INTELEGENT масло.png') }}" alt="Масло для бороды">
+            <span class="lookbook__cap">Масло</span>
+        </a>
+        <a href="product-tonic?id=homme-01" class="lookbook__item anim-fade-up anim-delay-2">
+            <img src="{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" alt="Пенка для бороды">
+            <span class="lookbook__cap">Пенка</span>
+        </a>
+        <a href="product-tonic?id=homme-04" class="lookbook__item anim-fade-up anim-delay-3">
+            <img src="{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" alt="Воск для бороды">
+            <span class="lookbook__cap">Воск</span>
+        </a>
+    </div>
+</section>
 
 <!-- Перекрёстная ссылка на женскую линию -->
 <section class="section section--light section--bordered-top">

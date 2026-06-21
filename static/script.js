@@ -10,7 +10,14 @@
 let cart = JSON.parse(localStorage.getItem('tsok_cart') || '[]');
 let favorites = JSON.parse(localStorage.getItem('tsok_favs') || '[]');
 let boxMeta = JSON.parse(localStorage.getItem('tsok_box_meta') || 'null');
-let checkoutPreview = null;
+
+/* Нормализация пути к картинке: data-img хранится как 'img/Pearl3.jpg',
+   но в корзине/чекауте/конструкторе рендерится напрямую и без /static/ даёт 404. */
+function tsokImg(path) {
+    if (!path) return '';
+    if (/^(https?:|data:|\/)/.test(path)) return path;
+    return '/static/' + path.replace(/^\/+/, '');
+}
 
 function saveCart() {
     localStorage.setItem('tsok_cart', JSON.stringify(cart));
@@ -99,19 +106,19 @@ function renderCartItems() {
             el.className = 'cart-item';
             el.innerHTML = `
                 <div class="cart-item__img">
-                    ${item.img ? `<img src="${item.img}" alt="${item.name}">` : ''}
+                    ${item.img ? `<img src="${tsokImg(item.img)}" alt="${item.name}">` : ''}
                 </div>
                 <div class="cart-item__info">
                     <div class="cart-item__top">
-                        <h4>${item.name}</h4>
+                        <h4 class="cart-item__name">${item.name}</h4>
                         <span class="cart-item__price">${(item.price * item.qty).toFixed(0)} ₽</span>
                     </div>
                     <span class="cart-item__size">${item.size || ''}</span>
                     <div class="cart-item__controls">
-                        <div class="quantity-selector">
-                            <button onclick="updateQty('${item.id}', -1)">−</button>
-                            <span>${item.qty}</span>
-                            <button onclick="updateQty('${item.id}', +1)">+</button>
+                        <div class="qty-control">
+                            <button onclick="updateQty('${item.id}', -1)" aria-label="Уменьшить">−</button>
+                            <span class="cart-item__qty-val">${item.qty}</span>
+                            <button onclick="updateQty('${item.id}', +1)" aria-label="Увеличить">+</button>
                         </div>
                         <button class="cart-item__remove" onclick="removeFromCart('${item.id}')">Удалить</button>
                     </div>
@@ -657,35 +664,6 @@ function cartSubtotal() {
     return cart.reduce((sum, item) => sum + item.qty * item.price, 0);
 }
 
-function checkoutLoyaltyPayload() {
-    return {
-        referral_code: document.getElementById('referralCodeInput')?.value.trim() || '',
-        use_coins: !!document.getElementById('useCoinsInput')?.checked,
-    };
-}
-
-async function refreshCheckoutPreview() {
-    if (!document.getElementById('checkoutForm') || !cart.length) {
-        checkoutPreview = null;
-        return null;
-    }
-    const payload = {
-        items: cart.map(item => ({ id: item.id, qty: item.qty })),
-        box: boxMeta ? { plan: boxMeta.plan, vip_gift: boxMeta.vip_gift } : null,
-        loyalty: checkoutLoyaltyPayload(),
-    };
-    const response = await fetch('/api/checkout/preview', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || 'Не удалось пересчитать бонусы.');
-    checkoutPreview = data;
-    renderCheckoutSummary();
-    return data;
-}
-
 function renderCheckoutSummary() {
     const container = document.getElementById('checkoutSummaryItems');
     const totalEl = document.getElementById('checkoutSummaryTotal');
@@ -693,17 +671,8 @@ function renderCheckoutSummary() {
     const submitBtn = document.getElementById('checkoutSubmitBtn');
     if (!container && !totalEl && !submitBtn) return;
 
-    const total = checkoutPreview?.benefits ? Number(checkoutPreview.benefits.payable_total) : cartSubtotal();
+    const total = cartSubtotal();
     if (totalEl) totalEl.textContent = `${total.toFixed(0)} ₽`;
-    const benefitsLine = document.getElementById('checkoutBenefitsLine');
-    if (benefitsLine && checkoutPreview?.benefits) {
-        const benefits = checkoutPreview.benefits;
-        const parts = [];
-        if (Number(benefits.referral_discount) > 0) parts.push(`реферальная скидка −${Number(benefits.referral_discount).toFixed(0)} ₽`);
-        if (Number(benefits.coins_redeemed) > 0) parts.push(`Coins −${Number(benefits.coins_redeemed).toFixed(0)} ₽`);
-        parts.push(`начислим ${Number(benefits.coins_pending).toFixed(0)} Coins через 14 дней`);
-        benefitsLine.textContent = parts.join(' · ');
-    }
     const boxNote = document.getElementById('checkoutBoxNote');
     if (boxNote && boxMeta) {
         boxNote.hidden = false;
@@ -725,7 +694,7 @@ function renderCheckoutSummary() {
         const el = document.createElement('div');
         el.className = 'checkout-summary-item';
         el.innerHTML = `
-            <div class="checkout-summary-item__img">${item.img ? `<img src="${item.img}" alt="${item.name}">` : ''}</div>
+            <div class="checkout-summary-item__img">${item.img ? `<img src="${tsokImg(item.img)}" alt="${item.name}">` : ''}</div>
             <div>
                 <div class="checkout-summary-item__name">${item.name}</div>
                 <span class="checkout-summary-item__meta">${item.brand || ''}${item.size ? ' · ' + item.size : ''} · ${item.qty} шт.</span>
@@ -753,10 +722,7 @@ function initCheckoutPage() {
     }
 
     editCartBtn?.addEventListener('click', openCart);
-    document.getElementById('referralCodeInput')?.addEventListener('input', () => refreshCheckoutPreview().catch(() => {}));
-    document.getElementById('useCoinsInput')?.addEventListener('change', () => refreshCheckoutPreview().catch(() => {}));
     renderCheckoutSummary();
-    refreshCheckoutPreview().catch(() => {});
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -770,8 +736,6 @@ function initCheckoutPage() {
             submitBtn.textContent = 'Создаём платёж…';
         }
 
-        try { await refreshCheckoutPreview(); } catch (error) { /* payment endpoint will validate again */ }
-
         const payload = {
             items: cart.map(item => ({ id: item.id, qty: item.qty })),
             box: boxMeta ? { plan: boxMeta.plan, vip_gift: boxMeta.vip_gift } : null,
@@ -780,7 +744,6 @@ function initCheckoutPage() {
                 phone: document.getElementById('customerPhone')?.value.trim() || '',
                 email: document.getElementById('customerEmail')?.value.trim() || '',
             },
-            loyalty: checkoutLoyaltyPayload(),
             delivery: {
                 city: document.getElementById('deliveryCity')?.value.trim() || '',
                 zip: document.getElementById('deliveryZip')?.value.trim() || '',
@@ -854,84 +817,4 @@ document.addEventListener('DOMContentLoaded', () => {
     updateFavUI();
     renderCartItems();
     renderCheckoutSummary();
-    /* ============================================================
-   ДИНАМИЧЕСКАЯ СТРАНИЦА ТОВАРА
-   ============================================================ */
-const productsDB = {
-    "pearl-01": {
-        name1: "Foam Mousse", name2: "Moisture",
-        desc: "Увлажняющая пенка для лица. Бережное очищение без чувства стянутости.",
-        price: 96, size: "150 мл", img: "img/Pearl1.jpg"
-    },
-    "pearl-02": {
-        name1: "Face Tonic", name2: "Toning",
-        desc: "Тоник для лица «Тонус». Устраняет следы усталости и освежает кожу.",
-        price: 93, size: "150 мл", img: "img/Pearl2.jpg"
-    },
-    "pearl-03": {
-        name1: "Tonic Youth", name2: "Restoring",
-        desc: "Тоник-реставратор молодости. Восстанавливает pH-баланс после умывания и сужает поры. Первый шаг к живой коже.",
-        price: 93, size: "150 мл", img: "img/Pearl3.jpg"
-    },
-    "pearl-04": {
-        name1: "Foam Mousse", name2: "Cleansing",
-        desc: "Пенка для умывания «Мягкое очищение». Идеально для чувствительной и реактивной кожи.",
-        price: 96, size: "150 мл", img: "img/Pearl4.jpg"
-    },
-    "pearl-05": {
-        name1: "Hair Tonic", name2: "Radiance",
-        desc: "Тоник для волос «Укрепляющий». Стимулирует рост, укрепляет корни и придает блеск.",
-        price: 88, size: "200 мл", img: "img/Pearl5.jpg"
-    },
-    "pearl-06": {
-        name1: "Velvet Oil", name2: "Blend",
-        desc: "Микс масел для волос. Глубокое питание и защита секущихся кончиков.",
-        price: 69, size: "60 мл", img: "img/Pearl6.jpg"
-    },
-    "pearl-07": {
-        name1: "Micellar Water", name2: "Extract Mix",
-        desc: "Мицеллярная вода «С экстрактами». Легкий демакияж глаз и деликатное тонизирование.",
-        price: 99, size: "200 мл", img: "img/Pearl7.jpg"
-    }
-};
-
-function renderProductPage() {
-    // Проверяем, находимся ли мы на странице товара (ищем элемент с ID)
-    const titleEl = document.getElementById('prodMainTitle');
-    if (!titleEl) return;
-
-    // Получаем ID из URL (например: ?id=pearl-01)
-    const params = new URLSearchParams(window.location.search);
-    const productId = params.get('id') || 'pearl-03'; // Если ID нет, показываем тоник №3 по умолчанию
-
-    const product = productsDB[productId];
-    if (!product) return;
-
-    // Меняем данные на странице
-    document.getElementById('prodMainImg').src = product.img;
-    document.getElementById('prodThumbImg').src = product.img;
-    titleEl.innerHTML = `${product.name1}<br><em>${product.name2}</em>`;
-    document.getElementById('prodMainDesc').textContent = product.desc;
-    
-    // Меняем цены и объемы
-    document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = `${product.price} ₽`);
-    document.querySelectorAll('.js-dyn-size').forEach(el => el.textContent = product.size);
-    document.getElementById('prodStickyName').textContent = `${product.name1} ${product.name2}`;
-
-    // Обновляем кнопки корзины и избранного, чтобы они добавляли правильный товар!
-    document.querySelectorAll('.js-add-to-cart').forEach(btn => {
-        btn.dataset.id = productId;
-        btn.dataset.name = `${product.name1} ${product.name2}`;
-        btn.dataset.price = product.price;
-        btn.dataset.size = product.size;
-    });
-    
-    document.querySelectorAll('.js-bookmark').forEach(btn => {
-        btn.dataset.id = productId;
-        btn.dataset.name = `${product.name1} ${product.name2}`;
-    });
-}
-
-// Запускаем при загрузке
-document.addEventListener('DOMContentLoaded', renderProductPage);
 });

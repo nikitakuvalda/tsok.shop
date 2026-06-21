@@ -50,11 +50,7 @@
             <div class="product-gallery__main">
                 <img src="" id="prodMainImg" class="product-gallery__img" alt="">
             </div>
-            <div class="product-gallery__thumbs">
-                <div class="product-gallery__thumb is-active">
-                    <img src="" id="prodThumbImg" alt="">
-                </div>
-            </div>
+            <div class="product-gallery__thumbs" id="prodThumbs"></div>
         </div>
 
         <!-- Информация -->
@@ -97,6 +93,25 @@
             </div>
 
             <a href="catalog" class="nav-link" style="color:var(--clay-deep);display:inline-flex;align-items:center;gap:8px;"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Вернуться в коллекцию Pearl</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════ СОСТАВ / РИТУАЛ ═══════════════ -->
+<section class="product-detail-band">
+    <div class="product-detail-band__grid">
+        <div class="product-detail-band__media anim-scale-up">
+            <img src="" id="pdMedia" alt="Состав">
+        </div>
+        <div class="anim-fade-up">
+            <div class="product-detail-card">
+                <div class="product-detail-card__t">Состав</div>
+                <p class="product-detail-card__text" id="pdComposition"></p>
+            </div>
+            <div class="product-detail-card">
+                <div class="product-detail-card__t">Ритуал применения</div>
+                <div id="pdRitual"></div>
+            </div>
         </div>
     </div>
 </section>
@@ -189,8 +204,8 @@
                 <div class="footer__col-title">Бутик</div>
                 <nav class="footer__nav">
                     <a href="index#our-story">О нас</a>
-                    <a href="#">Доставка</a>
-                    <a href="#">FAQ</a>
+                    <a href="index#ingredients">Состав</a>
+                    <a href="subscription#faq">FAQ</a>
                 </nav>
             </div>
         </div>
@@ -252,14 +267,88 @@ const PRODUCTS = {
     "pearl-05": { brand:"Pearl by Tais", t1:"Hair Tonic",  t2:"Radiance",  desc:"Тоник для волос «Укрепляющий». Стимулирует рост, укрепляет корни и придаёт блеск.", price:88, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl5.jpg') }}" },
     "pearl-06": { brand:"Pearl by Tais", t1:"Velvet Oil",  t2:"Blend",     desc:"Микс масел для волос. Глубокое питание и защита секущихся кончиков.", price:69, size:"60 мл", img:"{{ url_for('static', filename='img/Pearl6.jpg') }}" },
     "pearl-07": { brand:"Pearl by Tais", t1:"Micellar Water", t2:"Extract Mix", desc:"Мицеллярная вода «С экстрактами». Лёгкий демакияж глаз и деликатное тонизирование.", price:99, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl7.jpg') }}" },
-    "homme-01": { brand:"INTELEGENTOFF", t1:"Face Wash",   t2:"Black",     desc:"Глубокое очищение для мужской кожи. Удаляет излишки себума и загрязнения.", price:78, size:"200 мл", img:"{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" },
-    "homme-02": { brand:"INTELEGENTOFF", t1:"Toner",       t2:"Control",   desc:"Тоник для контроля жирного блеска. Сужает поры и матирует кожу.", price:89, size:"150 мл", img:"{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" },
-    "homme-03": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Oil",       desc:"Масло для бороды. Смягчает жёсткий волос, питает кожу под бородой.", price:96, size:"50 мл", img:"{{ url_for('static', filename='img/INTELEGENT масло.png') }}" },
-    "homme-04": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Wax",       desc:"Воск для укладки бороды. Фиксация и матовый финиш на весь день.", price:82, size:"50 мл", img:"{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" },
-    "homme-05": { brand:"INTELEGENTOFF", t1:"Face Serum",  t2:"Black",     desc:"Концентрированная сыворотка для лица. Антивозрастной комплекс высокой концентрации.", price:134, size:"30 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}" },
-    "homme-06": { brand:"INTELEGENTOFF", t1:"After Shave", t2:"Balm",      desc:"Бальзам после бритья. Успокаивает раздражение и восстанавливает кожу.", price:82, size:"100 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}" },
-    "homme-kit-01": { brand:"INTELEGENTOFF", t1:"Starter", t2:"Kit",       desc:"Стартовый набор: 3 продукта для полного ритуала ухода. Выгоднее, чем по отдельности.", price:254, size:"Набор 3 продукта", img:"{{ url_for('static', filename='img/logoIntelegent.png') }}" },
+    "homme-01": { brand:"INTELEGENTOFF", t1:"Face Wash",   t2:"Black",     desc:"Глубокое очищение для мужской кожи. Удаляет излишки себума и загрязнения.", price:78, size:"200 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" },
+    "homme-02": { brand:"INTELEGENTOFF", t1:"Toner",       t2:"Control",   desc:"Тоник для контроля жирного блеска. Сужает поры и матирует кожу.", price:89, size:"150 мл", img:"{{ url_for('static', filename='img/prod-photo-4.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" },
+    "homme-03": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Oil",       desc:"Масло для бороды. Смягчает жёсткий волос, питает кожу под бородой.", price:96, size:"50 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT масло.png') }}" },
+    "homme-04": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Wax",       desc:"Воск для укладки бороды. Фиксация и матовый финиш на весь день.", price:82, size:"50 мл", img:"{{ url_for('static', filename='img/prod-photo-3.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" },
+    "homme-05": { brand:"INTELEGENTOFF", t1:"Face Serum",  t2:"Black",     desc:"Концентрированная сыворотка для лица. Антивозрастной комплекс высокой концентрации.", price:134, size:"30 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
+    "homme-06": { brand:"INTELEGENTOFF", t1:"After Shave", t2:"Balm",      desc:"Бальзам после бритья. Успокаивает раздражение и восстанавливает кожу.", price:82, size:"100 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
+    "homme-kit-01": { brand:"INTELEGENTOFF", t1:"Starter", t2:"Kit",       desc:"Стартовый набор: 3 продукта для полного ритуала ухода. Выгоднее, чем по отдельности.", price:254, size:"Набор 3 продукта", img:"{{ url_for('static', filename='img/logoIntelegent.png') }}", poster:"{{ url_for('static', filename='img/IntelegentSergay.png') }}" }
 };
+
+// Опорные кадры из архива для галереи и блока «Состав»
+const ARCHIVE = {
+    philosophy: "{{ url_for('static', filename='img/philosophy.jpg') }}",
+    heroFem:    "{{ url_for('static', filename='img/HeroFem.jpg') }}",
+    heroHomme:  "{{ url_for('static', filename='img/HeroHomme.jpg') }}"
+};
+
+// Состав по товарам (кратко, честно)
+const COMPOSITION = {
+    "pearl-01":"Гидролат розы, пантенол (B5), глицерин растительного происхождения, экстракт алоэ вера, мягкие ПАВ кокосового происхождения. Без сульфатов, парабенов и силиконов.",
+    "pearl-02":"Гидролаты василька и мяты, ниацинамид, аллантоин, экстракт зелёного чая, пантенол. Без спирта и отдушек.",
+    "pearl-03":"Гидролат нероли, пептидный комплекс, гиалуроновая кислота, экстракт центеллы азиатской, ниацинамид, витамин E.",
+    "pearl-04":"Гидролат ромашки, бисаболол, пантенол, экстракт овса, мягкие аминокислотные ПАВ. Гипоаллергенная формула.",
+    "pearl-05":"Гидролат крапивы и розмарина, кофеин, биотин, пантенол, экстракт хвоща полевого, ниацинамид.",
+    "pearl-06":"Масла арганы, жожоба, авокадо и макадамии, витамин E, экстракт льняного семени. Несмываемая формула.",
+    "pearl-07":"Мицеллы, гидролат лепестков розы, экстракты огурца и зелёного чая, пантенол, аллантоин.",
+    "homme-01":"Активированный уголь, салициловая кислота, экстракт гуараны, ментол, аминокислотные ПАВ. Глубокое, но не пересушивающее очищение.",
+    "homme-02":"Гидролат гамамелиса, ниацинамид, цинк PCA, экстракт зелёного чая, кофеин. Контроль себума и матовый финиш.",
+    "homme-03":"Масла жожоба, арганы, виноградной косточки и аргинин, витамин E, древесно-цитрусовый аромат. Смягчает жёсткий волос.",
+    "homme-04":"Пчелиный воск, ланолин, масло ши и касторовое масло. Средне-сильная фиксация и матовый финиш на весь день.",
+    "homme-05":"Пептидный комплекс, ниацинамид 5%, гиалуроновая кислота, кофеин, витамин E. Высокая концентрация активов.",
+    "homme-06":"Аллантоин, пантенол, бисаболол, алоэ вера, ментол. Снимает раздражение и стянутость после бритья.",
+    "homme-kit-01":"Полный мужской ритуал: очищение, концентрированный уход и средство для бороды в единой тёмной эстетике."
+};
+
+// Ритуал применения по брендам
+const RITUAL = {
+    "Pearl by Tais":[
+        "Нанесите на очищенную кожу утром и вечером.",
+        "Распределите лёгкими движениями до впитывания.",
+        "Завершите уход кремом или маслом по типу кожи."
+    ],
+    "INTELEGENTOFF":[
+        "Используйте на чистой коже после умывания.",
+        "Нанесите небольшое количество и вмассируйте.",
+        "Применяйте ежедневно для устойчивого результата."
+    ]
+};
+
+function tsokThumb(src, isMain){
+    return '<div class="product-gallery__thumb'+(isMain?' is-active':'')+'" data-src="'+src+'"><img src="'+src+'" alt=""></div>';
+}
+
+function renderProductExtras(id, p){
+    // ── Галерея ──
+    const extras = p.brand === 'INTELEGENTOFF'
+        ? [p.img, (p.poster||ARCHIVE.heroHomme), ARCHIVE.heroHomme]
+        : [p.img, ARCHIVE.philosophy, ARCHIVE.heroFem];
+    const gallery = [...new Set(extras.filter(Boolean))];
+    const thumbsEl = document.getElementById('prodThumbs');
+    if (thumbsEl){
+        thumbsEl.innerHTML = gallery.map((src,i)=>tsokThumb(src, i===0)).join('');
+        thumbsEl.querySelectorAll('.product-gallery__thumb').forEach(t=>{
+            t.addEventListener('click',()=>{
+                document.getElementById('prodMainImg').src = t.dataset.src;
+                thumbsEl.querySelectorAll('.product-gallery__thumb').forEach(x=>x.classList.remove('is-active'));
+                t.classList.add('is-active');
+            });
+        });
+    }
+    // ── Состав / ритуал ──
+    const comp = document.getElementById('pdComposition');
+    if (comp) comp.textContent = COMPOSITION[id] || p.desc;
+    const ritual = RITUAL[p.brand] || RITUAL['Pearl by Tais'];
+    const ritualEl = document.getElementById('pdRitual');
+    if (ritualEl){
+        ritualEl.innerHTML = ritual.map((s,i)=>
+            '<div class="ritual-step"><span class="ritual-step__n">0'+(i+1)+'</span><span class="ritual-step__txt">'+s+'</span></div>'
+        ).join('');
+    }
+    const media = document.getElementById('pdMedia');
+    if (media) media.src = p.brand === 'INTELEGENTOFF' ? ARCHIVE.heroHomme : ARCHIVE.philosophy;
+}
 
 function renderTsokProduct() {
     const titleEl = document.getElementById('prodMainTitle');
@@ -269,18 +358,24 @@ function renderTsokProduct() {
     const p = PRODUCTS[id];
     if (!p) return;
 
-    // Картинки
+    // Картинки + галерея + состав/ритуал
     document.getElementById('prodMainImg').src  = p.img;
     document.getElementById('prodMainImg').alt  = p.t1 + ' ' + p.t2;
-    document.getElementById('prodThumbImg').src = p.img;
+    renderProductExtras(id, p);
 
     // Тексты
     titleEl.innerHTML = p.t1 + '<br><em>' + p.t2 + '</em>';
     document.getElementById('prodMainDesc').textContent = p.desc;
 
-    // Бренд в шапке информации (последний текстовый узел после линии-псевдоэлемента)
+    // Бренд в шапке информации
     const brandEl = document.querySelector('.product-info__brand');
     if (brandEl) brandEl.textContent = p.brand;
+
+    // Хлебные крошки и ссылку «назад» подстраиваем под линию
+    const crumbBrand = document.querySelector('.breadcrumbs a[href="catalog"]');
+    if (crumbBrand && p.brand === 'INTELEGENTOFF'){ crumbBrand.textContent = 'INTELEGENTOFF'; crumbBrand.setAttribute('href','catalog-homme'); }
+    const backLink = document.querySelector('.product-info a[href="catalog"]');
+    if (backLink && p.brand === 'INTELEGENTOFF'){ backLink.setAttribute('href','catalog-homme'); backLink.lastChild.textContent = ' Вернуться в INTELEGENTOFF'; }
 
     // Цены/объёмы
     document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = p.price + ' ₽');

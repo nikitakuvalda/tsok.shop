@@ -135,12 +135,14 @@
         </div>
         <div class="ready-boxes-grid">
             <div class="ready-box ready-box--pearl">
+                <div class="ready-box__bg"><img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" alt="" aria-hidden="true"></div>
                 <span class="ready-box__tag">Pearl by Tais</span>
                 <h3 class="ready-box__title">Женский ритуал</h3>
                 <p class="ready-box__desc">Тоник-реставратор, увлажняющая пенка, тоник для волос и мицеллярная вода — полный уход для неё.</p>
                 <button class="btn btn--dark" onclick="loadReadyBox('pearl')">Добавить этот бокс</button>
             </div>
             <div class="ready-box ready-box--homme">
+                <div class="ready-box__bg"><img src="{{ url_for('static', filename='img/HeroHomme.jpg') }}" alt="" aria-hidden="true"></div>
                 <span class="ready-box__tag">INTELEGENTOFF</span>
                 <h3 class="ready-box__title">Мужской ритуал</h3>
                 <p class="ready-box__desc">Очищение, увлажнение и масло для бороды — концентрированный уход без компромиссов для него.</p>
@@ -197,9 +199,9 @@
                 <div id="vipGiftSelection" style="display:none; margin-top:16px; padding:16px; border:1px solid var(--clay-deep); background:rgba(201,168,118,.06); border-radius:var(--r);">
                     <div class="vip-gift-note">Выберите ваш VIP-подарок</div>
                     <select id="vipGiftSelect" style="width:100%; padding:11px; border:1px solid var(--line); background:var(--paper); font-size:13px; outline:none; cursor:pointer; border-radius:var(--r); font-family:var(--font-body);">
-                        <option value="body-scrub">Премиальный скраб для тела</option>
-                        <option value="mask-set">Набор тканевых масок</option>
-                        <option value="quartz-roller">Массажный роллер из кварца</option>
+                        <option>Премиальный скраб для тела</option>
+                        <option>Набор тканевых масок</option>
+                        <option>Массажный роллер из кварца</option>
                     </select>
                 </div>
 
@@ -216,7 +218,6 @@
 
                 <div class="panel-line"><span>Товаров в боксе:</span><strong id="itemCount">0</strong></div>
                 <div class="panel-line"><span>Доставка:</span><strong id="deliveryLine"><span style="color:#c0392b;">Платная</span></strong></div>
-                <p class="panel-warn is-visible" id="progressHint">Добавьте 3 товара, чтобы активировать TSOK BOX</p>
                 <div class="panel-line"><span>TSOK Coins:</span><strong id="coinsLine">Silver · 3%</strong></div>
                 <div class="panel-line"><span>BNPL:</span><strong id="bnplLine">—</strong></div>
 
@@ -396,9 +397,12 @@
         { id:'pearl-05', name:'Hair Tonic Radiance',       size:'200 мл', price:88,  img:'img/Pearl5.jpg', cat:'hair',  brand:'pearl' },
         { id:'pearl-06', name:'Velvet Oil Blend',          size:'60 мл',  price:69,  img:'img/Pearl6.jpg', cat:'hair',  brand:'pearl' },
         { id:'pearl-07', name:'Micellar Water Extract Mix',size:'200 мл', price:99,  img:'img/Pearl7.jpg', cat:'face',  brand:'pearl' },
-        { id:'homme-01', name:'Face Wash Intense',         size:'150 мл', price:110, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
-        { id:'homme-02', name:'Moisturizer Power',         size:'50 мл',  price:145, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
-        { id:'homme-03', name:'Beard Oil Brutal',          size:'30 мл',  price:120, img:'img/INTELEGENT масло.png', cat:'homme', brand:'homme' },
+        { id:'homme-01', name:'Face Wash Black',           size:'200 мл', price:78,  img:'img/prod-photo-2.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-02', name:'Toner Control',             size:'150 мл', price:89,  img:'img/prod-photo-4.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-03', name:'Beard Oil',                 size:'50 мл',  price:96,  img:'img/prod-photo-1.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-04', name:'Beard Wax',                 size:'50 мл',  price:82,  img:'img/prod-photo-3.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-05', name:'Face Serum Black',          size:'30 мл',  price:134, img:'img/prod-photo-1.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-06', name:'After Shave Balm',          size:'100 мл', price:82,  img:'img/prod-photo-2.jpg', cat:'homme', brand:'homme' },
     ];
 
     // ── Состояние ──
@@ -502,24 +506,16 @@
         document.getElementById('coinsLine').textContent = (mode === '12m' || mode === '6m') ? 'Platinum · 10%' : (mode === '3m' ? 'Gold · 5%' : 'Silver · 3%');
         document.getElementById('bnplLine').textContent = plan.bnpl ? `Сегодня ${(total / 4).toFixed(0)} ₽ в Сплит на 4 платежа` : 'Недоступно для этого тарифа';
 
-        const hint = document.getElementById('progressHint');
-        if (hint) {
-            if (count < 3) hint.textContent = `Добавьте еще ${3 - count} товар(а), чтобы активировать TSOK BOX`;
-            else if (count === 3 && !deliveryFree) hint.textContent = 'Добавьте еще 1 продукт для бесплатной курьерской доставки (экономия 700 ₽)';
-            else if (count === 4) hint.textContent = 'Добавьте 5-й продукт и откройте доступ к VIP-подаркам';
-            else hint.textContent = 'Премиум-уровень открыт: бесплатная доставка и VIP-подарок за 0 ₽';
-        }
-
         // Блокировка кнопки
         const btn = document.getElementById('checkoutBtn');
         const warn = document.getElementById('minWarn');
 
-        if (count > 0 && count < MIN_ITEMS) {
+        if (mode !== 'once' && count > 0 && count < MIN_ITEMS) {
             warn.textContent = `Добавьте еще ${MIN_ITEMS - count} товар(а) для активации подписки`;
             warn.classList.add('is-visible');
             btn.disabled = true;
             btn.style.opacity = '0.4';
-            btn.innerHTML = 'Минимум 3 товара для TSOK BOX';
+            btn.innerHTML = 'Минимум 3 товара для подписки';
         } else if (count === 0) {
             warn.classList.remove('is-visible');
             btn.disabled = true;
@@ -565,7 +561,7 @@
         const total = getTotal();
         
         if (count === 0) return;
-        if (count < MIN_ITEMS) return;
+        if (mode !== 'once' && count < MIN_ITEMS) return;
 
         let giftInfo = '';
         if (mode !== 'once') {
@@ -629,7 +625,7 @@
             itemPrice = Math.round(p.price * (1 - (PLANS[mode]?.discount || 0)));
 
             return `<div class="constructor-product" data-product-id="${p.id}" style="${bg}">
-                <div class="constructor-product__img"><img src="${p.img}" alt="${p.name}" onerror="this.parentElement.style.background='${isHomme ? '#1a1714' : '#f0ebe4'}';this.style.display='none';"></div>
+                <div class="constructor-product__img"><img src="${typeof tsokImg==='function' ? tsokImg(p.img) : '/static/'+p.img}" alt="${p.name}" onerror="this.parentElement.style.background='${isHomme ? '#1a1714' : '#f0ebe4'}';this.style.display='none';"></div>
                 <div class="constructor-product__info">${brandTag}
                     <div class="constructor-product__name" style="${textColor}">${p.name}</div>
                     <div class="constructor-product__meta" style="${metaColor}">${p.size}</div>
