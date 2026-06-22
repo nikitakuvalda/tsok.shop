@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админка · TSOK Boutique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=DM+Sans:opsz,wght@9,400;9,500;9,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="admin-body">
+    <aside class="admin-sidebar">
+        <a class="admin-brand" href="admin"><span>TSOK</span><small>admin</small></a>
+        <nav class="admin-nav">
+            <a href="#overview">Обзор</a>
+            <a href="#users">Пользователи</a>
+            <a href="#sales">Продажи</a>
+            <a href="#subscriptions">Подписки</a>
+            <a href="#catalog-admin">Каталог</a>
+            <a href="#ops">Операции</a>
+        </nav>
+        <form method="post" action="{{ url_for('admin_logout') }}">
+            <button class="admin-logout" type="submit">Выйти</button>
+        </form>
+    </aside>
+
+    <main class="admin-main">
+        <section class="admin-hero" id="overview">
+            <div>
+                <span class="label">Панель управления</span>
+                <h1>TSOK Boutique<br><em>операционный центр</em></h1>
+                <p>Управление пользователями, продажами, подписками, каталогом, loyalty-событиями, referral и уведомлениями из одной закрытой панели.</p>
+            </div>
+            <div class="admin-admin-card">
+                <span>Администратор</span>
+                <strong>{{ state.admin.name }}</strong>
+                <p>{{ state.admin.email }} · {{ state.admin.role }}</p>
+            </div>
+        </section>
+
+        <section class="admin-stat-grid">
+            <article><span>Пользователи</span><strong>{{ state.stats.users }}</strong></article>
+            <article><span>Продажи</span><strong>{{ state.stats.sales_total }}</strong></article>
+            <article><span>Заказы</span><strong>{{ state.stats.sales_count }}</strong></article>
+            <article><span>Активные подписки</span><strong>{{ state.stats.active_subscriptions }}</strong></article>
+            <article><span>Coins выдано</span><strong>{{ state.stats.coins_issued }}</strong></article>
+        </section>
+
+        <section class="admin-panel" id="users">
+            <div class="admin-panel__head"><div><span class="label">CRM</span><h2>Пользователи</h2></div><button class="btn btn--outline-dark" type="button" data-admin-refresh>Обновить</button></div>
+            <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Клиент</th><th>Телефон</th><th>Tier</th><th>Coins</th><th>Годовая сумма</th><th>Подписка</th><th></th></tr></thead><tbody>
+                {% for user in state.users %}
+                <tr data-user-id="{{ user.id }}">
+                    <td><strong contenteditable data-field="name">{{ user.name }}</strong><small contenteditable data-field="email">{{ user.email }}</small></td>
+                    <td contenteditable data-field="phone">{{ user.phone }}</td>
+                    <td contenteditable data-field="loyalty_tier">{{ user.loyalty_tier }}</td>
+                    <td contenteditable data-field="tsok_coins">{{ user.tsok_coins }}</td>
+                    <td contenteditable data-field="annual_spend">{{ user.annual_spend }}</td>
+                    <td contenteditable data-field="subscription_status">{{ user.subscription_status }}</td>
+                    <td><button class="admin-mini-btn" type="button" data-save-user>Сохранить</button></td>
+                </tr>
+                {% endfor %}
+            </tbody></table></div>
+        </section>
+
+        <section class="admin-grid-2">
+            <article class="admin-panel" id="sales">
+                <div class="admin-panel__head"><div><span class="label">Commerce</span><h2>Продажи</h2></div></div>
+                <div class="admin-timeline">
+                    {% for sale in state.sales %}
+                    <div class="admin-timeline-item"><strong>{{ sale.id }} · {{ sale.total_label }}</strong><span>{{ sale.customer_name }} · {{ sale.type }} · {{ sale.status }}</span><small>{{ sale.created_at }} · {{ sale.items_count }} поз. · {{ sale.payment_provider }}</small></div>
+                    {% endfor %}
+                </div>
+            </article>
+
+            <article class="admin-panel" id="subscriptions">
+                <div class="admin-panel__head"><div><span class="label">D2C</span><h2>Подписка</h2></div></div>
+                <form class="admin-subscription-form" id="adminSubscriptionForm">
+                    <label>Статус<input name="status" value="{{ state.subscription.status }}"></label>
+                    <label>Тариф<select name="plan_code">
+                        {% for plan in ['once','monthly','3m','6m','12m'] %}<option value="{{ plan }}" {% if state.subscription.plan_code == plan %}selected{% endif %}>{{ plan }}</option>{% endfor %}
+                    </select></label>
+                    <label>Следующее списание<input name="next_charge_at" value="{{ state.subscription.next_charge_at }}"></label>
+                    <button class="btn btn--dark w-100" type="submit">Сохранить подписку</button>
+                </form>
+                <div class="admin-box-items">
+                    {% for item in state.subscription.items %}<span>{{ item.name }} × {{ item.qty }}</span>{% endfor %}
+                </div>
+            </article>
+        </section>
+
+        <section class="admin-panel" id="catalog-admin">
+            <div class="admin-panel__head"><div><span class="label">Inventory</span><h2>Каталог</h2></div></div>
+            <div class="admin-product-grid">
+                {% for product in state.products %}
+                <article><img src="{{ url_for('static', filename=product.image) }}" alt=""><strong>{{ product.name }}</strong><span>{{ product.brand }} · {{ product.size }}</span><b>{{ product.price_label }}</b></article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="admin-grid-3" id="ops">
+            <article class="admin-panel"><span class="label">Loyalty</span><h2>Coins events</h2><pre>{{ state.loyalty_events|tojson(indent=2) }}</pre></article>
+            <article class="admin-panel"><span class="label">Referral</span><h2>Claims</h2><pre>{{ state.referral_claims|tojson(indent=2) }}</pre></article>
+            <article class="admin-panel"><span class="label">CRM</span><h2>Notifications</h2><pre>{{ state.notifications|tojson(indent=2) }}</pre></article>
+        </section>
+        <p class="admin-toast" id="adminToast" hidden></p>
+    </main>
+<script>
+'use strict';
+function adminToast(message){ const el=document.getElementById('adminToast'); el.textContent=message; el.hidden=false; setTimeout(()=>el.hidden=true,2600); }
+document.addEventListener('click', async (event)=>{
+    if (event.target.matches('[data-admin-refresh]')) window.location.reload();
+    const saveBtn = event.target.closest('[data-save-user]');
+    if (!saveBtn) return;
+    const row = saveBtn.closest('[data-user-id]');
+    const payload = {};
+    row.querySelectorAll('[data-field]').forEach(cell => payload[cell.dataset.field] = cell.textContent.trim());
+    const res = await fetch(`/api/admin/users/${row.dataset.userId}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    const data = await res.json();
+    adminToast(data.message || data.error || 'Готово');
+});
+document.getElementById('adminSubscriptionForm')?.addEventListener('submit', async (event)=>{
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(event.target).entries());
+    const res = await fetch('/api/admin/subscription', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+    const data = await res.json();
+    adminToast(data.message || data.error || 'Готово');
+});
+</script>
+</body>
+</html>
