@@ -384,6 +384,22 @@
 </div>
 <div id="toastContainer" class="toast-container"></div>
 
+<div class="registration-modal" id="boxRegistrationModal" aria-hidden="true">
+    <form class="registration-modal__card" id="boxRegistrationForm">
+        <span class="label">Регистрация</span>
+        <h3>Создадим личный кабинет</h3>
+        <p>Перед оформлением TSOK BOX оставьте контакты — так мы сохраним состав бокса и привяжем подписку к вашему кабинету.</p>
+        <div class="registration-modal__fields">
+            <input id="boxRegName" type="text" autocomplete="name" placeholder="Ваше имя" required>
+            <input id="boxRegPhone" type="tel" autocomplete="tel" placeholder="Телефон" required>
+            <input id="boxRegEmail" type="email" autocomplete="email" placeholder="Email" required>
+        </div>
+        <p class="registration-modal__error" id="boxRegistrationError"></p>
+        <button class="btn btn--dark w-100" type="submit">Зарегистрироваться и оформить бокс</button>
+        <button class="btn btn--outline-dark w-100" type="button" id="boxRegistrationClose" style="margin-top:10px;">Вернуться к конструктору</button>
+    </form>
+</div>
+
 <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
     // ════════════════════════════════════════════
@@ -406,8 +422,9 @@
     ];
 
     // ── Состояние ──
-    let boxQty = {};
-    let mode = 'monthly';
+    const savedBoxState = JSON.parse(localStorage.getItem('tsok_box_state') || 'null');
+    let boxQty = savedBoxState?.items && typeof savedBoxState.items === 'object' ? savedBoxState.items : {};
+    let mode = savedBoxState?.plan || 'monthly';
     let curFilter = 'all';
     const MIN_ITEMS = 3;
     const PLANS = { once:{discount:0,label:'Разовая покупка'}, monthly:{discount:.10,label:'Рекуррент ежемесячно'}, '3m':{discount:.15,label:'Подписка 3 месяца',bnpl:true,months:3}, '6m':{discount:.20,label:'Подписка 6 месяцев',bnpl:true,months:6,freeDelivery:true}, '12m':{discount:.30,label:'VIP 12 месяцев',bnpl:true,months:12,freeDelivery:true} };
@@ -556,7 +573,26 @@
         renderConstructor();
     }
 
-    function handleCheckout() {
+    function isBoxCustomerRegistered() {
+        return localStorage.getItem('tsok_customer_profile') || localStorage.getItem('tsok_registered') === '1';
+    }
+
+    function openBoxRegistration() {
+        const modal = document.getElementById('boxRegistrationModal');
+        if (!modal) return;
+        modal.classList.add('is-active');
+        modal.setAttribute('aria-hidden', 'false');
+        document.getElementById('boxRegName')?.focus();
+    }
+
+    function closeBoxRegistration() {
+        const modal = document.getElementById('boxRegistrationModal');
+        if (!modal) return;
+        modal.classList.remove('is-active');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function proceedToCheckout() {
         const count = getCount();
         const total = getTotal();
         
@@ -585,17 +621,62 @@
             qty: boxQty[p.id]
         }));
         const giftSelect = document.getElementById('vipGiftSelect');
-        localStorage.setItem('tsok_cart', JSON.stringify(cartItems));
-        localStorage.setItem('tsok_box_meta', JSON.stringify({
+        const deliveryFree = count >= 4 || !!(PLANS[mode] || {}).freeDelivery;
+        const boxState = {
+            items: { ...boxQty },
+            plan: mode,
+            vip_gift: count >= 5 && giftSelect ? giftSelect.value : '',
+            updated_at: new Date().toISOString()
+        };
+        const boxMetaPayload = {
             plan: mode,
             plan_label: modeText,
-            vip_gift: count >= 5 && giftSelect ? giftSelect.value : '',
+            item_count: count,
+            base_total: getBaseTotal(),
+            total,
+            discount_percent: Math.round(((PLANS[mode] || PLANS.once).discount || 0) * 100),
+            delivery: deliveryFree ? 'Бесплатно' : 'Платная',
+            coins: document.getElementById('coinsLine')?.textContent || '',
+            bnpl: document.getElementById('bnplLine')?.textContent || '',
+            vip_gift: boxState.vip_gift,
             gift_note: giftInfo.trim(),
             bnpl_required: !!(PLANS[mode] || {}).bnpl,
-            checkout_note: `TSOK BOX · ${modeText} · ${total} ₽`
-        }));
+            checkout_note: `TSOK BOX · ${modeText} · ${total} ₽`,
+            constructor_url: 'subscription#constructor'
+        };
+        localStorage.setItem('tsok_cart', JSON.stringify(cartItems));
+        localStorage.setItem('tsok_box_state', JSON.stringify(boxState));
+        localStorage.setItem('tsok_box_meta', JSON.stringify(boxMetaPayload));
         window.location.href = 'checkout';
     }
+
+    function handleCheckout() {
+        if (!isBoxCustomerRegistered()) {
+            openBoxRegistration();
+            return;
+        }
+        proceedToCheckout();
+    }
+
+    document.getElementById('boxRegistrationClose')?.addEventListener('click', closeBoxRegistration);
+    document.getElementById('boxRegistrationModal')?.addEventListener('click', (event) => {
+        if (event.target.id === 'boxRegistrationModal') closeBoxRegistration();
+    });
+    document.getElementById('boxRegistrationForm')?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const name = document.getElementById('boxRegName')?.value.trim();
+        const phone = document.getElementById('boxRegPhone')?.value.trim();
+        const email = document.getElementById('boxRegEmail')?.value.trim();
+        const error = document.getElementById('boxRegistrationError');
+        if (!name || !phone || !email) {
+            if (error) error.textContent = 'Заполните имя, телефон и email.';
+            return;
+        }
+        localStorage.setItem('tsok_customer_profile', JSON.stringify({ name, phone, email, registered_at: new Date().toISOString() }));
+        localStorage.setItem('tsok_registered', '1');
+        closeBoxRegistration();
+        proceedToCheckout();
+    });
 
     // ── Мок отмены с удержанием ──
     function startCancelFlow() {
@@ -660,7 +741,15 @@
     }
 
     // Инит
-    renderConstructor();
+    if (savedBoxState?.plan) {
+        setMode(savedBoxState.plan);
+    } else {
+        renderConstructor();
+    }
+    if (savedBoxState?.vip_gift) {
+        const giftSelect = document.getElementById('vipGiftSelect');
+        if (giftSelect) giftSelect.value = savedBoxState.vip_gift;
+    }
     </script>
 </body>
 </html>

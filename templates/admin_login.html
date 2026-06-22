@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в админку · TSOK Boutique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=DM+Sans:opsz,wght@9,400;9,500;9,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="admin-login-body">
+    <main class="admin-login">
+        <form class="admin-login-card" method="post">
+            <span class="label">TSOK Admin</span>
+            <h1>Вход в панель</h1>
+            <p>Тестовый администратор уже создан. Ссылку в публичный хедер не добавляем.</p>
+            <label>Email</label>
+            <input name="email" type="email" value="{{ admin_email }}" autocomplete="username" required>
+            <label>Пароль</label>
+            <input name="password" type="password" value="{{ admin_password }}" autocomplete="current-password" required>
+            {% if error %}<div class="admin-login-error">{{ error }}</div>{% endif %}
+            <button class="btn btn--dark w-100" type="submit">Войти</button>
+            <div class="admin-login-hint">Тестовый доступ: <strong>{{ admin_email }}</strong> / <strong>{{ admin_password }}</strong></div>
+        </form>
+    </main>
+</body>
+</html>

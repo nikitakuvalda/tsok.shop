@@ -5,7 +5,9 @@ from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 
 import dotenv
-from flask import Flask, Response, jsonify, make_response, render_template, request, url_for
+from functools import wraps
+
+from flask import Flask, Response, jsonify, make_response, redirect, render_template, request, session, url_for
 from yookassa import Configuration, Payment
 
 from cache import PAGE_CACHE_TTL, cache_get_text, cache_set_text, is_rate_limited
@@ -20,7 +22,7 @@ from d2c import (
     money,
     referral_is_suspicious,
 )
-from db import get_products_by_ids, init_products_table
+from db import PRODUCT_SEED, get_products_by_ids, init_products_table
 
 
 class StaticSiteFlask(Flask):
@@ -34,6 +36,7 @@ class StaticSiteFlask(Flask):
 application = StaticSiteFlask(__name__)
 
 dotenv.load_dotenv(override=True)
+application.secret_key = os.getenv("FLASK_SECRET_KEY", "tsok-dev-secret-change-me")
 
 YOOKASSA_SHOP_ID   = os.getenv("YOOKASSA_SHOP_ID", "")
 YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")
@@ -138,6 +141,63 @@ DEMO_SUBSCRIPTION = {
 DEMO_NOTIFICATIONS = []
 DEMO_LOYALTY_EVENTS = []
 DEMO_REFERRAL_CLAIMS = []
+
+DEMO_ADMIN = {
+    "email": os.getenv("TSOK_ADMIN_EMAIL", "admin@tsok.shop"),
+    "password": os.getenv("TSOK_ADMIN_PASSWORD", "admin123"),
+    "name": "TSOK Admin",
+    "role": "owner",
+}
+
+DEMO_SALES = [
+    {
+        "id": "ORD-1001",
+        "customer_email": DEMO_CUSTOMER["email"],
+        "customer_name": DEMO_CUSTOMER["name"],
+        "type": "subscription",
+        "status": "paid",
+        "total": Decimal("386.00"),
+        "created_at": "2026-06-01T12:20:00+00:00",
+        "items_count": 4,
+        "payment_provider": "YooKassa",
+    },
+    {
+        "id": "ORD-1002",
+        "customer_email": "new.client@tsok.shop",
+        "customer_name": "Новый клиент",
+        "type": "one_time",
+        "status": "delivered",
+        "total": Decimal("254.00"),
+        "created_at": "2026-06-10T16:45:00+00:00",
+        "items_count": 1,
+        "payment_provider": "YooKassa",
+    },
+]
+
+DEMO_USERS = [
+    {
+        "id": "usr-demo-1",
+        "name": DEMO_CUSTOMER["name"],
+        "email": DEMO_CUSTOMER["email"],
+        "phone": "+375 29 000-00-00",
+        "loyalty_tier": DEMO_CUSTOMER["loyalty_tier"],
+        "tsok_coins": DEMO_CUSTOMER["tsok_coins"],
+        "annual_spend": DEMO_CUSTOMER["annual_spend"],
+        "subscription_status": DEMO_SUBSCRIPTION["status"],
+        "created_at": "2026-01-12",
+    },
+    {
+        "id": "usr-demo-2",
+        "name": "Новый клиент",
+        "email": "new.client@tsok.shop",
+        "phone": "+375 44 111-22-33",
+        "loyalty_tier": "Silver",
+        "tsok_coins": 120,
+        "annual_spend": 254,
+        "subscription_status": "none",
+        "created_at": "2026-06-10",
+    },
+]
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -375,6 +435,120 @@ def subscription():
     return _render_cached_template("subscription.html")
 
 
+
+
+def _admin_logged_in():
+    return session.get("admin_email") == DEMO_ADMIN["email"]
+
+
+def admin_required(view):
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        if not _admin_logged_in():
+            return redirect(url_for("admin_login", next=request.path))
+        return view(*args, **kwargs)
+    return wrapper
+
+
+def _admin_money(value):
+    return f"{Decimal(str(value)).quantize(Decimal('0.01'))} ₽"
+
+
+def _admin_state():
+    subscription_state = _current_subscription_state()
+    sales_total = sum((sale["total"] for sale in DEMO_SALES), Decimal("0"))
+    active_subscriptions = 1 if DEMO_SUBSCRIPTION.get("status") == "active" else 0
+    return {
+        "admin": {"email": DEMO_ADMIN["email"], "name": DEMO_ADMIN["name"], "role": DEMO_ADMIN["role"]},
+        "stats": {
+            "users": len(DEMO_USERS),
+            "sales_count": len(DEMO_SALES),
+            "sales_total": _admin_money(sales_total),
+            "active_subscriptions": active_subscriptions,
+            "coins_issued": sum(int(user.get("tsok_coins", 0)) for user in DEMO_USERS),
+        },
+        "users": DEMO_USERS,
+        "sales": [{**sale, "total_label": _admin_money(sale["total"])} for sale in DEMO_SALES],
+        "subscription": subscription_state["subscription"],
+        "loyalty_events": DEMO_LOYALTY_EVENTS,
+        "referral_claims": DEMO_REFERRAL_CLAIMS,
+        "notifications": DEMO_NOTIFICATIONS,
+        "products": [{"id": product_id, **product, "price_label": _admin_money(product["price"])} for product_id, product in PRODUCT_SEED.items()],
+        "credentials_hint": {"email": DEMO_ADMIN["email"], "password": DEMO_ADMIN["password"]},
+    }
+
+
+@application.route("/admin", methods=["GET"])
+@admin_required
+def admin_dashboard():
+    return render_template("admin.html", state=_admin_state())
+
+
+@application.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    error = ""
+    if request.method == "POST":
+        email = (request.form.get("email") or "").strip().lower()
+        password = request.form.get("password") or ""
+        if email == DEMO_ADMIN["email"].lower() and password == DEMO_ADMIN["password"]:
+            session["admin_email"] = DEMO_ADMIN["email"]
+            return redirect(request.args.get("next") or url_for("admin_dashboard"))
+        error = "Неверный email или пароль администратора."
+    return render_template("admin_login.html", admin_email=DEMO_ADMIN["email"], admin_password=DEMO_ADMIN["password"], error=error)
+
+
+@application.post("/admin/logout")
+@admin_required
+def admin_logout():
+    session.pop("admin_email", None)
+    return redirect(url_for("admin_login"))
+
+
+@application.get("/api/admin/state")
+@admin_required
+def admin_state_api():
+    return jsonify(_admin_state())
+
+
+@application.post("/api/admin/users/<user_id>")
+@admin_required
+def admin_update_user(user_id):
+    payload = request.get_json(silent=True) or {}
+    user = next((item for item in DEMO_USERS if item["id"] == user_id), None)
+    if not user:
+        return jsonify({"error": "Пользователь не найден."}), 404
+    for field in ["name", "email", "phone", "loyalty_tier", "subscription_status"]:
+        if field in payload:
+            user[field] = str(payload[field])[:160]
+    for field in ["tsok_coins", "annual_spend"]:
+        if field in payload:
+            try:
+                user[field] = int(payload[field])
+            except (TypeError, ValueError):
+                return jsonify({"error": f"Поле {field} должно быть числом."}), 400
+    if user["email"] == DEMO_CUSTOMER["email"]:
+        DEMO_CUSTOMER["name"] = user["name"]
+        DEMO_CUSTOMER["loyalty_tier"] = user["loyalty_tier"]
+        DEMO_CUSTOMER["tsok_coins"] = user["tsok_coins"]
+        DEMO_CUSTOMER["annual_spend"] = user["annual_spend"]
+    return jsonify({"message": "Пользователь обновлён.", "user": user, "state": _admin_state()})
+
+
+@application.post("/api/admin/subscription")
+@admin_required
+def admin_update_subscription():
+    payload = request.get_json(silent=True) or {}
+    if "status" in payload:
+        DEMO_SUBSCRIPTION["status"] = str(payload["status"])[:40]
+    if "plan_code" in payload and payload["plan_code"] in SUBSCRIPTION_PLANS:
+        DEMO_SUBSCRIPTION["plan_code"] = payload["plan_code"]
+    if "next_charge_at" in payload:
+        try:
+            DEMO_SUBSCRIPTION["next_charge_at"] = datetime.fromisoformat(str(payload["next_charge_at"])).isoformat()
+        except ValueError:
+            return jsonify({"error": "next_charge_at должен быть ISO datetime."}), 400
+    return jsonify({"message": "Подписка обновлена.", "state": _admin_state()})
+
 @application.route("/checkout")
 @application.route("/checkout.html")
 def checkout():
@@ -440,7 +614,21 @@ def create_yookassa_payment():
 
 def _subscription_items_with_products(subscription):
     products = get_products_by_ids([item["id"] for item in subscription["items"]])
-    return [{"id": item["id"], "qty": item["qty"], **products[item["id"]]} for item in subscription["items"] if item["id"] in products]
+    enriched_items = []
+    for item in subscription["items"]:
+        product = products.get(item["id"])
+        if not product:
+            continue
+        qty = int(item.get("qty", 1))
+        price = Decimal(str(product["price"]))
+        enriched_items.append({
+            "id": item["id"],
+            "qty": qty,
+            **product,
+            "price": price,
+            "line_total": price * qty,
+        })
+    return enriched_items
 
 
 def _current_subscription_state():
