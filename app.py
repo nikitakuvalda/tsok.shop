@@ -614,7 +614,21 @@ def create_yookassa_payment():
 
 def _subscription_items_with_products(subscription):
     products = get_products_by_ids([item["id"] for item in subscription["items"]])
-    return [{"id": item["id"], "qty": item["qty"], **products[item["id"]]} for item in subscription["items"] if item["id"] in products]
+    enriched_items = []
+    for item in subscription["items"]:
+        product = products.get(item["id"])
+        if not product:
+            continue
+        qty = int(item.get("qty", 1))
+        price = Decimal(str(product["price"]))
+        enriched_items.append({
+            "id": item["id"],
+            "qty": qty,
+            **product,
+            "price": price,
+            "line_total": price * qty,
+        })
+    return enriched_items
 
 
 def _current_subscription_state():
