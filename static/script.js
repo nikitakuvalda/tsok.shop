@@ -674,9 +674,24 @@ function renderCheckoutSummary() {
     const total = cartSubtotal();
     if (totalEl) totalEl.textContent = `${total.toFixed(0)} ₽`;
     const boxNote = document.getElementById('checkoutBoxNote');
-    if (boxNote && boxMeta) {
-        boxNote.hidden = false;
-        boxNote.textContent = `${boxMeta.checkout_note}${boxMeta.bnpl_required ? ' · доступна оплата частями' : ''}`;
+    if (boxNote) {
+        if (boxMeta) {
+            const details = [
+                boxMeta.checkout_note,
+                boxMeta.item_count ? `${boxMeta.item_count} товар(а)` : '',
+                boxMeta.discount_percent ? `скидка −${boxMeta.discount_percent}%` : '',
+                boxMeta.delivery ? `доставка: ${boxMeta.delivery}` : '',
+                boxMeta.coins ? `TSOK Coins: ${boxMeta.coins}` : '',
+                boxMeta.bnpl ? `BNPL: ${boxMeta.bnpl}` : '',
+                boxMeta.vip_gift ? `VIP-подарок: ${boxMeta.vip_gift}` : (boxMeta.gift_note || ''),
+                boxMeta.bnpl_required ? 'доступна оплата частями' : ''
+            ].filter(Boolean);
+            boxNote.hidden = false;
+            boxNote.innerHTML = `<strong>TSOK BOX из конструктора</strong><br>${details.map(escapeHtml).join('<br>')}`;
+        } else {
+            boxNote.hidden = true;
+            boxNote.textContent = '';
+        }
     }
     if (submitBtn) {
         submitBtn.textContent = cart.length ? `Купить за ${total.toFixed(0)} ₽` : 'Купить';
@@ -713,15 +728,35 @@ function initCheckoutPage() {
     const editCartBtn = document.getElementById('checkoutEditCartBtn');
     const successNotice = document.getElementById('paymentSuccessNotice');
 
-    if (successNotice) {
+    const paymentSucceeded = successNotice && getComputedStyle(successNotice).display !== 'none' && successNotice.textContent.trim();
+    if (paymentSucceeded) {
         cart = [];
         localStorage.removeItem('tsok_cart');
         localStorage.removeItem('tsok_box_meta');
+        localStorage.removeItem('tsok_box_state');
         boxMeta = null;
         updateCartUI();
     }
 
-    editCartBtn?.addEventListener('click', openCart);
+    const savedCustomerProfile = JSON.parse(localStorage.getItem('tsok_customer_profile') || 'null');
+    if (savedCustomerProfile) {
+        const fioInput = document.getElementById('customerFio');
+        const phoneInput = document.getElementById('customerPhone');
+        const emailInput = document.getElementById('customerEmail');
+        if (fioInput && !fioInput.value) fioInput.value = savedCustomerProfile.name || '';
+        if (phoneInput && !phoneInput.value) phoneInput.value = savedCustomerProfile.phone || '';
+        if (emailInput && !emailInput.value) emailInput.value = savedCustomerProfile.email || '';
+    }
+
+    if (editCartBtn && boxMeta) editCartBtn.textContent = 'Редактировать бокс';
+
+    editCartBtn?.addEventListener('click', () => {
+        if (boxMeta) {
+            window.location.href = boxMeta.constructor_url || 'subscription#constructor';
+            return;
+        }
+        openCart();
+    });
     renderCheckoutSummary();
 
     form.addEventListener('submit', async (event) => {
