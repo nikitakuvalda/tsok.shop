@@ -73,12 +73,14 @@
                 <li>Предлагаем премиум-скраб или паузу на 30 дней.</li>
                 <li>При финальном отказе отвязываем карту и понижаем tier до Silver.</li>
             </ol>
-            <button class="btn btn--dark w-100" type="button" id="pauseBtn">Пропустить месяц</button>
-            <button class="btn btn--outline-dark w-100" type="button" id="resumeBtn" style="margin-top:10px;">Возобновить подписку</button>
-            <button class="btn btn--outline-dark w-100" type="button" id="recalcTierBtn" style="margin-top:10px;">Пересчитать грейд</button>
-            <button class="btn btn--outline-dark w-100" type="button" id="scheduleNotifyBtn" style="margin-top:10px;">Запланировать 72h уведомление</button>
-            <button class="btn btn--outline-dark w-100" type="button" id="accrueCoinsBtn" style="margin-top:10px;">Смоделировать доставку и Coins</button>
-            <button class="btn btn--outline-dark w-100" type="button" id="cancelBtn" style="margin-top:10px;">Отменить подписку</button>
+            <div class="account-actions">
+                <button class="btn btn--dark w-100" type="button" id="pauseBtn">Пропустить месяц</button>
+                <button class="btn btn--outline-dark w-100" type="button" id="resumeBtn">Возобновить подписку</button>
+                <button class="btn btn--outline-dark w-100" type="button" id="recalcTierBtn">Пересчитать грейд</button>
+                <button class="btn btn--outline-dark w-100" type="button" id="scheduleNotifyBtn">Запланировать 72h уведомление</button>
+                <button class="btn btn--outline-dark w-100" type="button" id="accrueCoinsBtn">Смоделировать доставку и Coins</button>
+                <button class="btn btn--outline-dark w-100" type="button" id="cancelBtn">Отменить подписку</button>
+            </div>
             <p class="account-result" id="accountResult"></p>
         </aside>
     </section>
@@ -88,6 +90,7 @@
 <script>
 'use strict';
 const accountState = { items: [] };
+const savedProfile = JSON.parse(localStorage.getItem('tsok_customer_profile') || 'null');
 
 function money(value) { return `${Number(value || 0).toFixed(0)} ₽`; }
 
@@ -102,6 +105,10 @@ function renderAccount(state) {
     const customer = state.customer;
     const subscription = state.subscription;
     accountState.items = subscription.items.map(item => ({ id: item.id, qty: item.qty }));
+
+    if (savedProfile?.name) {
+        document.querySelector('.account-lead').textContent = `${savedProfile.name}, здесь можно управлять активной подпиской, составом бокса, TSOK Coins и уведомлениями.`;
+    }
 
     document.getElementById('accountTier').textContent = customer.loyalty_tier;
     document.getElementById('accountCoins').textContent = `${customer.tsok_coins} TSOK Coins`;

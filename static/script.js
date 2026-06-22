@@ -738,6 +738,16 @@ function initCheckoutPage() {
         updateCartUI();
     }
 
+    const savedCustomerProfile = JSON.parse(localStorage.getItem('tsok_customer_profile') || 'null');
+    if (savedCustomerProfile) {
+        const fioInput = document.getElementById('customerFio');
+        const phoneInput = document.getElementById('customerPhone');
+        const emailInput = document.getElementById('customerEmail');
+        if (fioInput && !fioInput.value) fioInput.value = savedCustomerProfile.name || '';
+        if (phoneInput && !phoneInput.value) phoneInput.value = savedCustomerProfile.phone || '';
+        if (emailInput && !emailInput.value) emailInput.value = savedCustomerProfile.email || '';
+    }
+
     if (editCartBtn && boxMeta) editCartBtn.textContent = 'Редактировать бокс';
 
     editCartBtn?.addEventListener('click', () => {
