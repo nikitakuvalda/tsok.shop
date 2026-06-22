@@ -406,8 +406,9 @@
     ];
 
     // ── Состояние ──
-    let boxQty = {};
-    let mode = 'monthly';
+    const savedBoxState = JSON.parse(localStorage.getItem('tsok_box_state') || 'null');
+    let boxQty = savedBoxState?.items && typeof savedBoxState.items === 'object' ? savedBoxState.items : {};
+    let mode = savedBoxState?.plan || 'monthly';
     let curFilter = 'all';
     const MIN_ITEMS = 3;
     const PLANS = { once:{discount:0,label:'Разовая покупка'}, monthly:{discount:.10,label:'Рекуррент ежемесячно'}, '3m':{discount:.15,label:'Подписка 3 месяца',bnpl:true,months:3}, '6m':{discount:.20,label:'Подписка 6 месяцев',bnpl:true,months:6,freeDelivery:true}, '12m':{discount:.30,label:'VIP 12 месяцев',bnpl:true,months:12,freeDelivery:true} };
@@ -585,15 +586,32 @@
             qty: boxQty[p.id]
         }));
         const giftSelect = document.getElementById('vipGiftSelect');
-        localStorage.setItem('tsok_cart', JSON.stringify(cartItems));
-        localStorage.setItem('tsok_box_meta', JSON.stringify({
+        const deliveryFree = count >= 4 || !!(PLANS[mode] || {}).freeDelivery;
+        const boxState = {
+            items: { ...boxQty },
+            plan: mode,
+            vip_gift: count >= 5 && giftSelect ? giftSelect.value : '',
+            updated_at: new Date().toISOString()
+        };
+        const boxMetaPayload = {
             plan: mode,
             plan_label: modeText,
-            vip_gift: count >= 5 && giftSelect ? giftSelect.value : '',
+            item_count: count,
+            base_total: getBaseTotal(),
+            total,
+            discount_percent: Math.round(((PLANS[mode] || PLANS.once).discount || 0) * 100),
+            delivery: deliveryFree ? 'Бесплатно' : 'Платная',
+            coins: document.getElementById('coinsLine')?.textContent || '',
+            bnpl: document.getElementById('bnplLine')?.textContent || '',
+            vip_gift: boxState.vip_gift,
             gift_note: giftInfo.trim(),
             bnpl_required: !!(PLANS[mode] || {}).bnpl,
-            checkout_note: `TSOK BOX · ${modeText} · ${total} ₽`
-        }));
+            checkout_note: `TSOK BOX · ${modeText} · ${total} ₽`,
+            constructor_url: 'subscription#constructor'
+        };
+        localStorage.setItem('tsok_cart', JSON.stringify(cartItems));
+        localStorage.setItem('tsok_box_state', JSON.stringify(boxState));
+        localStorage.setItem('tsok_box_meta', JSON.stringify(boxMetaPayload));
         window.location.href = 'checkout';
     }
 
@@ -660,7 +678,15 @@
     }
 
     // Инит
-    renderConstructor();
+    if (savedBoxState?.plan) {
+        setMode(savedBoxState.plan);
+    } else {
+        renderConstructor();
+    }
+    if (savedBoxState?.vip_gift) {
+        const giftSelect = document.getElementById('vipGiftSelect');
+        if (giftSelect) giftSelect.value = savedBoxState.vip_gift;
+    }
     </script>
 </body>
 </html>
