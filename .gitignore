@@ -1,3 +1,4 @@
 \__pycache__
 .env
 schema.sql
+tsok.sqlite3
