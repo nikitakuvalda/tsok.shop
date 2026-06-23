@@ -85,7 +85,7 @@
                     <button class="btn btn--dark w-100" type="submit">Сохранить подписку</button>
                 </form>
                 <div class="admin-box-items">
-                    {% for item in state.subscription.items %}<span>{{ item.name }} × {{ item.qty }}</span>{% endfor %}
+                    {% for item in state.subscription['items'] %}<span>{{ item.name }} × {{ item.qty }}</span>{% endfor %}
                 </div>
             </article>
         </section>
