@@ -12,13 +12,13 @@
 <body class="admin-body">
     <aside class="admin-sidebar">
         <a class="admin-brand" href="admin"><span>TSOK</span><small>admin</small></a>
-        <nav class="admin-nav">
-            <a href="#overview">Обзор</a>
-            <a href="#users">Пользователи</a>
-            <a href="#sales">Продажи</a>
-            <a href="#subscriptions">Подписки</a>
-            <a href="#catalog-admin">Каталог</a>
-            <a href="#ops">Операции</a>
+        <nav class="admin-nav" aria-label="Разделы админ панели">
+            <a href="#overview" data-admin-tab-link="overview">Обзор</a>
+            <a href="#users" data-admin-tab-link="users">Пользователи</a>
+            <a href="#sales" data-admin-tab-link="sales">Продажи</a>
+            <a href="#subscriptions" data-admin-tab-link="subscriptions">Активные подписки</a>
+            <a href="#catalog-admin" data-admin-tab-link="catalog-admin">Каталог</a>
+            <a href="#ops" data-admin-tab-link="ops">Операции</a>
         </nav>
         <form method="post" action="{{ url_for('admin_logout') }}">
             <button class="admin-logout" type="submit">Выйти</button>
@@ -26,7 +26,17 @@
     </aside>
 
     <main class="admin-main">
-        <section class="admin-hero" id="overview">
+        <div class="admin-folder-tabs" role="tablist" aria-label="Разделы админ панели">
+            <a href="#overview" data-admin-tab-link="overview" role="tab">Обзор</a>
+            <a href="#users" data-admin-tab-link="users" role="tab">Пользователи</a>
+            <a href="#sales" data-admin-tab-link="sales" role="tab">Продажи</a>
+            <a href="#subscriptions" data-admin-tab-link="subscriptions" role="tab">Подписки</a>
+            <a href="#catalog-admin" data-admin-tab-link="catalog-admin" role="tab">Каталог</a>
+            <a href="#ops" data-admin-tab-link="ops" role="tab">Операции</a>
+        </div>
+
+        <section class="admin-tab-panel admin-tab-panel--overview" id="overview" data-admin-tab-panel="overview">
+        <div class="admin-hero">
             <div>
                 <span class="label">Панель управления</span>
                 <h1>TSOK Boutique<br><em>операционный центр</em></h1>
@@ -37,7 +47,7 @@
                 <strong>{{ state.admin.name }}</strong>
                 <p>{{ state.admin.email }} · {{ state.admin.role }}</p>
             </div>
-        </section>
+        </div>
 
         <section class="admin-stat-grid">
             <article><span>Пользователи</span><strong>{{ state.stats.users }}</strong></article>
@@ -46,8 +56,9 @@
             <article><span>Активные подписки</span><strong>{{ state.stats.active_subscriptions }}</strong></article>
             <article><span>Coins выдано</span><strong>{{ state.stats.coins_issued }}</strong></article>
         </section>
+        </section>
 
-        <section class="admin-panel" id="users">
+        <section class="admin-tab-panel admin-panel" id="users" data-admin-tab-panel="users">
             <div class="admin-panel__head"><div><span class="label">CRM</span><h2>Пользователи</h2></div><button class="btn btn--outline-dark" type="button" data-admin-refresh>Обновить</button></div>
             <div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Клиент</th><th>Телефон</th><th>Tier</th><th>Coins</th><th>Годовая сумма</th><th>Подписка</th><th></th></tr></thead><tbody>
                 {% for user in state.users %}
@@ -64,33 +75,32 @@
             </tbody></table></div>
         </section>
 
-        <section class="admin-grid-2">
-            <article class="admin-panel" id="sales">
+        <section class="admin-tab-panel admin-panel" id="sales" data-admin-tab-panel="sales">
                 <div class="admin-panel__head"><div><span class="label">Commerce</span><h2>Продажи</h2></div></div>
                 <div class="admin-timeline">
                     {% for sale in state.sales %}
                     <div class="admin-timeline-item" data-order-id="{{ sale.id }}"><strong>{{ sale.id }} · {{ sale.total_label }}</strong><span>{{ sale.customer_name }} · {{ sale.type }} · <b contenteditable data-order-field="status">{{ sale.status }}</b></span><small>{{ sale.created_at }} · <span contenteditable data-order-field="items_count">{{ sale.items_count }}</span> поз. · <span contenteditable data-order-field="payment_provider">{{ sale.payment_provider }}</span></small><button class="admin-mini-btn" type="button" data-save-order>Сохранить заказ</button></div>
                     {% endfor %}
                 </div>
-            </article>
-
-            <article class="admin-panel" id="subscriptions">
-                <div class="admin-panel__head"><div><span class="label">Subscriptions</span><h2>Подписка</h2></div></div>
-                <form class="admin-subscription-form" id="adminSubscriptionForm">
-                    <label>Статус<input name="status" value="{{ state.subscription.status }}"></label>
-                    <label>Тариф<select name="plan_code">
-                        {% for plan in ['once','monthly','3m','6m','12m'] %}<option value="{{ plan }}" {% if state.subscription.plan_code == plan %}selected{% endif %}>{{ plan }}</option>{% endfor %}
-                    </select></label>
-                    <label>Следующее списание<input name="next_charge_at" value="{{ state.subscription.next_charge_at }}"></label>
-                    <button class="btn btn--dark w-100" type="submit">Сохранить подписку</button>
-                </form>
-                <div class="admin-box-items">
-                    {% for item in state.subscription['items'] %}<span>{{ item.name }} × {{ item.qty }}</span>{% endfor %}
-                </div>
-            </article>
         </section>
 
-        <section class="admin-panel" id="catalog-admin">
+        <section class="admin-tab-panel admin-panel" id="subscriptions" data-admin-tab-panel="subscriptions">
+            <div class="admin-panel__head"><div><span class="label">Subscriptions</span><h2>Активные подписки</h2></div></div>
+            <p class="admin-panel-note">Здесь не редактируется демо-подписка: раздел нужен операционно — видеть, у кого сейчас активен автозаказ, когда следующее списание и какой тариф обслуживать.</p>
+            <div class="admin-subscription-list">
+                {% for subscription in state.active_subscriptions if subscription.status == 'active' %}
+                <article class="admin-subscription-card">
+                    <div><span>Клиент</span><strong>{{ subscription.customer_name or subscription.user_id or 'Гость' }}</strong><small>{{ subscription.customer_email or 'email не указан' }} · {{ subscription.customer_phone or 'телефон не указан' }}</small></div>
+                    <div><span>Тариф</span><strong>{{ subscription.plan_code }}</strong><small>Следующее списание: {{ subscription.next_charge_at or 'не запланировано' }}</small></div>
+                    <div><span>Статус</span><strong>{{ subscription.status }}</strong><small>{{ subscription.id }}</small></div>
+                </article>
+                {% else %}
+                <div class="admin-empty-state"><strong>Активных подписок пока нет</strong><p>Когда клиенты оформят автозаказ, карточки появятся здесь вместо неочевидного редактора демо-подписки.</p></div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="admin-tab-panel admin-panel admin-panel--catalog" id="catalog-admin" data-admin-tab-panel="catalog-admin">
             <div class="admin-panel__head"><div><span class="label">Inventory</span><h2>Каталог из базы данных</h2></div></div>
             <form class="admin-subscription-form" method="post" action="{{ url_for('admin_create_product') }}" enctype="multipart/form-data">
                 <label>ID<input name="id" placeholder="prod-001"></label><label>Название<input name="name" required></label>
@@ -117,7 +127,7 @@
             </div>
         </section>
 
-        <section class="admin-grid-3" id="ops">
+        <section class="admin-tab-panel admin-grid-3" id="ops" data-admin-tab-panel="ops">
             <article class="admin-panel"><span class="label">Loyalty</span><h2>Coins events</h2><pre>{{ state.loyalty_events|tojson(indent=2) }}</pre></article>
             <article class="admin-panel"><span class="label">Referral</span><h2>Claims</h2><pre>{{ state.referral_claims|tojson(indent=2) }}</pre></article>
             <article class="admin-panel"><span class="label">CRM</span><h2>Notifications</h2><pre>{{ state.notifications|tojson(indent=2) }}</pre></article>
@@ -127,7 +137,23 @@
 <script>
 'use strict';
 function adminToast(message){ const el=document.getElementById('adminToast'); el.textContent=message; el.hidden=false; setTimeout(()=>el.hidden=true,2600); }
+const adminTabs = [...document.querySelectorAll('[data-admin-tab-panel]')];
+const adminTabLinks = [...document.querySelectorAll('[data-admin-tab-link]')];
+function activateAdminTab(tabId){
+    const fallback = adminTabs[0]?.dataset.adminTabPanel || 'overview';
+    const activeId = adminTabs.some(panel => panel.dataset.adminTabPanel === tabId) ? tabId : fallback;
+    adminTabs.forEach(panel => panel.classList.toggle('is-active', panel.dataset.adminTabPanel === activeId));
+    adminTabLinks.forEach(link => {
+        const isActive = link.dataset.adminTabLink === activeId;
+        link.classList.toggle('is-active', isActive);
+        link.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+}
+activateAdminTab((window.location.hash || '#overview').slice(1));
+window.addEventListener('hashchange', () => activateAdminTab((window.location.hash || '#overview').slice(1)));
 document.addEventListener('click', async (event)=>{
+    const tabLink = event.target.closest('[data-admin-tab-link]');
+    if (tabLink) activateAdminTab(tabLink.dataset.adminTabLink);
     if (event.target.matches('[data-admin-refresh]')) window.location.reload();
     const saveBtn = event.target.closest('[data-save-user]');
     if (saveBtn) {
@@ -146,13 +172,6 @@ document.addEventListener('click', async (event)=>{
         const res = await fetch(`/api/admin/orders/${row.dataset.orderId}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
         const data = await res.json(); adminToast(data.message || data.error || 'Готово');
     }
-});
-document.getElementById('adminSubscriptionForm')?.addEventListener('submit', async (event)=>{
-    event.preventDefault();
-    const payload = Object.fromEntries(new FormData(event.target).entries());
-    const res = await fetch('/api/admin/subscription', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
-    const data = await res.json();
-    adminToast(data.message || data.error || 'Готово');
 });
 </script>
 </body>
