@@ -74,6 +74,11 @@
                 </div>
                 <button class="btn btn--outline-dark" type="button" id="saveBoxBtn">Сохранить состав</button>
             </div>
+            <div class="account-empty-box" id="accountEmptyBox" hidden>
+                <strong>У вас пока нет активного TSOK BOX</strong>
+                <p>Соберите бокс на странице подписки — после оформления он появится в личном кабинете.</p>
+                <a class="btn btn--dark" href="{{ url_for('subscription') }}">Собрать TSOK BOX</a>
+            </div>
             <div class="account-items" id="accountItems"></div>
             <button class="account-add-item" type="button" id="addBoxItemBtn"><span>+</span> Добавить товар в бокс</button>
             <p class="account-note">Нельзя опустить состав ниже 3 товаров. После сохранения сумма следующего автосписания пересчитывается автоматически.</p>
@@ -139,14 +144,22 @@ function renderAccount(state) {
 
     document.getElementById('accountTier').textContent = customer.loyalty_tier;
     document.getElementById('accountCoins').textContent = `${customer.tsok_coins} TSOK Coins`;
-    document.getElementById('subscriptionStatus').textContent = subscription.status;
+    const hasSubscription = Boolean(subscription.has_subscription);
+    document.getElementById('subscriptionStatus').textContent = hasSubscription ? subscription.status : 'нет подписки';
     document.getElementById('nextChargeDate').textContent = subscription.next_charge_date;
     document.getElementById('planLabel').textContent = subscription.quote.plan_label;
     document.getElementById('payableTotal').textContent = money(subscription.quote.payable_total);
     document.getElementById('planTotal').textContent = money(subscription.quote.box_total);
     accountState.catalog = state.catalog || [];
     document.getElementById('referralCode').textContent = customer.referral_code;
-    if (state.loyalty_events?.length) document.getElementById('accountResult').textContent = `Последнее начисление: ${state.loyalty_events.at(-1).coins_delta} Coins будет доступно через 14 дней.`;
+    document.getElementById('accountEmptyBox').hidden = hasSubscription;
+    document.getElementById('accountItems').hidden = !hasSubscription;
+    document.getElementById('addBoxItemBtn').hidden = !hasSubscription;
+    document.getElementById('saveBoxBtn').disabled = !hasSubscription;
+    document.getElementById('pauseBtn').disabled = !hasSubscription;
+    document.getElementById('cancelBtn').disabled = !hasSubscription;
+    if (!hasSubscription) document.getElementById('accountResult').textContent = '';
+    if (hasSubscription && state.loyalty_events?.length) document.getElementById('accountResult').textContent = `Последнее начисление: ${state.loyalty_events.at(-1).coins_delta} Coins будет доступно через 14 дней.`;
     document.getElementById('accountItems').innerHTML = subscription.items.map(item => `
         <div class="account-item" data-id="${item.id}">
             <div class="account-item__img">${item.image ? `<img src="/static/${item.image}" alt="${item.name}">` : ''}</div>

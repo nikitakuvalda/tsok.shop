@@ -755,23 +755,61 @@ def _subscription_items_with_products(subscription):
     return enriched_items
 
 
+def _empty_box_quote():
+    return {
+        "plan_code": "",
+        "plan_label": "—",
+        "box_total": Decimal("0"),
+        "discount_percent": 0,
+        "discount_amount": Decimal("0"),
+        "payable_total": Decimal("0"),
+        "item_count": 0,
+        "free_delivery": False,
+        "vip_gift": "",
+        "bnpl": None,
+    }
+
+
+def _user_has_active_subscription(db_user):
+    return bool(db_user and db_user.get("subscription_status") in {"active", "paused"})
+
+
 def _current_subscription_state():
     db_user = _db_user(_current_user_id()) if _current_user_id() else None
     customer = {**DEMO_CUSTOMER}
     if db_user:
         customer.update({"name": db_user["name"], "email": db_user["email"], "phone": db_user.get("phone", ""), "city": db_user.get("city", ""), "address": db_user.get("address", ""), "loyalty_tier": db_user["loyalty_tier"], "tsok_coins": db_user["tsok_coins"], "annual_spend": db_user["annual_spend"]})
-    items = _subscription_items_with_products(DEMO_SUBSCRIPTION)
-    quote = _calculate_box_quote(items, DEMO_SUBSCRIPTION["plan_code"], DEMO_SUBSCRIPTION.get("vip_gift", ""))
-    next_charge = datetime.fromisoformat(DEMO_SUBSCRIPTION["next_charge_at"])
-    return {
-        "customer": customer,
-        "subscription": {
+
+    has_subscription = _user_has_active_subscription(db_user)
+    if has_subscription:
+        items = _subscription_items_with_products(DEMO_SUBSCRIPTION)
+        quote = _calculate_box_quote(items, DEMO_SUBSCRIPTION["plan_code"], DEMO_SUBSCRIPTION.get("vip_gift", ""))
+        next_charge = datetime.fromisoformat(DEMO_SUBSCRIPTION["next_charge_at"])
+        subscription = {
             **DEMO_SUBSCRIPTION,
+            "has_subscription": True,
             "next_charge_date": next_charge.strftime("%d.%m.%Y"),
             "items": _quote_items_to_json(items),
             "quote": _quote_to_json(quote),
             "vip_gift_label": GIFT_LABELS.get(DEMO_SUBSCRIPTION.get("vip_gift", ""), ""),
-        },
+        }
+    else:
+        subscription = {
+            "id": "",
+            "plan_code": "",
+            "status": db_user.get("subscription_status", "none") if db_user else "none",
+            "has_subscription": False,
+            "next_charge_at": "",
+            "next_charge_date": "—",
+            "vip_gift": "",
+            "items": [],
+            "quote": _quote_to_json(_empty_box_quote()),
+            "vip_gift_label": "",
+        }
+
+    return {
+        "customer": customer,
+        "subscription": subscription,
         "loyalty_rules": {
             "coins_rate": "1 Coin = 1 ₽",
             "coins_available_after_days": 14,
@@ -894,6 +932,8 @@ def account_subscription():
 
 @application.post("/api/account/subscription/swap")
 def account_subscription_swap():
+    if not _user_has_active_subscription(_db_user(_current_user_id())):
+        return jsonify({"error": "У вас пока нет активной подписки TSOK BOX."}), 400
     payload = request.get_json(silent=True) or {}
     raw_items = payload.get("items")
     if not isinstance(raw_items, list):
@@ -921,6 +961,8 @@ def account_subscription_swap():
 
 @application.post("/api/account/subscription/pause")
 def account_subscription_pause():
+    if not _user_has_active_subscription(_db_user(_current_user_id())):
+        return jsonify({"error": "У вас пока нет активной подписки TSOK BOX."}), 400
     skip_count = int(DEMO_SUBSCRIPTION.get("skip_count", 0))
     if skip_count >= 2:
         return jsonify({"error": "Лимит пропусков исчерпан: месяц можно пропустить не больше двух раз."}), 400
@@ -928,6 +970,8 @@ def account_subscription_pause():
     DEMO_SUBSCRIPTION["next_charge_at"] = next_charge.isoformat()
     DEMO_SUBSCRIPTION["skip_count"] = skip_count + 1
     DEMO_SUBSCRIPTION["status"] = "paused"
+    with get_connection() as conn:
+        conn.execute("UPDATE users SET subscription_status='paused', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
     return jsonify({"message": f"Месяц пропущен ({DEMO_SUBSCRIPTION['skip_count']}/2), следующее списание сдвинуто на 30 дней.", "state": _current_subscription_state()})
 
 
@@ -944,6 +988,8 @@ def account_loyalty_recalculate_tier():
 @application.post("/api/account/subscription/resume")
 def account_subscription_resume():
     DEMO_SUBSCRIPTION["status"] = "active"
+    with get_connection() as conn:
+        conn.execute("UPDATE users SET subscription_status='active', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
     DEMO_CUSTOMER["loyalty_tier"] = determine_loyalty_tier(
         DEMO_CUSTOMER.get("subscription_months", 0),
         DEMO_CUSTOMER.get("annual_spend", 0),
@@ -954,9 +1000,13 @@ def account_subscription_resume():
 
 @application.post("/api/account/subscription/cancel")
 def account_subscription_cancel():
+    if not _user_has_active_subscription(_db_user(_current_user_id())):
+        return jsonify({"error": "У вас пока нет активной подписки TSOK BOX."}), 400
     DEMO_SUBSCRIPTION["status"] = "cancelled"
     DEMO_SUBSCRIPTION["payment_token_id"] = ""
     DEMO_CUSTOMER["loyalty_tier"] = "Silver"
+    with get_connection() as conn:
+        conn.execute("UPDATE users SET subscription_status='cancelled', loyalty_tier='Silver', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
     return jsonify({"message": "Карта отвязана в платёжном шлюзе, подписка отменена, loyalty_tier понижен до Silver.", "state": _current_subscription_state()})
 
 
