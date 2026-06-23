@@ -786,8 +786,7 @@ def _current_subscription_state():
         "loyalty_events": DEMO_LOYALTY_EVENTS,
         "referral_claims": DEMO_REFERRAL_CLAIMS,
         "notifications": DEMO_NOTIFICATIONS,
-        "anti_churn_steps": ["loss", "offer", "final"],
-        "notification": "CRON-уведомление будет отправлено за 72 часа до списания; у клиента есть 48 часов на swap/pause.",
+        "catalog": _quote_items_to_json([{**product, "qty": 1, "line_total": Decimal(str(product["price"]))} for product in list_products()]),
     }
 
 
@@ -887,19 +886,6 @@ def account_notifications_schedule():
     return jsonify({"message": "Уведомление за 72 часа поставлено в демо-очередь.", "notification": notification})
 
 
-@application.post("/api/subscription-box/anti-churn")
-def subscription_anti_churn():
-    payload = request.get_json(silent=True) or {}
-    tier = str(payload.get("loyalty_tier") or "Silver")
-    step = str(payload.get("step") or "loss")
-    offers = {
-        "loss": f"При отмене подписки статус {tier} будет понижен до Silver, а повышенный кэшбек TSOK Coins отключится.",
-        "offer": "Останьтесь — добавим премиум-скраб за 0 ₽ в следующий бокс или поставим подписку на паузу на 30 дней.",
-        "final": "Карта будет отвязана в платёжном шлюзе, подписка отменена, loyalty_tier станет Silver.",
-    }
-    return jsonify({"step": step, "message": offers.get(step, offers["loss"])})
-
-
 @application.get("/api/account/subscription")
 @login_required
 def account_subscription():
@@ -935,10 +921,14 @@ def account_subscription_swap():
 
 @application.post("/api/account/subscription/pause")
 def account_subscription_pause():
+    skip_count = int(DEMO_SUBSCRIPTION.get("skip_count", 0))
+    if skip_count >= 2:
+        return jsonify({"error": "Лимит пропусков исчерпан: месяц можно пропустить не больше двух раз."}), 400
     next_charge = datetime.fromisoformat(DEMO_SUBSCRIPTION["next_charge_at"]) + timedelta(days=30)
     DEMO_SUBSCRIPTION["next_charge_at"] = next_charge.isoformat()
+    DEMO_SUBSCRIPTION["skip_count"] = skip_count + 1
     DEMO_SUBSCRIPTION["status"] = "paused"
-    return jsonify({"message": "Подписка поставлена на паузу, следующее списание сдвинуто на 30 дней.", "state": _current_subscription_state()})
+    return jsonify({"message": f"Месяц пропущен ({DEMO_SUBSCRIPTION['skip_count']}/2), следующее списание сдвинуто на 30 дней.", "state": _current_subscription_state()})
 
 
 @application.post("/api/account/loyalty/recalculate-tier")
@@ -967,7 +957,7 @@ def account_subscription_cancel():
     DEMO_SUBSCRIPTION["status"] = "cancelled"
     DEMO_SUBSCRIPTION["payment_token_id"] = ""
     DEMO_CUSTOMER["loyalty_tier"] = "Silver"
-    return jsonify({"message": "Карта отвязана в демо-шлюзе, подписка отменена, loyalty_tier понижен до Silver.", "state": _current_subscription_state()})
+    return jsonify({"message": "Карта отвязана в платёжном шлюзе, подписка отменена, loyalty_tier понижен до Silver.", "state": _current_subscription_state()})
 
 
 if __name__ == "__main__":
