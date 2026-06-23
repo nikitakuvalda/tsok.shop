@@ -17,13 +17,27 @@
         <div>
             <span class="label">TSOK CLUB</span>
             <h1 class="account-title">Личный кабинет<br><em>гибкой рутины</em></h1>
-            <p class="account-lead">Управляйте активной подпиской: меняйте состав, переносите списание, следите за TSOK Coins и проходите anti-churn сценарий без звонков менеджеру.</p>
+            <p class="account-lead">{{ user.name }}, это ваш индивидуальный кабинет. Здесь хранятся личные данные, подписка, TSOK Coins и история действий.</p>
         </div>
         <div class="account-status-card">
             <span>Статус</span>
             <strong id="accountTier">—</strong>
             <p id="accountCoins">— Coins</p>
         </div>
+    </section>
+
+    <section class="account-grid">
+        <article class="account-card account-card--wide">
+            <div class="account-card__head"><div><span class="label">Профиль</span><h2>Личные данные</h2></div><form method="post" action="{{ url_for('account_logout') }}"><button class="btn btn--outline-dark" type="submit">Выйти</button></form></div>
+            <form id="profileForm" class="admin-subscription-form">
+                <label>Имя<input name="name" value="{{ user.name }}" required></label>
+                <label>Email<input value="{{ user.email }}" disabled></label>
+                <label>Телефон<input name="phone" value="{{ user.phone }}"></label>
+                <label>Город<input name="city" value="{{ user.city }}"></label>
+                <label>Адрес<input name="address" value="{{ user.address }}"></label>
+                <button class="btn btn--dark w-100" type="submit">Сохранить личные данные</button>
+            </form>
+        </article>
     </section>
 
     <section class="account-grid">
@@ -203,6 +217,12 @@ document.addEventListener('click', async event => {
     }
 });
 
+document.getElementById('profileForm')?.addEventListener('submit', async event => {
+    event.preventDefault();
+    const payload = Object.fromEntries(new FormData(event.target).entries());
+    const data = await api('/api/account/profile', { method: 'POST', body: JSON.stringify(payload) });
+    document.getElementById('accountResult').textContent = data.message;
+});
 loadAccount().catch(error => { document.getElementById('accountResult').textContent = error.message; });
 </script>
 </body>

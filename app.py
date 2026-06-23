@@ -6,6 +6,8 @@ from decimal import Decimal, InvalidOperation
 
 import dotenv
 from functools import wraps
+from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
 
 from flask import Flask, Response, jsonify, make_response, redirect, render_template, request, session, url_for
 from yookassa import Configuration, Payment
@@ -22,7 +24,7 @@ from d2c import (
     money,
     referral_is_suspicious,
 )
-from db import PRODUCT_SEED, get_products_by_ids, init_products_table
+from db import PRODUCT_SEED, get_connection, get_products_by_ids, init_database, init_products_table, list_products
 
 
 class StaticSiteFlask(Flask):
@@ -37,6 +39,7 @@ application = StaticSiteFlask(__name__)
 
 dotenv.load_dotenv(override=True)
 application.secret_key = os.getenv("FLASK_SECRET_KEY", "tsok-dev-secret-change-me")
+init_database()
 
 YOOKASSA_SHOP_ID   = os.getenv("YOOKASSA_SHOP_ID", "")
 YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")
@@ -396,8 +399,8 @@ def _create_yookassa_payment(items, total, customer, delivery, quote=None, benef
 @application.cli.command("init-db")
 def init_db_command():
     """Create and seed PostgreSQL tables."""
-    init_products_table()
-    print("PostgreSQL products table is ready.")
+    init_database()
+    print("Database is ready.")
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -438,7 +441,18 @@ def subscription():
 
 
 def _admin_logged_in():
-    return session.get("admin_email") == DEMO_ADMIN["email"]
+    return bool(session.get("admin_user_id")) or session.get("admin_email") == DEMO_ADMIN["email"]
+
+def _current_user_id():
+    return session.get("user_id")
+
+def login_required(view):
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        if not _current_user_id():
+            return redirect(url_for("account_login", next=request.path))
+        return view(*args, **kwargs)
+    return wrapper
 
 
 def admin_required(view):
@@ -454,26 +468,30 @@ def _admin_money(value):
     return f"{Decimal(str(value)).quantize(Decimal('0.01'))} ₽"
 
 
+def _db_user(user_id):
+    with get_connection() as conn:
+        row = conn.execute("SELECT * FROM users WHERE id=?", (user_id,)).fetchone()
+    return dict(row) if row else None
+
+
 def _admin_state():
-    subscription_state = _current_subscription_state()
-    sales_total = sum((sale["total"] for sale in DEMO_SALES), Decimal("0"))
-    active_subscriptions = 1 if DEMO_SUBSCRIPTION.get("status") == "active" else 0
+    products = list_products(include_inactive=True)
+    with get_connection() as conn:
+        users = [dict(row) for row in conn.execute("SELECT id,name,email,phone,loyalty_tier,tsok_coins,annual_spend,subscription_status,role,created_at FROM users ORDER BY created_at DESC").fetchall()]
+        orders = [dict(row) for row in conn.execute("SELECT * FROM orders ORDER BY created_at DESC").fetchall()]
+    sales_total = sum((Decimal(str(order.get("total") or 0)) for order in orders), Decimal("0"))
+    active_subscriptions = sum(1 for user in users if user.get("subscription_status") == "active")
     return {
-        "admin": {"email": DEMO_ADMIN["email"], "name": DEMO_ADMIN["name"], "role": DEMO_ADMIN["role"]},
+        "admin": {"email": session.get("admin_email", DEMO_ADMIN["email"]), "name": DEMO_ADMIN["name"], "role": DEMO_ADMIN["role"]},
         "stats": {
-            "users": len(DEMO_USERS),
-            "sales_count": len(DEMO_SALES),
-            "sales_total": _admin_money(sales_total),
-            "active_subscriptions": active_subscriptions,
-            "coins_issued": sum(int(user.get("tsok_coins", 0)) for user in DEMO_USERS),
+            "users": len(users), "sales_count": len(orders), "sales_total": _admin_money(sales_total),
+            "active_subscriptions": active_subscriptions, "coins_issued": sum(int(user.get("tsok_coins", 0) or 0) for user in users),
         },
-        "users": DEMO_USERS,
-        "sales": [{**sale, "total_label": _admin_money(sale["total"])} for sale in DEMO_SALES],
-        "subscription": subscription_state["subscription"],
-        "loyalty_events": DEMO_LOYALTY_EVENTS,
-        "referral_claims": DEMO_REFERRAL_CLAIMS,
-        "notifications": DEMO_NOTIFICATIONS,
-        "products": [{"id": product_id, **product, "price_label": _admin_money(product["price"])} for product_id, product in PRODUCT_SEED.items()],
+        "users": users,
+        "sales": [{**sale, "total_label": _admin_money(sale.get("total") or 0)} for sale in orders],
+        "subscription": _current_subscription_state()["subscription"],
+        "loyalty_events": DEMO_LOYALTY_EVENTS, "referral_claims": DEMO_REFERRAL_CLAIMS, "notifications": DEMO_NOTIFICATIONS,
+        "products": [{**product, "price_label": _admin_money(product["price"])} for product in products],
         "credentials_hint": {"email": DEMO_ADMIN["email"], "password": DEMO_ADMIN["password"]},
     }
 
@@ -490,8 +508,11 @@ def admin_login():
     if request.method == "POST":
         email = (request.form.get("email") or "").strip().lower()
         password = request.form.get("password") or ""
-        if email == DEMO_ADMIN["email"].lower() and password == DEMO_ADMIN["password"]:
-            session["admin_email"] = DEMO_ADMIN["email"]
+        with get_connection() as conn:
+            admin = conn.execute("SELECT * FROM users WHERE lower(email)=? AND role='admin'", (email,)).fetchone()
+        if admin and check_password_hash(admin["password_hash"], password):
+            session["admin_user_id"] = admin["id"]
+            session["admin_email"] = admin["email"]
             return redirect(request.args.get("next") or url_for("admin_dashboard"))
         error = "Неверный email или пароль администратора."
     return render_template("admin_login.html", admin_email=DEMO_ADMIN["email"], admin_password=DEMO_ADMIN["password"], error=error)
@@ -501,6 +522,7 @@ def admin_login():
 @admin_required
 def admin_logout():
     session.pop("admin_email", None)
+    session.pop("admin_user_id", None)
     return redirect(url_for("admin_login"))
 
 
@@ -514,25 +536,64 @@ def admin_state_api():
 @admin_required
 def admin_update_user(user_id):
     payload = request.get_json(silent=True) or {}
-    user = next((item for item in DEMO_USERS if item["id"] == user_id), None)
-    if not user:
-        return jsonify({"error": "Пользователь не найден."}), 404
-    for field in ["name", "email", "phone", "loyalty_tier", "subscription_status"]:
-        if field in payload:
-            user[field] = str(payload[field])[:160]
-    for field in ["tsok_coins", "annual_spend"]:
-        if field in payload:
-            try:
-                user[field] = int(payload[field])
-            except (TypeError, ValueError):
-                return jsonify({"error": f"Поле {field} должно быть числом."}), 400
-    if user["email"] == DEMO_CUSTOMER["email"]:
-        DEMO_CUSTOMER["name"] = user["name"]
-        DEMO_CUSTOMER["loyalty_tier"] = user["loyalty_tier"]
-        DEMO_CUSTOMER["tsok_coins"] = user["tsok_coins"]
-        DEMO_CUSTOMER["annual_spend"] = user["annual_spend"]
-    return jsonify({"message": "Пользователь обновлён.", "user": user, "state": _admin_state()})
+    allowed = {"name","email","phone","loyalty_tier","subscription_status","tsok_coins","annual_spend"}
+    fields = {k: payload[k] for k in allowed if k in payload}
+    if not fields: return jsonify({"error":"Нет полей для обновления."}), 400
+    if "tsok_coins" in fields: fields["tsok_coins"] = int(fields["tsok_coins"] or 0)
+    if "annual_spend" in fields: fields["annual_spend"] = int(fields["annual_spend"] or 0)
+    sets = ", ".join(f"{k}=?" for k in fields) + ", updated_at=CURRENT_TIMESTAMP"
+    with get_connection() as conn:
+        cur = conn.execute(f"UPDATE users SET {sets} WHERE id=?", [*fields.values(), user_id])
+        if cur.rowcount == 0: return jsonify({"error":"Пользователь не найден."}), 404
+    return jsonify({"message":"Пользователь обновлён в базе.", "state": _admin_state()})
 
+
+
+@application.post("/api/admin/products")
+@admin_required
+def admin_create_product():
+    payload = request.form if request.form else (request.get_json(silent=True) or {})
+    product_id = (payload.get("id") or f"prod-{uuid.uuid4().hex[:8]}").strip()
+    image = (payload.get("image") or "").strip()
+    file = request.files.get("image_file") if request.files else None
+    if file and file.filename:
+        filename = secure_filename(file.filename)
+        image = f"img/{uuid.uuid4().hex[:6]}-{filename}"
+        file.save(os.path.join(application.static_folder, image))
+    with get_connection() as conn:
+        conn.execute("""INSERT INTO products(id,name,price,size,brand,category,description,image,is_active)
+        VALUES(?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET name=excluded.name, price=excluded.price, size=excluded.size,
+        brand=excluded.brand, category=excluded.category, description=excluded.description, image=excluded.image,
+        is_active=excluded.is_active, updated_at=CURRENT_TIMESTAMP""", (
+            product_id, payload.get("name","Новый товар"), str(payload.get("price") or 0), payload.get("size",""),
+            payload.get("brand",""), payload.get("category","tais"), payload.get("description",""), image, int(payload.get("is_active", 1))
+        ))
+    return redirect(url_for("admin_dashboard"))
+
+@application.post("/api/admin/products/<product_id>")
+@admin_required
+def admin_update_product(product_id):
+    payload = request.form if request.form else (request.get_json(silent=True) or {})
+    fields = {k: payload.get(k) for k in ["name","price","size","brand","category","description","image","is_active"] if k in payload}
+    file = request.files.get("image_file") if request.files else None
+    if file and file.filename:
+        filename = secure_filename(file.filename)
+        fields["image"] = f"img/{uuid.uuid4().hex[:6]}-{filename}"
+        file.save(os.path.join(application.static_folder, fields["image"]))
+    if "is_active" in fields: fields["is_active"] = int(fields["is_active"])
+    with get_connection() as conn:
+        conn.execute(f"UPDATE products SET {', '.join(f'{k}=?' for k in fields)}, updated_at=CURRENT_TIMESTAMP WHERE id=?", [*fields.values(), product_id])
+    return redirect(url_for("admin_dashboard"))
+
+@application.post("/api/admin/orders/<order_id>")
+@admin_required
+def admin_update_order(order_id):
+    payload = request.get_json(silent=True) or {}
+    fields = {k: payload[k] for k in ["status","type","total","items_count","payment_provider","comment"] if k in payload}
+    if not fields: return jsonify({"error":"Нет полей для обновления."}), 400
+    with get_connection() as conn:
+        conn.execute(f"UPDATE orders SET {', '.join(f'{k}=?' for k in fields)}, updated_at=CURRENT_TIMESTAMP WHERE id=?", [*fields.values(), order_id])
+    return jsonify({"message":"Заказ обновлён в базе.", "state": _admin_state()})
 
 @application.post("/api/admin/subscription")
 @admin_required
@@ -557,8 +618,62 @@ def checkout():
 
 @application.route("/account")
 @application.route("/account.html")
+@login_required
 def account():
-    return render_template("account.html")
+    return render_template("account.html", user=_db_user(_current_user_id()))
+
+@application.route("/login", methods=["GET", "POST"])
+def account_login():
+    error = ""
+    if request.method == "POST":
+        email = (request.form.get("email") or "").strip().lower()
+        password = request.form.get("password") or ""
+        with get_connection() as conn:
+            user = conn.execute("SELECT * FROM users WHERE lower(email)=? AND role='customer'", (email,)).fetchone()
+        if user and check_password_hash(user["password_hash"], password):
+            session["user_id"] = user["id"]
+            return redirect(request.args.get("next") or url_for("account"))
+        error = "Неверный email или пароль."
+    return render_template("account_login.html", error=error)
+
+@application.route("/register", methods=["GET", "POST"])
+def account_register():
+    error = ""
+    if request.method == "POST":
+        user_id = f"usr-{uuid.uuid4().hex[:10]}"
+        name = (request.form.get("name") or "").strip()
+        email = (request.form.get("email") or "").strip().lower()
+        password = request.form.get("password") or ""
+        phone = (request.form.get("phone") or "").strip()
+        city = (request.form.get("city") or "").strip()
+        address = (request.form.get("address") or "").strip()
+        if not name or not email or len(password) < 6:
+            error = "Укажите имя, email и пароль от 6 символов."
+        else:
+            try:
+                with get_connection() as conn:
+                    conn.execute("INSERT INTO users(id,name,email,password_hash,phone,city,address) VALUES(?,?,?,?,?,?,?)", (user_id, name, email, generate_password_hash(password), phone, city, address))
+                session["user_id"] = user_id
+                return redirect(url_for("account"))
+            except Exception:
+                error = "Такой email уже зарегистрирован."
+    return render_template("account_register.html", error=error)
+
+@application.post("/logout")
+def account_logout():
+    session.pop("user_id", None)
+    return redirect(url_for("account_login"))
+
+@application.post("/api/account/profile")
+@login_required
+def account_profile_update():
+    payload = request.get_json(silent=True) or request.form
+    fields = {k: str(payload.get(k) or "").strip()[:255] for k in ["name", "phone", "city", "address"] if k in payload}
+    if not fields: return jsonify({"error":"Нет данных для сохранения."}), 400
+    sets = ", ".join(f"{k}=?" for k in fields) + ", updated_at=CURRENT_TIMESTAMP"
+    with get_connection() as conn:
+        conn.execute(f"UPDATE users SET {sets} WHERE id=?", [*fields.values(), _current_user_id()])
+    return jsonify({"message":"Личные данные сохранены в базе.", "user": _db_user(_current_user_id())})
 
 
 @application.route("/payment/success")
@@ -632,11 +747,15 @@ def _subscription_items_with_products(subscription):
 
 
 def _current_subscription_state():
+    db_user = _db_user(_current_user_id()) if _current_user_id() else None
+    customer = {**DEMO_CUSTOMER}
+    if db_user:
+        customer.update({"name": db_user["name"], "email": db_user["email"], "phone": db_user.get("phone", ""), "city": db_user.get("city", ""), "address": db_user.get("address", ""), "loyalty_tier": db_user["loyalty_tier"], "tsok_coins": db_user["tsok_coins"], "annual_spend": db_user["annual_spend"]})
     items = _subscription_items_with_products(DEMO_SUBSCRIPTION)
     quote = _calculate_box_quote(items, DEMO_SUBSCRIPTION["plan_code"], DEMO_SUBSCRIPTION.get("vip_gift", ""))
     next_charge = datetime.fromisoformat(DEMO_SUBSCRIPTION["next_charge_at"])
     return {
-        "customer": DEMO_CUSTOMER,
+        "customer": customer,
         "subscription": {
             **DEMO_SUBSCRIPTION,
             "next_charge_date": next_charge.strftime("%d.%m.%Y"),
@@ -773,6 +892,7 @@ def subscription_anti_churn():
 
 
 @application.get("/api/account/subscription")
+@login_required
 def account_subscription():
     return jsonify(_current_subscription_state())
 
