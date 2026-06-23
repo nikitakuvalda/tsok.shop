@@ -479,8 +479,17 @@ def _admin_state():
     with get_connection() as conn:
         users = [dict(row) for row in conn.execute("SELECT id,name,email,phone,loyalty_tier,tsok_coins,annual_spend,subscription_status,role,created_at FROM users ORDER BY created_at DESC").fetchall()]
         orders = [dict(row) for row in conn.execute("SELECT * FROM orders ORDER BY created_at DESC").fetchall()]
+        subscriptions = [dict(row) for row in conn.execute("""
+            SELECT s.id, s.user_id, s.status, s.plan_code, s.next_charge_at, s.vip_gift, s.items, s.payment_token_id, s.updated_at,
+                   u.name AS customer_name, u.email AS customer_email, u.phone AS customer_phone
+            FROM subscriptions s
+            LEFT JOIN users u ON u.id = s.user_id
+            ORDER BY COALESCE(s.next_charge_at, s.updated_at) DESC
+        """).fetchall()]
     sales_total = sum((Decimal(str(order.get("total") or 0)) for order in orders), Decimal("0"))
-    active_subscriptions = sum(1 for user in users if user.get("subscription_status") == "active")
+    active_subscriptions = sum(1 for sub in subscriptions if sub.get("status") == "active")
+    if not subscriptions:
+        active_subscriptions = sum(1 for user in users if user.get("subscription_status") == "active")
     return {
         "admin": {"email": session.get("admin_email", DEMO_ADMIN["email"]), "name": DEMO_ADMIN["name"], "role": DEMO_ADMIN["role"]},
         "stats": {
@@ -489,7 +498,7 @@ def _admin_state():
         },
         "users": users,
         "sales": [{**sale, "total_label": _admin_money(sale.get("total") or 0)} for sale in orders],
-        "subscription": _current_subscription_state()["subscription"],
+        "active_subscriptions": subscriptions,
         "loyalty_events": DEMO_LOYALTY_EVENTS, "referral_claims": DEMO_REFERRAL_CLAIMS, "notifications": DEMO_NOTIFICATIONS,
         "products": [{**product, "price_label": _admin_money(product["price"])} for product in products],
         "credentials_hint": {"email": DEMO_ADMIN["email"], "password": DEMO_ADMIN["password"]},
@@ -568,7 +577,7 @@ def admin_create_product():
             product_id, payload.get("name","Новый товар"), str(payload.get("price") or 0), payload.get("size",""),
             payload.get("brand",""), payload.get("category","tais"), payload.get("description",""), image, int(payload.get("is_active", 1))
         ))
-    return redirect(url_for("admin_dashboard"))
+    return redirect(url_for("admin_dashboard") + "#catalog-admin")
 
 @application.post("/api/admin/products/<product_id>")
 @admin_required
@@ -583,7 +592,7 @@ def admin_update_product(product_id):
     if "is_active" in fields: fields["is_active"] = int(fields["is_active"])
     with get_connection() as conn:
         conn.execute(f"UPDATE products SET {', '.join(f'{k}=?' for k in fields)}, updated_at=CURRENT_TIMESTAMP WHERE id=?", [*fields.values(), product_id])
-    return redirect(url_for("admin_dashboard"))
+    return redirect(url_for("admin_dashboard") + "#catalog-admin")
 
 @application.post("/api/admin/orders/<order_id>")
 @admin_required
