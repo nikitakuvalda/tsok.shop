@@ -49,19 +49,18 @@
                 </div>
                 <strong class="account-pill" id="subscriptionStatus">—</strong>
             </div>
-            <div class="account-metrics">
-                <div><span>Дата списания</span><strong id="nextChargeDate">—</strong></div>
+            <div class="account-metrics account-metrics--subscription">
+                <div><span>Дата следующего списания</span><strong id="nextChargeDate">—</strong></div>
+                <div><span>К оплате в эту дату</span><strong id="payableTotal">—</strong></div>
                 <div><span>Тариф</span><strong id="planLabel">—</strong></div>
-                <div><span>К оплате</span><strong id="payableTotal">—</strong></div>
-                <div><span>BNPL</span><strong id="bnplInfo">—</strong></div>
+                <div><span>Стоимость тарифа</span><strong id="planTotal">—</strong></div>
             </div>
-            <p class="account-note" id="cronNote">—</p>
         </article>
 
         <article class="account-card">
             <span class="label">Referral</span>
             <h2>Refer-a-Friend</h2>
-            <p>Новый клиент получает −10% на первый заказ, а вы — 500 TSOK Coins после успешной доставки. Anti-fraud проверяет IP, device fingerprint и карту.</p>
+            <p>Новый клиент получает −10% на первый заказ, а вы — 500 TSOK Coins после успешной доставки.</p>
             <div class="ref-code" id="referralCode">—</div>
         </article>
     </section>
@@ -70,29 +69,27 @@
         <article class="account-card account-card--wide">
             <div class="account-card__head">
                 <div>
-                    <span class="label">Swap</span>
+                    <span class="label">Box</span>
                     <h2>Состав активного бокса</h2>
                 </div>
-                <button class="btn btn--outline-dark" type="button" id="saveSwapBtn">Сохранить состав</button>
+                <button class="btn btn--outline-dark" type="button" id="saveBoxBtn">Сохранить состав</button>
+            </div>
+            <div class="account-empty-box" id="accountEmptyBox" hidden>
+                <strong>У вас пока нет активного TSOK BOX</strong>
+                <p>Соберите бокс на странице подписки — после оформления он появится в личном кабинете.</p>
+                <a class="btn btn--dark" href="{{ url_for('subscription') }}">Собрать TSOK BOX</a>
             </div>
             <div class="account-items" id="accountItems"></div>
-            <p class="account-note">Нельзя опустить состав ниже 3 товаров. После сохранения сумма следующего автосписания пересчитывается на backend.</p>
+            <button class="account-add-item" type="button" id="addBoxItemBtn"><span>+</span> Добавить товар в бокс</button>
+            <p class="account-note">Нельзя опустить состав ниже 3 товаров. После сохранения сумма следующего автосписания пересчитывается автоматически.</p>
         </article>
 
         <aside class="account-card">
-            <span class="label">Anti-churn</span>
-            <h2>Удержание</h2>
-            <ol class="churn-list">
-                <li>Показываем потерю статуса и кэшбэка.</li>
-                <li>Предлагаем премиум-скраб или паузу на 30 дней.</li>
-                <li>При финальном отказе отвязываем карту и понижаем tier до Silver.</li>
-            </ol>
+            <span class="label">Действия</span>
+            <h2>Управление подпиской</h2>
+            <p>Можно пропустить месяц не больше двух раз или полностью отменить подписку.</p>
             <div class="account-actions">
                 <button class="btn btn--dark w-100" type="button" id="pauseBtn">Пропустить месяц</button>
-                <button class="btn btn--outline-dark w-100" type="button" id="resumeBtn">Возобновить подписку</button>
-                <button class="btn btn--outline-dark w-100" type="button" id="recalcTierBtn">Пересчитать грейд</button>
-                <button class="btn btn--outline-dark w-100" type="button" id="scheduleNotifyBtn">Запланировать 72h уведомление</button>
-                <button class="btn btn--outline-dark w-100" type="button" id="accrueCoinsBtn">Смоделировать доставку и Coins</button>
                 <button class="btn btn--outline-dark w-100" type="button" id="cancelBtn">Отменить подписку</button>
             </div>
             <p class="account-result" id="accountResult"></p>
@@ -100,10 +97,31 @@
     </section>
 </main>
 
+<div class="account-confirm" id="accountConfirm" aria-hidden="true">
+    <div class="account-confirm__card" role="dialog" aria-modal="true" aria-labelledby="accountConfirmTitle">
+        <span class="label">TSOK BOX</span>
+        <h3 id="accountConfirmTitle">Вы уверены?</h3>
+        <p id="accountConfirmText">Подтвердите действие.</p>
+        <div class="account-confirm__actions">
+            <button class="btn btn--outline-dark" type="button" data-confirm="no">Нет</button>
+            <button class="btn btn--dark" type="button" data-confirm="yes">Да</button>
+        </div>
+    </div>
+</div>
+
+<div class="account-picker" id="accountPicker" aria-hidden="true">
+    <div class="account-picker__card" role="dialog" aria-modal="true" aria-labelledby="accountPickerTitle">
+        <button class="account-picker__close" type="button" id="closePickerBtn">×</button>
+        <span class="label">Каталог</span>
+        <h3 id="accountPickerTitle">Выберите товар</h3>
+        <div class="account-picker__grid" id="accountPickerGrid"></div>
+    </div>
+</div>
+
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 <script>
 'use strict';
-const accountState = { items: [] };
+const accountState = { items: [], catalog: [], replaceId: null };
 const savedProfile = JSON.parse(localStorage.getItem('tsok_customer_profile') || 'null');
 
 function money(value) { return `${Number(value || 0).toFixed(0)} ₽`; }
@@ -126,16 +144,22 @@ function renderAccount(state) {
 
     document.getElementById('accountTier').textContent = customer.loyalty_tier;
     document.getElementById('accountCoins').textContent = `${customer.tsok_coins} TSOK Coins`;
-    document.getElementById('subscriptionStatus').textContent = subscription.status;
+    const hasSubscription = Boolean(subscription.has_subscription);
+    document.getElementById('subscriptionStatus').textContent = hasSubscription ? subscription.status : 'нет подписки';
     document.getElementById('nextChargeDate').textContent = subscription.next_charge_date;
     document.getElementById('planLabel').textContent = subscription.quote.plan_label;
     document.getElementById('payableTotal').textContent = money(subscription.quote.payable_total);
-    document.getElementById('bnplInfo').textContent = subscription.quote.bnpl ? `сегодня ${subscription.quote.bnpl.today_payment} ₽` : '—';
-    document.getElementById('cronNote').textContent = state.notification;
+    document.getElementById('planTotal').textContent = money(subscription.quote.box_total);
+    accountState.catalog = state.catalog || [];
     document.getElementById('referralCode').textContent = customer.referral_code;
-    if (state.loyalty_events?.length) document.getElementById('accountResult').textContent = `Последнее начисление: ${state.loyalty_events.at(-1).coins_delta} Coins будет доступно через 14 дней.`;
-    if (state.notifications?.length) document.getElementById('cronNote').textContent = `${state.notification} Следующая отправка: ${new Date(state.notifications.at(-1).send_at).toLocaleString('ru-RU')}`;
-
+    document.getElementById('accountEmptyBox').hidden = hasSubscription;
+    document.getElementById('accountItems').hidden = !hasSubscription;
+    document.getElementById('addBoxItemBtn').hidden = !hasSubscription;
+    document.getElementById('saveBoxBtn').disabled = !hasSubscription;
+    document.getElementById('pauseBtn').disabled = !hasSubscription;
+    document.getElementById('cancelBtn').disabled = !hasSubscription;
+    if (!hasSubscription) document.getElementById('accountResult').textContent = '';
+    if (hasSubscription && state.loyalty_events?.length) document.getElementById('accountResult').textContent = `Последнее начисление: ${state.loyalty_events.at(-1).coins_delta} Coins будет доступно через 14 дней.`;
     document.getElementById('accountItems').innerHTML = subscription.items.map(item => `
         <div class="account-item" data-id="${item.id}">
             <div class="account-item__img">${item.image ? `<img src="/static/${item.image}" alt="${item.name}">` : ''}</div>
@@ -143,13 +167,57 @@ function renderAccount(state) {
                 <strong>${item.name}</strong>
                 <span>${item.brand} · ${item.size} · ${money(item.price)}</span>
             </div>
-            <div class="quantity-selector">
-                <button type="button" data-delta="-1">−</button>
-                <span>${item.qty}</span>
-                <button type="button" data-delta="1">+</button>
+            <div class="account-item__controls">
+                <div class="quantity-selector">
+                    <button type="button" data-delta="-1">−</button>
+                    <span>${item.qty}</span>
+                    <button type="button" data-delta="1">+</button>
+                </div>
+                <button class="account-link-btn" type="button" data-action="replace">Заменить</button>
+                <button class="account-link-btn" type="button" data-action="remove">Удалить</button>
             </div>
         </div>
     `).join('');
+}
+
+
+function isMobileConfirm() { return window.matchMedia('(max-width: 768px)').matches; }
+
+function askConfirm(text) {
+    if (isMobileConfirm()) return Promise.resolve(confirm(`Вы уверены?\n\n${text}`));
+    const modal = document.getElementById('accountConfirm');
+    document.getElementById('accountConfirmText').textContent = text;
+    modal.classList.add('is-active');
+    modal.setAttribute('aria-hidden', 'false');
+    return new Promise(resolve => {
+        const handler = event => {
+            const answer = event.target.closest('[data-confirm]');
+            if (!answer) return;
+            modal.classList.remove('is-active');
+            modal.setAttribute('aria-hidden', 'true');
+            modal.removeEventListener('click', handler);
+            resolve(answer.dataset.confirm === 'yes');
+        };
+        modal.addEventListener('click', handler);
+    });
+}
+
+function openPicker(replaceId = null) {
+    accountState.replaceId = replaceId;
+    document.getElementById('accountPickerGrid').innerHTML = accountState.catalog.map(item => `
+        <button class="account-picker__item" type="button" data-pick-id="${item.id}">
+            <span class="account-picker__img">${item.image ? `<img src="/static/${item.image}" alt="${item.name}">` : ''}</span>
+            <strong>${item.name}</strong>
+            <small>${item.brand} · ${item.size} · ${money(item.price)}</small>
+        </button>
+    `).join('');
+    document.getElementById('accountPicker').classList.add('is-active');
+    document.getElementById('accountPicker').setAttribute('aria-hidden', 'false');
+}
+
+function closePicker() {
+    document.getElementById('accountPicker').classList.remove('is-active');
+    document.getElementById('accountPicker').setAttribute('aria-hidden', 'true');
 }
 
 async function loadAccount() {
@@ -162,12 +230,49 @@ document.addEventListener('click', async event => {
     if (qtyBtn) {
         const row = qtyBtn.closest('.account-item');
         const item = accountState.items.find(entry => entry.id === row.dataset.id);
-        item.qty = Math.max(0, item.qty + Number(qtyBtn.dataset.delta));
+        item.qty = Math.max(1, item.qty + Number(qtyBtn.dataset.delta));
         row.querySelector('.quantity-selector span').textContent = item.qty;
         return;
     }
 
-    if (event.target.id === 'saveSwapBtn') {
+    const itemAction = event.target.closest('.account-link-btn');
+    if (itemAction) {
+        const row = itemAction.closest('.account-item');
+        if (itemAction.dataset.action === 'replace') openPicker(row.dataset.id);
+        if (itemAction.dataset.action === 'remove') {
+            accountState.items = accountState.items.filter(entry => entry.id !== row.dataset.id);
+            row.remove();
+        }
+        return;
+    }
+
+    if (event.target.closest('#addBoxItemBtn')) { openPicker(); return; }
+    if (event.target.closest('#closePickerBtn')) { closePicker(); return; }
+
+    const picked = event.target.closest('[data-pick-id]');
+    if (picked) {
+        const pickedId = picked.dataset.pickId;
+        if (accountState.replaceId) {
+            const item = accountState.items.find(entry => entry.id === accountState.replaceId);
+            const duplicate = accountState.items.find(entry => entry.id === pickedId);
+            if (item && duplicate && item !== duplicate) {
+                duplicate.qty += item.qty;
+                accountState.items = accountState.items.filter(entry => entry !== item);
+            } else if (item) {
+                item.id = pickedId;
+            }
+        } else {
+            const existing = accountState.items.find(entry => entry.id === pickedId);
+            if (existing) existing.qty += 1; else accountState.items.push({ id: pickedId, qty: 1 });
+        }
+        closePicker();
+        const data = await api('/api/account/subscription/swap', { method: 'POST', body: JSON.stringify({ items: accountState.items }) });
+        document.getElementById('accountResult').textContent = data.message;
+        renderAccount(data.state);
+        return;
+    }
+
+    if (event.target.id === 'saveBoxBtn') {
         try {
             const data = await api('/api/account/subscription/swap', { method: 'POST', body: JSON.stringify({ items: accountState.items }) });
             document.getElementById('accountResult').textContent = data.message;
@@ -176,46 +281,18 @@ document.addEventListener('click', async event => {
     }
 
     if (event.target.id === 'pauseBtn') {
+        if (!await askConfirm('Пропустить ближайший месяц подписки? Доступно не больше двух пропусков.')) return;
         const data = await api('/api/account/subscription/pause', { method: 'POST', body: '{}' });
         document.getElementById('accountResult').textContent = data.message;
         renderAccount(data.state);
     }
 
-    if (event.target.id === 'resumeBtn') {
-        const data = await api('/api/account/subscription/resume', { method: 'POST', body: '{}' });
-        document.getElementById('accountResult').textContent = data.message;
-        renderAccount(data.state);
-    }
-
-    if (event.target.id === 'recalcTierBtn') {
-        const data = await api('/api/account/loyalty/recalculate-tier', { method: 'POST', body: '{}' });
-        document.getElementById('accountResult').textContent = data.message;
-        renderAccount(data.state);
-    }
-
-    if (event.target.id === 'scheduleNotifyBtn') {
-        const data = await api('/api/account/notifications/schedule', { method: 'POST', body: '{}' });
-        document.getElementById('accountResult').textContent = data.message;
-        await loadAccount();
-    }
-
-    if (event.target.id === 'accrueCoinsBtn') {
-        const total = document.getElementById('payableTotal').textContent.replace(/[^0-9.]/g, '') || '0';
-        const data = await api('/api/account/loyalty/accrue', { method: 'POST', body: JSON.stringify({ delivered_total: total }) });
-        document.getElementById('accountResult').textContent = data.message;
-        await loadAccount();
-    }
-
     if (event.target.id === 'cancelBtn') {
-        const loss = await api('/api/subscription-box/anti-churn', { method: 'POST', body: JSON.stringify({ step: 'loss', loyalty_tier: document.getElementById('accountTier').textContent }) });
-        if (!confirm(`${loss.message}\n\nПродолжить отмену?`)) return;
-        const offer = await api('/api/subscription-box/anti-churn', { method: 'POST', body: JSON.stringify({ step: 'offer' }) });
-        if (!confirm(`${offer.message}\n\nОтказаться от оффера и отменить?`)) return;
+        if (!await askConfirm('Отменить подписку? Карта будет отвязана, а статус TSOK CLUB понизится до Silver.')) return;
         const data = await api('/api/account/subscription/cancel', { method: 'POST', body: '{}' });
         document.getElementById('accountResult').textContent = data.message;
         renderAccount(data.state);
-    }
-});
+    }});
 
 document.getElementById('profileForm')?.addEventListener('submit', async event => {
     event.preventDefault();
