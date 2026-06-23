@@ -69,13 +69,13 @@
                 <div class="admin-panel__head"><div><span class="label">Commerce</span><h2>Продажи</h2></div></div>
                 <div class="admin-timeline">
                     {% for sale in state.sales %}
-                    <div class="admin-timeline-item"><strong>{{ sale.id }} · {{ sale.total_label }}</strong><span>{{ sale.customer_name }} · {{ sale.type }} · {{ sale.status }}</span><small>{{ sale.created_at }} · {{ sale.items_count }} поз. · {{ sale.payment_provider }}</small></div>
+                    <div class="admin-timeline-item" data-order-id="{{ sale.id }}"><strong>{{ sale.id }} · {{ sale.total_label }}</strong><span>{{ sale.customer_name }} · {{ sale.type }} · <b contenteditable data-order-field="status">{{ sale.status }}</b></span><small>{{ sale.created_at }} · <span contenteditable data-order-field="items_count">{{ sale.items_count }}</span> поз. · <span contenteditable data-order-field="payment_provider">{{ sale.payment_provider }}</span></small><button class="admin-mini-btn" type="button" data-save-order>Сохранить заказ</button></div>
                     {% endfor %}
                 </div>
             </article>
 
             <article class="admin-panel" id="subscriptions">
-                <div class="admin-panel__head"><div><span class="label">D2C</span><h2>Подписка</h2></div></div>
+                <div class="admin-panel__head"><div><span class="label">Subscriptions</span><h2>Подписка</h2></div></div>
                 <form class="admin-subscription-form" id="adminSubscriptionForm">
                     <label>Статус<input name="status" value="{{ state.subscription.status }}"></label>
                     <label>Тариф<select name="plan_code">
@@ -91,10 +91,28 @@
         </section>
 
         <section class="admin-panel" id="catalog-admin">
-            <div class="admin-panel__head"><div><span class="label">Inventory</span><h2>Каталог</h2></div></div>
+            <div class="admin-panel__head"><div><span class="label">Inventory</span><h2>Каталог из базы данных</h2></div></div>
+            <form class="admin-subscription-form" method="post" action="{{ url_for('admin_create_product') }}" enctype="multipart/form-data">
+                <label>ID<input name="id" placeholder="prod-001"></label><label>Название<input name="name" required></label>
+                <label>Цена<input name="price" type="number" step="0.01" required></label><label>Размер<input name="size"></label>
+                <label>Бренд<input name="brand"></label><label>Линейка<select name="category"><option value="tais">tais</option><option value="intelegent">intelegent</option></select></label>
+                <label>Описание<input name="description"></label><label>Картинка<input name="image_file" type="file" accept="image/*"></label>
+                <button class="btn btn--dark w-100" type="submit">Добавить товар</button>
+            </form>
             <div class="admin-product-grid">
                 {% for product in state.products %}
-                <article><img src="{{ url_for('static', filename=product.image) }}" alt=""><strong>{{ product.name }}</strong><span>{{ product.brand }} · {{ product.size }}</span><b>{{ product.price_label }}</b></article>
+                <article>
+                    <img src="{{ url_for('static', filename=product.image) }}" alt="">
+                    <form method="post" action="{{ url_for('admin_update_product', product_id=product.id) }}" enctype="multipart/form-data" class="admin-subscription-form">
+                        <strong>{{ product.id }}</strong>
+                        <input name="name" value="{{ product.name }}"><input name="price" type="number" step="0.01" value="{{ product.price }}">
+                        <input name="brand" value="{{ product.brand }}"><input name="size" value="{{ product.size }}">
+                        <select name="category"><option value="tais" {% if product.category == 'tais' %}selected{% endif %}>tais</option><option value="intelegent" {% if product.category == 'intelegent' %}selected{% endif %}>intelegent</option></select>
+                        <input name="description" value="{{ product.description }}"><input name="image_file" type="file" accept="image/*">
+                        <input type="hidden" name="is_active" value="0"><label><input name="is_active" type="checkbox" value="1" {% if product.is_active %}checked{% endif %}> Активен</label>
+                        <button class="admin-mini-btn" type="submit">Сохранить товар</button>
+                    </form>
+                </article>
                 {% endfor %}
             </div>
         </section>
@@ -112,13 +130,22 @@ function adminToast(message){ const el=document.getElementById('adminToast'); el
 document.addEventListener('click', async (event)=>{
     if (event.target.matches('[data-admin-refresh]')) window.location.reload();
     const saveBtn = event.target.closest('[data-save-user]');
-    if (!saveBtn) return;
-    const row = saveBtn.closest('[data-user-id]');
-    const payload = {};
-    row.querySelectorAll('[data-field]').forEach(cell => payload[cell.dataset.field] = cell.textContent.trim());
-    const res = await fetch(`/api/admin/users/${row.dataset.userId}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
-    const data = await res.json();
-    adminToast(data.message || data.error || 'Готово');
+    if (saveBtn) {
+        const row = saveBtn.closest('[data-user-id]');
+        const payload = {};
+        row.querySelectorAll('[data-field]').forEach(cell => payload[cell.dataset.field] = cell.textContent.trim());
+        const res = await fetch(`/api/admin/users/${row.dataset.userId}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+        const data = await res.json(); adminToast(data.message || data.error || 'Готово');
+        return;
+    }
+    const orderBtn = event.target.closest('[data-save-order]');
+    if (orderBtn) {
+        const row = orderBtn.closest('[data-order-id]');
+        const payload = {};
+        row.querySelectorAll('[data-order-field]').forEach(cell => payload[cell.dataset.orderField] = cell.textContent.trim());
+        const res = await fetch(`/api/admin/orders/${row.dataset.orderId}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)});
+        const data = await res.json(); adminToast(data.message || data.error || 'Готово');
+    }
 });
 document.getElementById('adminSubscriptionForm')?.addEventListener('submit', async (event)=>{
     event.preventDefault();

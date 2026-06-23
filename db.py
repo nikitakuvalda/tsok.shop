@@ -1,113 +1,71 @@
 import os
+import sqlite3
 from contextlib import contextmanager
 from decimal import Decimal
-
-try:
-    import psycopg
-    from psycopg.rows import dict_row
-except ImportError:  # pragma: no cover - local environments install requirements.txt
-    psycopg = None
-    dict_row = None
-
-from cache import PRODUCT_CACHE_TTL, cache_get_json, cache_set_json
+from pathlib import Path
+from werkzeug.security import generate_password_hash
 
 DATABASE_URL = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL") or os.getenv("POSTGRES_DSN")
+SQLITE_PATH = os.getenv("SQLITE_PATH", str(Path(__file__).with_name("tsok.sqlite3")))
 
 PRODUCT_SEED = {
-    "pearl-01": {"name": "Foam Mousse Moisture", "price": Decimal("96"), "size": "150 мл", "brand": "Pearl by Tais", "image": "img/Pearl1.jpg"},
-    "pearl-02": {"name": "Face Tonic Toning", "price": Decimal("93"), "size": "150 мл", "brand": "Pearl by Tais", "image": "img/Pearl2.jpg"},
-    "pearl-03": {"name": "Tonic Youth Restoring", "price": Decimal("93"), "size": "150 мл", "brand": "Pearl by Tais", "image": "img/Pearl3.jpg"},
-    "pearl-04": {"name": "Foam Mousse Cleansing", "price": Decimal("96"), "size": "150 мл", "brand": "Pearl by Tais", "image": "img/Pearl4.jpg"},
-    "pearl-05": {"name": "Hair Tonic Radiance", "price": Decimal("88"), "size": "200 мл", "brand": "Pearl by Tais", "image": "img/Pearl5.jpg"},
-    "pearl-06": {"name": "Velvet Oil Blend", "price": Decimal("69"), "size": "60 мл", "brand": "Pearl by Tais", "image": "img/Pearl6.jpg"},
-    "pearl-07": {"name": "Micellar Water Extract Mix", "price": Decimal("99"), "size": "200 мл", "brand": "Pearl by Tais", "image": "img/Pearl7.jpg"},
-    "homme-01": {"name": "Face Wash Black", "price": Decimal("78"), "size": "200 мл", "brand": "INTELEGENTOFF", "image": "img/INTELEGENT Пенка.png"},
-    "homme-02": {"name": "Toner Control", "price": Decimal("89"), "size": "150 мл", "brand": "INTELEGENTOFF", "image": "img/INTELEGENT тоник.png"},
-    "homme-03": {"name": "Beard Oil", "price": Decimal("96"), "size": "50 мл", "brand": "INTELEGENTOFF", "image": "img/INTELEGENT масло.png"},
-    "homme-04": {"name": "Beard Wax", "price": Decimal("82"), "size": "50 мл", "brand": "INTELEGENTOFF", "image": "img/INTELEGENT Воск.png"},
-    "homme-05": {"name": "Face Serum Black", "price": Decimal("134"), "size": "30 мл", "brand": "INTELEGENTOFF", "image": "img/prod-photo-1.jpg"},
-    "homme-06": {"name": "After Shave Balm", "price": Decimal("82"), "size": "100 мл", "brand": "INTELEGENTOFF", "image": "img/prod-photo-2.jpg"},
-    "homme-kit-01": {"name": "INTELEGENTOFF Starter Kit", "price": Decimal("254"), "size": "Набор 3 продукта", "brand": "INTELEGENTOFF", "image": "img/logoIntelegent.png"},
+    "pearl-01": {"name": "Foam Mousse Moisture", "price": Decimal("96"), "size": "150 мл", "brand": "Pearl by Tais", "category": "tais", "description": "Увлажняющая пенка для лица.", "image": "img/Pearl1.jpg"},
+    "pearl-02": {"name": "Face Tonic Toning", "price": Decimal("93"), "size": "150 мл", "brand": "Pearl by Tais", "category": "tais", "description": "Тоник для лица Тонус.", "image": "img/Pearl2.jpg"},
+    "pearl-03": {"name": "Tonic Youth Restoring", "price": Decimal("93"), "size": "150 мл", "brand": "Pearl by Tais", "category": "tais", "description": "Тоник-реставратор молодости.", "image": "img/Pearl3.jpg"},
+    "pearl-04": {"name": "Foam Mousse Cleansing", "price": Decimal("96"), "size": "150 мл", "brand": "Pearl by Tais", "category": "tais", "description": "Очищающая пенка для лица.", "image": "img/Pearl4.jpg"},
+    "pearl-05": {"name": "Hair Tonic Radiance", "price": Decimal("88"), "size": "200 мл", "brand": "Pearl by Tais", "category": "tais", "description": "Тоник для сияния волос.", "image": "img/Pearl5.jpg"},
+    "pearl-06": {"name": "Velvet Oil Blend", "price": Decimal("69"), "size": "60 мл", "brand": "Pearl by Tais", "category": "tais", "description": "Бархатное масло для ухода.", "image": "img/Pearl6.jpg"},
+    "pearl-07": {"name": "Micellar Water Extract Mix", "price": Decimal("99"), "size": "200 мл", "brand": "Pearl by Tais", "category": "tais", "description": "Мицеллярная вода с экстрактами.", "image": "img/Pearl7.jpg"},
+    "homme-01": {"name": "Face Wash Black", "price": Decimal("78"), "size": "200 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Пенка для мужского ухода.", "image": "img/INTELEGENT Пенка.png"},
+    "homme-02": {"name": "Toner Control", "price": Decimal("89"), "size": "150 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Контроль-тоник.", "image": "img/INTELEGENT тоник.png"},
+    "homme-03": {"name": "Beard Oil", "price": Decimal("96"), "size": "50 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Масло для бороды.", "image": "img/INTELEGENT масло.png"},
+    "homme-04": {"name": "Beard Wax", "price": Decimal("82"), "size": "50 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Воск для бороды.", "image": "img/INTELEGENT Воск.png"},
+    "homme-05": {"name": "Face Serum Black", "price": Decimal("134"), "size": "30 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Сыворотка для лица.", "image": "img/prod-photo-1.jpg"},
+    "homme-06": {"name": "After Shave Balm", "price": Decimal("82"), "size": "100 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Бальзам после бритья.", "image": "img/prod-photo-2.jpg"},
+    "homme-kit-01": {"name": "INTELEGENTOFF Starter Kit", "price": Decimal("254"), "size": "Набор 3 продукта", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Стартовый набор.", "image": "img/logoIntelegent.png"},
 }
-
 
 @contextmanager
 def get_connection():
-    if not DATABASE_URL:
-        raise RuntimeError("Не настроен DATABASE_URL для PostgreSQL.")
-    if psycopg is None:
-        raise RuntimeError("Не установлен пакет psycopg. Установите зависимости из requirements.txt.")
-    with psycopg.connect(DATABASE_URL, row_factory=dict_row) as conn:
+    conn = sqlite3.connect(SQLITE_PATH)
+    conn.row_factory = sqlite3.Row
+    try:
         yield conn
-
-
-def init_products_table():
-    """Create and seed the PostgreSQL products table."""
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                CREATE TABLE IF NOT EXISTS products (
-                    id TEXT PRIMARY KEY,
-                    name TEXT NOT NULL,
-                    price NUMERIC(12, 2) NOT NULL CHECK (price >= 0),
-                    size TEXT NOT NULL DEFAULT '',
-                    brand TEXT NOT NULL DEFAULT '',
-                    image TEXT NOT NULL DEFAULT '',
-                    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-                )
-                """
-            )
-            cur.executemany(
-                """
-                INSERT INTO products (id, name, price, size, brand, image)
-                VALUES (%(id)s, %(name)s, %(price)s, %(size)s, %(brand)s, %(image)s)
-                ON CONFLICT (id) DO UPDATE SET
-                    name = EXCLUDED.name,
-                    price = EXCLUDED.price,
-                    size = EXCLUDED.size,
-                    brand = EXCLUDED.brand,
-                    image = EXCLUDED.image,
-                    updated_at = NOW()
-                """,
-                [{"id": product_id, **data} for product_id, data in PRODUCT_SEED.items()],
-            )
         conn.commit()
+    finally:
+        conn.close()
 
+def _row(row):
+    data = dict(row)
+    if "price" in data: data["price"] = Decimal(str(data["price"]))
+    return data
+
+def init_database():
+    Path(SQLITE_PATH).parent.mkdir(parents=True, exist_ok=True)
+    with get_connection() as conn:
+        c = conn.cursor()
+        c.execute("""CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL, phone TEXT DEFAULT '', city TEXT DEFAULT '', address TEXT DEFAULT '', loyalty_tier TEXT DEFAULT 'Silver', tsok_coins INTEGER DEFAULT 0, annual_spend INTEGER DEFAULT 0, subscription_status TEXT DEFAULT 'none', role TEXT DEFAULT 'customer', created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
+        c.execute("""CREATE TABLE IF NOT EXISTS products (id TEXT PRIMARY KEY, name TEXT NOT NULL, price NUMERIC NOT NULL, size TEXT DEFAULT '', brand TEXT DEFAULT '', category TEXT DEFAULT 'tais', description TEXT DEFAULT '', image TEXT DEFAULT '', is_active INTEGER DEFAULT 1, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
+        c.execute("""CREATE TABLE IF NOT EXISTS orders (id TEXT PRIMARY KEY, user_id TEXT, customer_name TEXT DEFAULT '', customer_email TEXT DEFAULT '', type TEXT DEFAULT 'one_time', status TEXT DEFAULT 'new', total NUMERIC DEFAULT 0, items_count INTEGER DEFAULT 0, payment_provider TEXT DEFAULT '', comment TEXT DEFAULT '', created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
+        c.execute("""CREATE TABLE IF NOT EXISTS subscriptions (id TEXT PRIMARY KEY, user_id TEXT, status TEXT DEFAULT 'active', plan_code TEXT DEFAULT '3m', next_charge_at TEXT, vip_gift TEXT DEFAULT '', items TEXT DEFAULT '[]', payment_token_id TEXT DEFAULT '', updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
+        for pid, p in PRODUCT_SEED.items():
+            c.execute("""INSERT OR IGNORE INTO products(id,name,price,size,brand,category,description,image) VALUES(?,?,?,?,?,?,?,?)""", (pid,p['name'],str(p['price']),p['size'],p['brand'],p['category'],p['description'],p['image']))
+        admin_email=os.getenv('TSOK_ADMIN_EMAIL','admin@tsok.shop').lower(); admin_pass=os.getenv('TSOK_ADMIN_PASSWORD','admin123')
+        c.execute("""INSERT OR IGNORE INTO users(id,name,email,password_hash,role,phone,loyalty_tier,tsok_coins,annual_spend,subscription_status) VALUES('admin','TSOK Admin',?,?, 'admin','', 'Gold',0,0,'none')""", (admin_email, generate_password_hash(admin_pass)))
+
+def init_products_table(): init_database()
+
+def list_products(category=None, include_inactive=False):
+    init_database(); sql="SELECT * FROM products WHERE 1=1"; args=[]
+    if category: sql += " AND category=?"; args.append(category)
+    if not include_inactive: sql += " AND is_active=1"
+    sql += " ORDER BY category, name"
+    with get_connection() as conn: return [_row(r) for r in conn.execute(sql,args).fetchall()]
 
 def get_products_by_ids(product_ids):
-    """Return active products keyed by id from PostgreSQL.
-
-    If DATABASE_URL is absent, fall back to the seed catalog so local development
-    and tests can run without a PostgreSQL service. Production must set
-    DATABASE_URL to make checkout prices authoritative from the database.
-    """
-    unique_ids = list(dict.fromkeys(product_ids))
-    if not unique_ids:
-        return {}
-
-    cache_key = "products:v1:" + ",".join(sorted(unique_ids))
-    cached_products = cache_get_json(cache_key)
-    if cached_products is not None:
-        return {product_id: {**product, "price": Decimal(str(product["price"]))} for product_id, product in cached_products.items()}
-
-    if not DATABASE_URL:
-        products = {product_id: PRODUCT_SEED[product_id] for product_id in unique_ids if product_id in PRODUCT_SEED}
-        cache_set_json(cache_key, products, PRODUCT_CACHE_TTL)
-        return products
-
+    init_database(); ids=list(dict.fromkeys(product_ids));
+    if not ids: return {}
+    q=','.join('?'*len(ids))
     with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                """
-                SELECT id, name, price, size, brand, image
-                FROM products
-                WHERE id = ANY(%s) AND is_active = TRUE
-                """,
-                (unique_ids,),
-            )
-            rows = cur.fetchall()
-    products = {row["id"]: row for row in rows}
-    cache_set_json(cache_key, products, PRODUCT_CACHE_TTL)
-    return products
+        rows=conn.execute(f"SELECT * FROM products WHERE id IN ({q}) AND is_active=1", ids).fetchall()
+    return {r['id']:_row(r) for r in rows}
