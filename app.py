@@ -313,6 +313,64 @@ def _checkout_benefits_from_payload(payload, subtotal, is_subscription_box=False
 def _benefits_to_json(benefits):
     return {k: (_format_amount(v) if isinstance(v, Decimal) else v) for k, v in benefits.items()}
 
+
+def _compact_metadata_value(value, max_length=512):
+    return str(value or "")[:max_length]
+
+
+def _build_yookassa_metadata(order_number, customer, delivery, quote=None, benefits=None):
+    # YooKassa rejects large metadata maps. Keep only compact, useful fields and
+    # group optional checkout details into short strings so payment creation does
+    # not fail with `parameter: metadata`.
+    metadata = {
+        "order_number": order_number,
+        "customer_fio": _compact_metadata_value(customer.get("fio"), 120),
+        "customer_phone": _compact_metadata_value(customer.get("phone"), 32),
+        "customer_email": _compact_metadata_value(customer.get("email"), 120),
+        "delivery_city": _compact_metadata_value(delivery.get("city"), 120),
+        "delivery_address": _compact_metadata_value(delivery.get("address"), 255),
+    }
+
+    delivery_comment = _compact_metadata_value(delivery.get("comment"), 180)
+    if delivery_comment:
+        metadata["delivery_comment"] = delivery_comment
+
+    pvz_parts = [
+        _compact_metadata_value(delivery.get("pvz_provider"), 24),
+        _compact_metadata_value(delivery.get("pvz_name"), 80),
+        _compact_metadata_value(delivery.get("pvz_address"), 160),
+        _compact_metadata_value(delivery.get("pvz_coordinates"), 48),
+    ]
+    pvz_info = " | ".join(part for part in pvz_parts if part)
+    if pvz_info:
+        metadata["delivery_pvz"] = _compact_metadata_value(pvz_info, 512)
+
+    if quote:
+        box_info = " | ".join(filter(None, [
+            _compact_metadata_value(quote.get("plan_code"), 24),
+            _compact_metadata_value(quote.get("plan_label"), 80),
+            f"items:{quote.get('item_count')}",
+            f"discount:{quote.get('discount_percent')}",
+            "free_delivery" if quote.get("free_delivery") else "",
+            _compact_metadata_value(GIFT_LABELS.get(quote.get("vip_gift", ""), ""), 80),
+        ]))
+        metadata["box_info"] = _compact_metadata_value(box_info, 512)
+
+    if benefits:
+        loyalty_info = " | ".join([
+            f"tier:{benefits['loyalty_tier']}",
+            f"cashback:{benefits['cashback_percent']}",
+            f"ref:{benefits.get('referral_code', '') or '-'}",
+            f"ref_status:{benefits['referral_status']}",
+            f"ref_discount:{_format_amount(benefits['referral_discount'])}",
+            f"coins_used:{_format_amount(benefits['coins_redeemed'])}",
+            f"coins_pending:{_format_amount(benefits['coins_pending'])}",
+        ])
+        metadata["loyalty_info"] = _compact_metadata_value(loyalty_info, 512)
+
+    return metadata
+
+
 def _create_yookassa_payment(items, total, customer, delivery, quote=None, benefits=None):
     if not YOOKASSA_SHOP_ID or not YOOKASSA_SECRET_KEY:
         raise RuntimeError("Не настроены YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY.")
@@ -320,40 +378,7 @@ def _create_yookassa_payment(items, total, customer, delivery, quote=None, benef
     order_number   = f"TSOK-{int(time.time())}-{uuid.uuid4().hex[:6]}".upper()
     description_lines = ", ".join(f"{item['name']} x{item['qty']}" for item in items)
     description    = f"Заказ {order_number}: {description_lines}"[:128]
-    metadata = {
-        "order_number":              order_number,
-        "customer_fio":              str(customer.get("fio", ""))[:120],
-        "customer_phone":            str(customer.get("phone", ""))[:32],
-        "customer_email":            str(customer.get("email", ""))[:120],
-        "delivery_city":             str(delivery.get("city", ""))[:120],
-        "delivery_address":          str(delivery.get("address", ""))[:255],
-        "delivery_comment":          str(delivery.get("comment", ""))[:255],
-        "delivery_pvz_provider":     str(delivery.get("pvz_provider", ""))[:32],
-        "delivery_pvz_name":         str(delivery.get("pvz_name", ""))[:160],
-        "delivery_pvz_address":      str(delivery.get("pvz_address", ""))[:255],
-        "delivery_pvz_coordinates":  str(delivery.get("pvz_coordinates", ""))[:64],
-    }
-
-    if quote:
-        metadata.update({
-            "box_plan": quote["plan_code"],
-            "box_plan_label": quote["plan_label"],
-            "box_item_count": str(quote["item_count"]),
-            "box_discount_percent": str(quote["discount_percent"]),
-            "box_free_delivery": str(quote["free_delivery"]).lower(),
-            "box_vip_gift": quote.get("vip_gift", ""),
-            "box_vip_gift_label": GIFT_LABELS.get(quote.get("vip_gift", ""), ""),
-        })
-    if benefits:
-        metadata.update({
-            "loyalty_tier": benefits["loyalty_tier"],
-            "loyalty_cashback_percent": str(benefits["cashback_percent"]),
-            "loyalty_referral_code": benefits.get("referral_code", ""),
-            "loyalty_referral_status": benefits["referral_status"],
-            "loyalty_referral_discount": _format_amount(benefits["referral_discount"]),
-            "loyalty_coins_redeemed": _format_amount(benefits["coins_redeemed"]),
-            "loyalty_coins_pending": _format_amount(benefits["coins_pending"]),
-        })
+    metadata = _build_yookassa_metadata(order_number, customer, delivery, quote, benefits)
     payment_total = benefits["payable_total"] if benefits else (quote["payable_total"] if quote else total)
     payload = {
         "amount": {"value": _format_amount(payment_total), "currency": YOOKASSA_CURRENCY},
