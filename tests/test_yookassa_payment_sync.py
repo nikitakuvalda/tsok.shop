@@ -64,3 +64,32 @@ def test_successful_subscription_payment_creates_subscription(monkeypatch, tmp_p
         assert subscription["plan_code"] == "12m"
         assert subscription["vip_gift"] == "quartz-roller"
         assert subscription["payment_token_id"] == "pay-box"
+
+
+def test_yookassa_webhook_syncs_successful_payment(monkeypatch, tmp_path):
+    db_path = tmp_path / "webhook.sqlite3"
+    create_payment_tables(db_path)
+    monkeypatch.setattr(app, "get_connection", lambda: sqlite_connection(db_path))
+
+    with sqlite_connection(db_path) as conn:
+        conn.execute("""INSERT INTO payment_sessions(order_number,payment_id,type,total,customer_name,customer_email,items_count,items,quote) VALUES('TSOK-WEBHOOK','pay-webhook','one_time','700.00','Олег','oleg@example.com',1,'[]','{}')""")
+
+    monkeypatch.setattr(app.Payment, "find_one", lambda payment_id: {"id": payment_id, "status": "succeeded", "paid": True})
+
+    response = app.application.test_client().post("/api/yookassa/webhook", json={
+        "type": "notification",
+        "event": "payment.succeeded",
+        "object": {
+            "id": "pay-webhook",
+            "status": "succeeded",
+            "paid": True,
+            "metadata": {"order_number": "TSOK-WEBHOOK"},
+        },
+    })
+
+    assert response.status_code == 200
+    assert response.get_json()["status"] == "succeeded"
+    with sqlite_connection(db_path) as conn:
+        order = conn.execute("SELECT * FROM orders WHERE id='TSOK-WEBHOOK'").fetchone()
+        assert order["status"] == "paid"
+        assert order["comment"] == "payment_id=pay-webhook"

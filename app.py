@@ -472,6 +472,16 @@ def _persist_successful_payment(session_row, payment):
         conn.execute("UPDATE payment_sessions SET status='succeeded', updated_at=CURRENT_TIMESTAMP WHERE order_number=?", (order_number,))
 
 
+def _webhook_payment_identity(payload):
+    if not isinstance(payload, dict):
+        return "", ""
+    payment_object = payload.get("object") if isinstance(payload.get("object"), dict) else {}
+    payment_id = str(payment_object.get("id") or payload.get("payment_id") or "").strip()
+    metadata = payment_object.get("metadata") if isinstance(payment_object.get("metadata"), dict) else {}
+    order_number = str(metadata.get("order_number") or payload.get("order_number") or "").strip()
+    return order_number, payment_id
+
+
 def _sync_yookassa_payment(order_number=None, payment_id=None):
     if not (order_number or payment_id):
         return {"status": "missing", "message": "Не передан номер заказа или платежа."}
@@ -866,6 +876,21 @@ def iot():
 #  API — YooKassa (без изменений)
 # ═══════════════════════════════════════════════════════════════════════
 
+
+@application.post("/api/yookassa/webhook")
+def yookassa_webhook():
+    payload = request.get_json(silent=True) or {}
+    event = str(payload.get("event") or "")
+    order_number, payment_id = _webhook_payment_identity(payload)
+    if not (order_number or payment_id):
+        return jsonify({"ok": False, "error": "Не найден payment_id или order_number в уведомлении."}), 400
+
+    try:
+        result = _sync_yookassa_payment(order_number=order_number, payment_id=payment_id)
+    except Exception as error:
+        return jsonify({"ok": False, "error": str(error)}), 502
+
+    return jsonify({"ok": True, "event": event, **result})
 
 @application.get("/api/yookassa/check-payment")
 def check_yookassa_payment():
