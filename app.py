@@ -1,6 +1,8 @@
+import json
 import os
 import time
 import uuid
+from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
 from datetime import datetime, timedelta, timezone
 from decimal import Decimal, InvalidOperation
 
@@ -261,6 +263,14 @@ def _absolute_return_url():
     return url_for("payment_success", _external=True)
 
 
+def _return_url_for_order(order_number):
+    url = _absolute_return_url()
+    parts = urlsplit(url)
+    query = dict(parse_qsl(parts.query, keep_blank_values=True))
+    query["order_number"] = order_number
+    return urlunsplit((parts.scheme, parts.netloc, parts.path, urlencode(query), parts.fragment))
+
+
 def _payment_field(payment, field_name):
     if isinstance(payment, dict):
         return payment.get(field_name)
@@ -313,6 +323,189 @@ def _checkout_benefits_from_payload(payload, subtotal, is_subscription_box=False
 def _benefits_to_json(benefits):
     return {k: (_format_amount(v) if isinstance(v, Decimal) else v) for k, v in benefits.items()}
 
+
+def _compact_metadata_value(value, max_length=512):
+    return str(value or "")[:max_length]
+
+
+def _build_yookassa_metadata(order_number, customer, delivery, quote=None, benefits=None):
+    # YooKassa rejects large metadata maps. Keep only compact, useful fields and
+    # group optional checkout details into short strings so payment creation does
+    # not fail with `parameter: metadata`.
+    metadata = {
+        "order_number": order_number,
+        "customer_fio": _compact_metadata_value(customer.get("fio"), 120),
+        "customer_phone": _compact_metadata_value(customer.get("phone"), 32),
+        "customer_email": _compact_metadata_value(customer.get("email"), 120),
+        "delivery_city": _compact_metadata_value(delivery.get("city"), 120),
+        "delivery_address": _compact_metadata_value(delivery.get("address"), 255),
+    }
+
+    delivery_comment = _compact_metadata_value(delivery.get("comment"), 180)
+    if delivery_comment:
+        metadata["delivery_comment"] = delivery_comment
+
+    pvz_parts = [
+        _compact_metadata_value(delivery.get("pvz_provider"), 24),
+        _compact_metadata_value(delivery.get("pvz_name"), 80),
+        _compact_metadata_value(delivery.get("pvz_address"), 160),
+        _compact_metadata_value(delivery.get("pvz_coordinates"), 48),
+    ]
+    pvz_info = " | ".join(part for part in pvz_parts if part)
+    if pvz_info:
+        metadata["delivery_pvz"] = _compact_metadata_value(pvz_info, 512)
+
+    if quote:
+        box_info = " | ".join(filter(None, [
+            _compact_metadata_value(quote.get("plan_code"), 24),
+            _compact_metadata_value(quote.get("plan_label"), 80),
+            f"items:{quote.get('item_count')}",
+            f"discount:{quote.get('discount_percent')}",
+            "free_delivery" if quote.get("free_delivery") else "",
+            _compact_metadata_value(GIFT_LABELS.get(quote.get("vip_gift", ""), ""), 80),
+        ]))
+        metadata["box_info"] = _compact_metadata_value(box_info, 512)
+
+    if benefits:
+        loyalty_info = " | ".join([
+            f"tier:{benefits['loyalty_tier']}",
+            f"cashback:{benefits['cashback_percent']}",
+            f"ref:{benefits.get('referral_code', '') or '-'}",
+            f"ref_status:{benefits['referral_status']}",
+            f"ref_discount:{_format_amount(benefits['referral_discount'])}",
+            f"coins_used:{_format_amount(benefits['coins_redeemed'])}",
+            f"coins_pending:{_format_amount(benefits['coins_pending'])}",
+        ])
+        metadata["loyalty_info"] = _compact_metadata_value(loyalty_info, 512)
+
+    return metadata
+
+
+def _serialize_checkout_items(items):
+    return json.dumps([{"id": item["id"], "qty": item["qty"], "name": item["name"]} for item in items], ensure_ascii=False)
+
+
+def _store_payment_session(payment, order_number, items, customer, quote, benefits):
+    payment_id = _payment_field(payment, "id")
+    checkout_type = "subscription" if quote else "one_time"
+    total = benefits["payable_total"] if benefits else (quote["payable_total"] if quote else sum(item["line_total"] for item in items))
+    with get_connection() as conn:
+        conn.execute(
+            """
+            INSERT OR REPLACE INTO payment_sessions(
+                order_number, payment_id, type, status, total, customer_name, customer_email, customer_phone,
+                items_count, items, quote, updated_at
+            ) VALUES(?,?,?,?,?,?,?,?,?,?,?,CURRENT_TIMESTAMP)
+            """,
+            (
+                order_number,
+                payment_id,
+                checkout_type,
+                "pending",
+                _format_amount(total),
+                str(customer.get("fio", ""))[:255],
+                str(customer.get("email", ""))[:255],
+                str(customer.get("phone", ""))[:64],
+                _selected_count(items),
+                _serialize_checkout_items(items),
+                json.dumps(_quote_to_json(quote) if quote else {}, ensure_ascii=False),
+            ),
+        )
+
+
+def _payment_is_successful(payment):
+    status = _payment_field(payment, "status")
+    paid = _payment_field(payment, "paid")
+    return status == "succeeded" or paid is True
+
+
+def _persist_successful_payment(session_row, payment):
+    order_number = session_row["order_number"]
+    payment_id = session_row["payment_id"] or _payment_field(payment, "id") or ""
+    checkout_type = session_row["type"] or "one_time"
+    with get_connection() as conn:
+        conn.execute(
+            """
+            INSERT INTO orders(id,user_id,customer_name,customer_email,type,status,total,items_count,payment_provider,comment)
+            VALUES(?,?,?,?,?,?,?,?,?,?)
+            ON CONFLICT(id) DO UPDATE SET
+                status=excluded.status, total=excluded.total, items_count=excluded.items_count,
+                payment_provider=excluded.payment_provider, comment=excluded.comment, updated_at=CURRENT_TIMESTAMP
+            """,
+            (
+                order_number,
+                None,
+                session_row["customer_name"],
+                session_row["customer_email"],
+                checkout_type,
+                "paid",
+                session_row["total"],
+                session_row["items_count"],
+                "YooKassa",
+                f"payment_id={payment_id}",
+            ),
+        )
+        if checkout_type == "subscription":
+            quote = json.loads(session_row["quote"] or "{}")
+            next_charge_at = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
+            subscription_id = f"SUB-{order_number}"
+            conn.execute(
+                """
+                INSERT INTO subscriptions(id,user_id,status,plan_code,next_charge_at,vip_gift,items,payment_token_id)
+                VALUES(?,?,?,?,?,?,?,?)
+                ON CONFLICT(id) DO UPDATE SET
+                    status=excluded.status, plan_code=excluded.plan_code, next_charge_at=excluded.next_charge_at,
+                    vip_gift=excluded.vip_gift, items=excluded.items, payment_token_id=excluded.payment_token_id,
+                    updated_at=CURRENT_TIMESTAMP
+                """,
+                (
+                    subscription_id,
+                    None,
+                    "active",
+                    quote.get("plan_code", "once"),
+                    next_charge_at,
+                    quote.get("vip_gift", ""),
+                    session_row["items"],
+                    payment_id,
+                ),
+            )
+        conn.execute("UPDATE payment_sessions SET status='succeeded', updated_at=CURRENT_TIMESTAMP WHERE order_number=?", (order_number,))
+
+
+def _webhook_payment_identity(payload):
+    if not isinstance(payload, dict):
+        return "", ""
+    payment_object = payload.get("object") if isinstance(payload.get("object"), dict) else {}
+    payment_id = str(payment_object.get("id") or payload.get("payment_id") or "").strip()
+    metadata = payment_object.get("metadata") if isinstance(payment_object.get("metadata"), dict) else {}
+    order_number = str(metadata.get("order_number") or payload.get("order_number") or "").strip()
+    return order_number, payment_id
+
+
+def _sync_yookassa_payment(order_number=None, payment_id=None):
+    if not (order_number or payment_id):
+        return {"status": "missing", "message": "Не передан номер заказа или платежа."}
+    with get_connection() as conn:
+        if order_number:
+            row = conn.execute("SELECT * FROM payment_sessions WHERE order_number=?", (order_number,)).fetchone()
+        else:
+            row = conn.execute("SELECT * FROM payment_sessions WHERE payment_id=?", (payment_id,)).fetchone()
+    if not row:
+        return {"status": "missing", "message": "Платёжная сессия не найдена."}
+
+    Configuration.account_id = YOOKASSA_SHOP_ID
+    Configuration.secret_key = YOOKASSA_SECRET_KEY
+    payment = Payment.find_one(row["payment_id"])
+    payment_status = _payment_field(payment, "status") or "unknown"
+    if _payment_is_successful(payment):
+        _persist_successful_payment(row, payment)
+        return {"status": "succeeded", "order_number": row["order_number"], "payment_id": row["payment_id"]}
+
+    with get_connection() as conn:
+        conn.execute("UPDATE payment_sessions SET status=?, updated_at=CURRENT_TIMESTAMP WHERE order_number=?", (payment_status, row["order_number"]))
+    return {"status": payment_status, "order_number": row["order_number"], "payment_id": row["payment_id"]}
+
+
 def _create_yookassa_payment(items, total, customer, delivery, quote=None, benefits=None):
     if not YOOKASSA_SHOP_ID or not YOOKASSA_SECRET_KEY:
         raise RuntimeError("Не настроены YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY.")
@@ -320,45 +513,12 @@ def _create_yookassa_payment(items, total, customer, delivery, quote=None, benef
     order_number   = f"TSOK-{int(time.time())}-{uuid.uuid4().hex[:6]}".upper()
     description_lines = ", ".join(f"{item['name']} x{item['qty']}" for item in items)
     description    = f"Заказ {order_number}: {description_lines}"[:128]
-    metadata = {
-        "order_number":              order_number,
-        "customer_fio":              str(customer.get("fio", ""))[:120],
-        "customer_phone":            str(customer.get("phone", ""))[:32],
-        "customer_email":            str(customer.get("email", ""))[:120],
-        "delivery_city":             str(delivery.get("city", ""))[:120],
-        "delivery_address":          str(delivery.get("address", ""))[:255],
-        "delivery_comment":          str(delivery.get("comment", ""))[:255],
-        "delivery_pvz_provider":     str(delivery.get("pvz_provider", ""))[:32],
-        "delivery_pvz_name":         str(delivery.get("pvz_name", ""))[:160],
-        "delivery_pvz_address":      str(delivery.get("pvz_address", ""))[:255],
-        "delivery_pvz_coordinates":  str(delivery.get("pvz_coordinates", ""))[:64],
-    }
-
-    if quote:
-        metadata.update({
-            "box_plan": quote["plan_code"],
-            "box_plan_label": quote["plan_label"],
-            "box_item_count": str(quote["item_count"]),
-            "box_discount_percent": str(quote["discount_percent"]),
-            "box_free_delivery": str(quote["free_delivery"]).lower(),
-            "box_vip_gift": quote.get("vip_gift", ""),
-            "box_vip_gift_label": GIFT_LABELS.get(quote.get("vip_gift", ""), ""),
-        })
-    if benefits:
-        metadata.update({
-            "loyalty_tier": benefits["loyalty_tier"],
-            "loyalty_cashback_percent": str(benefits["cashback_percent"]),
-            "loyalty_referral_code": benefits.get("referral_code", ""),
-            "loyalty_referral_status": benefits["referral_status"],
-            "loyalty_referral_discount": _format_amount(benefits["referral_discount"]),
-            "loyalty_coins_redeemed": _format_amount(benefits["coins_redeemed"]),
-            "loyalty_coins_pending": _format_amount(benefits["coins_pending"]),
-        })
+    metadata = _build_yookassa_metadata(order_number, customer, delivery, quote, benefits)
     payment_total = benefits["payable_total"] if benefits else (quote["payable_total"] if quote else total)
     payload = {
         "amount": {"value": _format_amount(payment_total), "currency": YOOKASSA_CURRENCY},
         "capture": True,
-        "confirmation": {"type": "redirect", "return_url": _absolute_return_url()},
+        "confirmation": {"type": "redirect", "return_url": _return_url_for_order(order_number)},
         "description":  description,
         "metadata":     metadata,
     }
@@ -687,7 +847,19 @@ def account_profile_update():
 
 @application.route("/payment/success")
 def payment_success():
-    return render_template("checkout.html", yandex_maps_api_key=YANDEX_MAPS_API_KEY, payment_success=True)
+    order_number = request.args.get("order_number", "").strip()
+    payment_status = "missing"
+    if order_number:
+        try:
+            payment_status = _sync_yookassa_payment(order_number=order_number).get("status", "unknown")
+        except Exception:
+            payment_status = "check_failed"
+    return render_template(
+        "checkout.html",
+        yandex_maps_api_key=YANDEX_MAPS_API_KEY,
+        payment_success=payment_status == "succeeded",
+        payment_status=payment_status,
+    )
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -704,6 +876,32 @@ def iot():
 #  API — YooKassa (без изменений)
 # ═══════════════════════════════════════════════════════════════════════
 
+
+@application.post("/api/yookassa/webhook")
+def yookassa_webhook():
+    payload = request.get_json(silent=True) or {}
+    event = str(payload.get("event") or "")
+    order_number, payment_id = _webhook_payment_identity(payload)
+    if not (order_number or payment_id):
+        return jsonify({"ok": False, "error": "Не найден payment_id или order_number в уведомлении."}), 400
+
+    try:
+        result = _sync_yookassa_payment(order_number=order_number, payment_id=payment_id)
+    except Exception as error:
+        return jsonify({"ok": False, "error": str(error)}), 502
+
+    return jsonify({"ok": True, "event": event, **result})
+
+@application.get("/api/yookassa/check-payment")
+def check_yookassa_payment():
+    order_number = request.args.get("order_number", "").strip()
+    payment_id = request.args.get("payment_id", "").strip()
+    try:
+        result = _sync_yookassa_payment(order_number=order_number, payment_id=payment_id)
+    except Exception as error:
+        return jsonify({"error": str(error)}), 502
+    return jsonify(result)
+
 @application.post("/api/yookassa/create-payment")
 def create_yookassa_payment():
     if is_rate_limited(_client_rate_limit_key()):
@@ -719,6 +917,7 @@ def create_yookassa_payment():
         subtotal_for_benefits = quote["payable_total"] if quote else total
         benefits = _checkout_benefits_from_payload(payload, subtotal_for_benefits, is_subscription_box=bool(quote))
         payment, order_number = _create_yookassa_payment(items, total, customer, delivery, quote, benefits)
+        _store_payment_session(payment, order_number, items, customer, quote, benefits)
     except (ValueError, InvalidOperation) as error:
         return jsonify({"error": str(error)}), 400
     except Exception as error:
