@@ -6,7 +6,6 @@
     <title>Продукт · Pearl by Tais — TSOK Boutique</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=DM+Sans:opsz,wght@9,300;9,400;9,500;9,600;9,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .product-benefits{display:flex;flex-direction:column;gap:14px;margin-bottom:28px}
@@ -17,6 +16,14 @@
         .breadcrumbs a{color:var(--muted);transition:color .25s}
         .breadcrumbs a:hover{color:var(--clay-deep)}
     </style>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%23B07E3D%27%2F%3E%3Ctext%20x%3D%2716%27%20y%3D%2723%27%20font-family%3D%27Georgia%2Cserif%27%20font-size%3D%2718%27%20fill%3D%27%23FBF8F2%27%20text-anchor%3D%27middle%27%3ET%3C%2Ftext%3E%3C%2Fsvg%3E">
+    <meta name="theme-color" content="#FBF8F2">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TSOK Boutique">
+    <meta property="og:title" content="Продукт · Pearl by Tais — TSOK Boutique">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="/static/img/HeroFem.jpg">
+    <meta name="twitter:card" content="summary_large_image">
 </head>
 <body class="product-page-body">
 
@@ -46,7 +53,7 @@
 
     <div class="product-layout">
         <!-- Галерея -->
-        <div class="product-gallery">
+        <div class="product-gallery" data-reveal>
             <div class="product-gallery__main">
                 <img src="" id="prodMainImg" class="product-gallery__img" alt="">
             </div>
@@ -54,7 +61,7 @@
         </div>
 
         <!-- Информация -->
-        <div class="product-info">
+        <div class="product-info" data-reveal>
             <span class="product-info__brand">Pearl by Tais</span>
             <h1 class="product-info__title" id="prodMainTitle"></h1>
 
@@ -124,7 +131,7 @@
             <h2 class="section-title">Дополните <em>ритуал</em></h2>
         </div>
         <div class="catalog-grid" style="margin-top:40px;">
-            <div class="product-card" data-category="face" data-price="93">
+            <div class="product-card" data-reveal data-category="face" data-price="93">
                 <div class="product-card__image-wrap">
                     <a href="product-tonic?id=pearl-03"><img src="{{ url_for('static', filename='img/Pearl3.jpg') }}" alt="Tonic Youth Restoring"></a>
                     <div class="product-card__badge">Хит</div>
@@ -135,12 +142,12 @@
                     <a href="product-tonic?id=pearl-03"><h3 class="product-card__title">Tonic Youth Restoring</h3></a>
                     <p class="product-card__desc">Тоник-реставратор молодости.</p>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">93 ₽</span></div>
-                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-03" data-name="Tonic Youth Restoring" data-price="93" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl3.jpg">+ В корзину</button>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">2 390 ₽</span></div>
+                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-03" data-name="Tonic Youth Restoring" data-price="2390" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl3.jpg">+ В корзину</button>
                     </div>
                 </div>
             </div>
-            <div class="product-card" data-category="face" data-price="96">
+            <div class="product-card" data-reveal data-category="face" data-price="96">
                 <div class="product-card__image-wrap">
                     <a href="product-tonic?id=pearl-01"><img src="{{ url_for('static', filename='img/Pearl1.jpg') }}" alt="Foam Mousse Moisture"></a>
                     <button class="product-card__bookmark js-bookmark" data-id="pearl-01" data-name="Foam Mousse Moisture"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
@@ -150,12 +157,12 @@
                     <a href="product-tonic?id=pearl-01"><h3 class="product-card__title">Foam Mousse Moisture</h3></a>
                     <p class="product-card__desc">Увлажняющая пенка для лица.</p>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">96 ₽</span></div>
-                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-01" data-name="Foam Mousse Moisture" data-price="96" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl1.jpg">+ В корзину</button>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">2 290 ₽</span></div>
+                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-01" data-name="Foam Mousse Moisture" data-price="2290" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl1.jpg">+ В корзину</button>
                     </div>
                 </div>
             </div>
-            <div class="product-card" data-category="hair" data-price="88">
+            <div class="product-card" data-reveal data-category="hair" data-price="88">
                 <div class="product-card__image-wrap">
                     <a href="product-tonic?id=pearl-05"><img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" alt="Hair Tonic Radiance"></a>
                     <button class="product-card__bookmark js-bookmark" data-id="pearl-05" data-name="Hair Tonic Radiance"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
@@ -165,8 +172,8 @@
                     <a href="product-tonic?id=pearl-05"><h3 class="product-card__title">Hair Tonic Radiance</h3></a>
                     <p class="product-card__desc">Укрепляющий тоник для волос.</p>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">88 ₽</span></div>
-                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-05" data-name="Hair Tonic Radiance" data-price="88" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl5.jpg">+ В корзину</button>
+                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">1 990 ₽</span></div>
+                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-05" data-name="Hair Tonic Radiance" data-price="1990" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl5.jpg">+ В корзину</button>
                     </div>
                 </div>
             </div>
@@ -212,8 +219,8 @@
         <div class="footer__bottom">
             <span>© 2026 TSOK Boutique</span>
             <div class="footer__legal">
-                <a href="#">Политика конфиденциальности</a>
-                <a href="#">Публичная оферта</a>
+                <a href="privacy">Политика конфиденциальности</a>
+                <a href="oferta">Публичная оферта</a>
             </div>
         </div>
     </div>
@@ -260,20 +267,20 @@
 <script>
 // ── Данные товаров (с корректными статическими путями через url_for) ──
 const PRODUCTS = {
-    "pearl-01": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Moisture",  desc:"Увлажняющая пенка для лица. Бережное очищение без чувства стянутости.", price:96, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl1.jpg') }}" },
-    "pearl-02": { brand:"Pearl by Tais", t1:"Face Tonic",  t2:"Toning",    desc:"Тоник для лица «Тонус». Устраняет следы усталости и освежает кожу.", price:93, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl2.jpg') }}" },
-    "pearl-03": { brand:"Pearl by Tais", t1:"Tonic Youth", t2:"Restoring", desc:"Тоник-реставратор молодости. Восстанавливает pH-баланс после умывания и сужает поры. Первый шаг к живой коже.", price:93, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl3.jpg') }}" },
-    "pearl-04": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Cleansing", desc:"Пенка для умывания «Мягкое очищение». Идеально для чувствительной и реактивной кожи.", price:96, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl4.jpg') }}" },
-    "pearl-05": { brand:"Pearl by Tais", t1:"Hair Tonic",  t2:"Radiance",  desc:"Тоник для волос «Укрепляющий». Стимулирует рост, укрепляет корни и придаёт блеск.", price:88, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl5.jpg') }}" },
-    "pearl-06": { brand:"Pearl by Tais", t1:"Velvet Oil",  t2:"Blend",     desc:"Микс масел для волос. Глубокое питание и защита секущихся кончиков.", price:69, size:"60 мл", img:"{{ url_for('static', filename='img/Pearl6.jpg') }}" },
-    "pearl-07": { brand:"Pearl by Tais", t1:"Micellar Water", t2:"Extract Mix", desc:"Мицеллярная вода «С экстрактами». Лёгкий демакияж глаз и деликатное тонизирование.", price:99, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl7.jpg') }}" },
-    "homme-01": { brand:"INTELEGENTOFF", t1:"Face Wash",   t2:"Black",     desc:"Глубокое очищение для мужской кожи. Удаляет излишки себума и загрязнения.", price:78, size:"200 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" },
-    "homme-02": { brand:"INTELEGENTOFF", t1:"Toner",       t2:"Control",   desc:"Тоник для контроля жирного блеска. Сужает поры и матирует кожу.", price:89, size:"150 мл", img:"{{ url_for('static', filename='img/prod-photo-4.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" },
-    "homme-03": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Oil",       desc:"Масло для бороды. Смягчает жёсткий волос, питает кожу под бородой.", price:96, size:"50 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT масло.png') }}" },
-    "homme-04": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Wax",       desc:"Воск для укладки бороды. Фиксация и матовый финиш на весь день.", price:82, size:"50 мл", img:"{{ url_for('static', filename='img/prod-photo-3.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" },
-    "homme-05": { brand:"INTELEGENTOFF", t1:"Face Serum",  t2:"Black",     desc:"Концентрированная сыворотка для лица. Антивозрастной комплекс высокой концентрации.", price:134, size:"30 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
-    "homme-06": { brand:"INTELEGENTOFF", t1:"After Shave", t2:"Balm",      desc:"Бальзам после бритья. Успокаивает раздражение и восстанавливает кожу.", price:82, size:"100 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
-    "homme-kit-01": { brand:"INTELEGENTOFF", t1:"Starter", t2:"Kit",       desc:"Стартовый набор: 3 продукта для полного ритуала ухода. Выгоднее, чем по отдельности.", price:254, size:"Набор 3 продукта", img:"{{ url_for('static', filename='img/logoIntelegent.png') }}", poster:"{{ url_for('static', filename='img/IntelegentSergay.png') }}" }
+    "pearl-01": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Moisture",  desc:"Увлажняющая пенка для лица. Бережное очищение без чувства стянутости.", price:2290, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl1.jpg') }}" },
+    "pearl-02": { brand:"Pearl by Tais", t1:"Face Tonic",  t2:"Toning",    desc:"Тоник для лица «Тонус». Устраняет следы усталости и освежает кожу.", price:2190, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl2.jpg') }}" },
+    "pearl-03": { brand:"Pearl by Tais", t1:"Tonic Youth", t2:"Restoring", desc:"Тоник-реставратор молодости. Восстанавливает pH-баланс после умывания и сужает поры. Первый шаг к живой коже.", price:2390, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl3.jpg') }}" },
+    "pearl-04": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Cleansing", desc:"Пенка для умывания «Мягкое очищение». Идеально для чувствительной и реактивной кожи.", price:2290, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl4.jpg') }}" },
+    "pearl-05": { brand:"Pearl by Tais", t1:"Hair Tonic",  t2:"Radiance",  desc:"Тоник для волос «Укрепляющий». Стимулирует рост, укрепляет корни и придаёт блеск.", price:1990, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl5.jpg') }}" },
+    "pearl-06": { brand:"Pearl by Tais", t1:"Velvet Oil",  t2:"Blend",     desc:"Микс масел для волос. Глубокое питание и защита секущихся кончиков.", price:2490, size:"60 мл", img:"{{ url_for('static', filename='img/Pearl6.jpg') }}" },
+    "pearl-07": { brand:"Pearl by Tais", t1:"Micellar Water", t2:"Extract Mix", desc:"Мицеллярная вода «С экстрактами». Лёгкий демакияж глаз и деликатное тонизирование.", price:2190, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl7.jpg') }}" },
+    "homme-01": { brand:"INTELEGENTOFF", t1:"Face Wash",   t2:"Black",     desc:"Глубокое очищение для мужской кожи. Удаляет излишки себума и загрязнения.", price:1990, size:"200 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" },
+    "homme-02": { brand:"INTELEGENTOFF", t1:"Toner",       t2:"Control",   desc:"Тоник для контроля жирного блеска. Сужает поры и матирует кожу.", price:2190, size:"150 мл", img:"{{ url_for('static', filename='img/prod-photo-4.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" },
+    "homme-03": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Oil",       desc:"Масло для бороды. Смягчает жёсткий волос, питает кожу под бородой.", price:2290, size:"50 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT масло.png') }}" },
+    "homme-04": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Wax",       desc:"Воск для укладки бороды. Фиксация и матовый финиш на весь день.", price:1890, size:"50 мл", img:"{{ url_for('static', filename='img/prod-photo-3.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" },
+    "homme-05": { brand:"INTELEGENTOFF", t1:"Face Serum",  t2:"Black",     desc:"Концентрированная сыворотка для лица. Антивозрастной комплекс высокой концентрации.", price:2790, size:"30 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
+    "homme-06": { brand:"INTELEGENTOFF", t1:"After Shave", t2:"Balm",      desc:"Бальзам после бритья. Успокаивает раздражение и восстанавливает кожу.", price:1990, size:"100 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
+    "homme-kit-01": { brand:"INTELEGENTOFF", t1:"Starter", t2:"Kit",       desc:"Стартовый набор: 3 продукта для полного ритуала ухода. Выгоднее, чем по отдельности.", price:5990, size:"Набор 3 продукта", img:"{{ url_for('static', filename='img/logoIntelegent.png') }}", poster:"{{ url_for('static', filename='img/IntelegentSergay.png') }}" }
 };
 
 // Опорные кадры из архива для галереи и блока «Состав»

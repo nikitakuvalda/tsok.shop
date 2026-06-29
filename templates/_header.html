@@ -1,59 +1,37 @@
 <!-- ═══════════════════════════════════════════
-     ЕДИНАЯ ШАПКА САЙТА — TSOK Boutique
+     ЕДИНАЯ ШАПКА САЙТА — TSOK Boutique 2.0
      ═══════════════════════════════════════════ -->
 <script>
-/* reveal-safety: гарантируем, что контент станет видимым,
-   даже если IntersectionObserver не сработает */
-(function(){
-    function revealAll(){
-        document.querySelectorAll('.anim-fade-up,.anim-scale-up,.fi').forEach(function(el){
-            el.classList.add('is-visible');
-        });
+(function () {
+    /* включаем reveal-режим только если браузер умеет и движение не отключено;
+       иначе контент остаётся видимым по умолчанию (без скрытия) */
+    if ('IntersectionObserver' in window &&
+        !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+        document.documentElement.classList.add('anim-ready');
     }
-    // если что-то не раскрылось за 1.4с после загрузки — раскрываем принудительно
-    window.addEventListener('load', function(){ setTimeout(revealAll, 1400); });
-    // на случай отключённого JS-обсервера для прокрутки за пределами экрана
-    window.addEventListener('scroll', function onScroll(){
-        if (window.scrollY + window.innerHeight >= document.body.scrollHeight - 4){
-            revealAll();
-        }
-    }, {passive:true});
-
-    /* промо-полоса сворачивается, как только пользователь чуть пролистал вниз
-       (сам хедер прячется/показывается логикой initHeaderScroll из script.js) */
-    window.addEventListener('scroll', function(){
+    /* промо-полоса сворачивается при прокрутке вниз */
+    window.addEventListener('scroll', function () {
         var st = document.getElementById('siteTop');
-        if (!st) return;
-        st.classList.toggle('promo-collapsed', window.scrollY > 40);
-    }, {passive:true});
-
-    /* «живые краски»: для каждой секции с .liquid-bg обновляем --scroll (0..1)
-       в зависимости от того, как секция проходит через вьюпорт — краски «плывут» */
-    var liquidTicking = false;
-    function updateLiquid(){
-        document.querySelectorAll('.liquid-bg').forEach(function(bg){
-            var sec = bg.closest('section, div');
-            if (!sec) return;
-            var r = sec.getBoundingClientRect();
-            var vh = window.innerHeight || 1;
-            // прогресс от появления секснизу (0) до ухода вверх (1)
-            var p = 1 - (r.top + r.height/2) / (vh + r.height/2);
-            p = Math.max(0, Math.min(1, p));
-            bg.style.setProperty('--scroll', p.toFixed(3));
-        });
-        liquidTicking = false;
+        if (st) st.classList.toggle('promo-collapsed', window.scrollY > 40);
+    }, { passive: true });
+    /* лёгкий ambient-параллакс: свечения чуть смещаются за курсором (десктоп) */
+    if (window.innerWidth > 860) {
+        window.addEventListener('mousemove', function (e) {
+            var x = (e.clientX / window.innerWidth - .5);
+            var y = (e.clientY / window.innerHeight - .5);
+            document.querySelectorAll('.ambient').forEach(function (a) {
+                a.style.transform = 'translate3d(' + (x * 14).toFixed(1) + 'px,' + (y * 14).toFixed(1) + 'px,0)';
+            });
+        }, { passive: true });
     }
-    window.addEventListener('scroll', function(){
-        if (!liquidTicking){ requestAnimationFrame(updateLiquid); liquidTicking = true; }
-    }, {passive:true});
-    window.addEventListener('load', updateLiquid);
 })();
 </script>
+<script defer src="{{ url_for('static', filename='animations.js') }}"></script>
+
 <div class="site-top" id="siteTop">
     <div class="promo-bar">
-        Бесплатная доставка от 80&nbsp;₽ &nbsp;·&nbsp;
-        <a href="catalog">Pearl by Tais</a> &nbsp;·&nbsp;
-        <a href="catalog-homme">INTELEGENTOFF</a>
+        Бесплатная доставка по подписке · Подарок в каждом TSOK&nbsp;BOX ·
+        <a href="subscription">собрать бокс</a>
     </div>
 
     <div class="header-group" id="headerGroup">
@@ -77,6 +55,7 @@
                             </div>
                         </div>
                         <a href="subscription" class="nav-link text-gold">TSOK BOX</a>
+                        <a href="gift" class="nav-link">Подарки</a>
                         <a href="index#our-story" class="nav-link">История</a>
                     </nav>
                 </div>
@@ -92,16 +71,16 @@
                     <button class="icon-btn desktop-only" aria-label="Поиск">
                         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                     </button>
-                    <a class="icon-btn" id="loginBtn" href="account" aria-label="Личный кабинет" title="Личный кабинет" style="text-decoration:none;">
+                    <a class="icon-btn desktop-only" id="loginBtn" href="account" aria-label="Личный кабинет" title="Личный кабинет">
                         <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="7.5" r="3.5"/><path d="M4.5 21a7.5 7.5 0 0 1 15 0"/></svg>
                     </a>
-                    <button class="icon-btn" id="headerFavBtn" aria-label="Избранное">
+                    <button class="icon-btn desktop-only" id="headerFavBtn" aria-label="Избранное">
                         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                         <span class="fav-count"></span>
                     </button>
                     <button class="icon-btn" id="cartOpenBtn" aria-label="Корзина">
                         <span class="desktop-only btn-text">Корзина</span>
-                        <svg class="mobile-only" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="5" y="8" width="14" height="13" rx="1"/><path d="M8 8V6a2 2 0 0 1 4 0v2"/></svg>
+                        <svg class="mobile-only" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><rect x="5" y="8" width="14" height="13" rx="1.5"/><path d="M8.5 8V6.2a3.5 3.5 0 0 1 7 0V8"/></svg>
                         <span class="cart-count"></span>
                     </button>
                 </div>
@@ -109,3 +88,61 @@
         </header>
     </div>
 </div>
+
+<!-- ═══════ COOKIE-СОГЛАСИЕ (на всех страницах) ═══════ -->
+<div class="cookie" id="cookieConsent" role="dialog" aria-label="Согласие на использование cookie">
+    <div class="cookie__intro">
+        <div class="cookie__title">Мы используем cookie</div>
+        <p class="cookie__text">Файлы cookie помогают сайту работать, запоминать корзину и улучшать сервис. Часть из них обрабатывает данные — вы можете выбрать, какие разрешить. Подробнее в <a href="privacy">Политике конфиденциальности</a>.</p>
+        <div class="cookie__actions">
+            <button type="button" class="btn btn--gold" id="cookieAcceptAll">Принять все</button>
+            <button type="button" class="btn btn--outline-dark" id="cookieReject">Только необходимые</button>
+        </div>
+        <button type="button" class="cookie__link-btn" id="cookieCustomize">Настроить cookie</button>
+    </div>
+    <div class="cookie__settings">
+        <div class="cookie__title">Настройки cookie</div>
+        <div class="cookie-cat">
+            <div class="cookie-cat__txt"><strong>Необходимые</strong><span>Корзина, вход, безопасность. Всегда включены.</span></div>
+            <span class="cookie-sw is-on is-locked" aria-disabled="true" role="switch" aria-checked="true"></span>
+        </div>
+        <div class="cookie-cat">
+            <div class="cookie-cat__txt"><strong>Аналитические</strong><span>Помогают понять, как улучшить сайт.</span></div>
+            <button type="button" class="cookie-sw" id="cookieAnalytics" role="switch" aria-checked="false" aria-label="Аналитические cookie"></button>
+        </div>
+        <div class="cookie-cat">
+            <div class="cookie-cat__txt"><strong>Маркетинговые</strong><span>Релевантные предложения и реклама.</span></div>
+            <button type="button" class="cookie-sw" id="cookieMarketing" role="switch" aria-checked="false" aria-label="Маркетинговые cookie"></button>
+        </div>
+        <div class="cookie__actions" style="margin-top:16px">
+            <button type="button" class="btn btn--dark" id="cookieSave">Сохранить выбор</button>
+            <button type="button" class="btn btn--outline-dark" id="cookieAcceptAll2">Принять все</button>
+        </div>
+    </div>
+</div>
+<script>
+(function () {
+    var KEY = 'tsok_cookie_consent';
+    var box = document.getElementById('cookieConsent');
+    if (!box) return;
+    function saved() { try { return JSON.parse(localStorage.getItem(KEY)); } catch (e) { return null; } }
+    function store(c) { c.ts = Date.now(); c.v = 1; try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (e) {} window.tsokConsent = c; }
+    var existing = saved();
+    if (existing && existing.v) { window.tsokConsent = existing; }
+    else { setTimeout(function () { box.classList.add('is-shown'); }, 800); }
+
+    var an = document.getElementById('cookieAnalytics');
+    var mk = document.getElementById('cookieMarketing');
+    function tog(el) { el.addEventListener('click', function () { var on = !el.classList.contains('is-on'); el.classList.toggle('is-on', on); el.setAttribute('aria-checked', on); }); }
+    if (an) tog(an); if (mk) tog(mk);
+    function done(c) { store(c); box.classList.remove('is-shown'); }
+    function all() { done({ necessary: true, analytics: true, marketing: true }); }
+    document.getElementById('cookieAcceptAll').addEventListener('click', all);
+    document.getElementById('cookieAcceptAll2').addEventListener('click', all);
+    document.getElementById('cookieReject').addEventListener('click', function () { done({ necessary: true, analytics: false, marketing: false }); });
+    document.getElementById('cookieCustomize').addEventListener('click', function () { box.classList.add('is-settings'); });
+    document.getElementById('cookieSave').addEventListener('click', function () {
+        done({ necessary: true, analytics: an.classList.contains('is-on'), marketing: mk.classList.contains('is-on') });
+    });
+})();
+</script>

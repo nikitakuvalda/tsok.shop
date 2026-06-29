@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Собрать подарок под ключ · TSOK Boutique</title>
+    <meta name="description" content="Соберите подарочный набор TSOK под ключ: выберите получателя и формат, добавьте открытку, подпись создателя бренда и монограмму. Упакуем и привезём под дверь.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%23B07E3D%27%2F%3E%3Ctext%20x%3D%2716%27%20y%3D%2723%27%20font-family%3D%27Georgia%2Cserif%27%20font-size%3D%2718%27%20fill%3D%27%23FBF8F2%27%20text-anchor%3D%27middle%27%3ET%3C%2Ftext%3E%3C%2Fsvg%3E">
+    <meta name="theme-color" content="#FBF8F2">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TSOK Boutique">
+    <meta property="og:title" content="Собрать подарок под ключ · TSOK Boutique">
+    <meta property="og:description" content="Соберите подарочный набор TSOK под ключ: выберите получателя и формат, добавьте открытку, подпись создателя бренда и монограмму. Упакуем и привезём под дверь.">
+    <meta property="og:image" content="/static/img/HeroFem.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+</head>
+<body class="gift-page-body">
+
+{% include "_header.html" %}
+
+<!-- ═══════ HERO ═══════ -->
+<section class="gift-page-hero">
+    <div class="ambient" aria-hidden="true"><div class="ambient__bloom ambient__bloom--rose"></div><div class="ambient__bloom ambient__bloom--champagne"></div></div>
+    <div class="gift-page-hero__inner" data-reveal>
+        <span class="label center">TSOK Подарок · под ключ</span>
+        <h1>Подарок, который<br>хочется <em>развязать.</em></h1>
+        <p>Выберите получателя и формат — мы соберём набор, добавим открытку с пожеланием и подпись создателя бренда, упакуем и привезём под дверь готовым к вручению.</p>
+        <div class="gift-page-hero__trust">
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="20 6 9 17 4 12"/></svg>Бесплатная упаковка</span>
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="20 6 9 17 4 12"/></svg>Подпись блогера</span>
+            <span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><polyline points="20 6 9 17 4 12"/></svg>Доставка под дверь</span>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════ КОНСТРУКТОР ═══════ -->
+<section class="gift-build">
+    <div class="ambient" aria-hidden="true"><div class="ambient__bloom ambient__bloom--sage"></div></div>
+    <div class="gift-build__layout">
+
+        <!-- ШАГИ -->
+        <div class="gift-steps">
+
+            <!-- Шаг 1 -->
+            <div class="gift-step" data-reveal>
+                <div class="gift-step__head">
+                    <span class="gift-step__num">1</span>
+                    <h2 class="gift-step__title">Кому подарок</h2>
+                </div>
+                <div class="recipient-chips" style="justify-content:flex-start;margin:0;max-width:none;padding:0">
+                    <span class="r-chip is-active" data-recipient="her">Ей</span>
+                    <span class="r-chip" data-recipient="him">Ему</span>
+                    <span class="r-chip" data-recipient="mom">Маме</span>
+                    <span class="r-chip" data-recipient="dad">Папе</span>
+                    <span class="r-chip" data-recipient="grandma">Бабушке</span>
+                    <span class="r-chip" data-recipient="couple">Паре</span>
+                    <span class="r-chip" data-recipient="any">Без повода</span>
+                </div>
+                <div class="gift-curated" data-reveal>
+                    <span class="gift-curated__label">Мы уже подобрали</span>
+                    <h3 class="gift-curated__title" id="curatedTitle">Набор «<em>нежный уход</em>»</h3>
+                    <p class="gift-curated__note">Вам не нужно думать, что подарить — мы собрали готовый набор под получателя. Состав можно оставить как есть или скорректировать после заказа.</p>
+                    <div class="gift-curated__items" id="curatedItems"></div>
+                </div>
+            </div>
+
+            <!-- Шаг 2 -->
+            <div class="gift-step" data-reveal>
+                <div class="gift-step__head">
+                    <span class="gift-step__num">2</span>
+                    <h2 class="gift-step__title">Формат набора</h2>
+                </div>
+                <div class="gift-formats">
+                    <button type="button" class="gift-fmt" data-tier="attention">
+                        <span class="gift-fmt__check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                        <div class="gift-fmt__name">Знак внимания</div>
+                        <div class="gift-fmt__price"><span class="gift-fmt__old">4 600 ₽</span><span class="gift-fmt__now">3 900 ₽</span></div>
+                        <p class="gift-fmt__desc">2 продукта Pearl, открытка и фирменная упаковка с лентой.</p>
+                    </button>
+                    <button type="button" class="gift-fmt is-selected" data-tier="love">
+                        <span class="gift-fmt__badge">Хит выбора</span>
+                        <span class="gift-fmt__check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                        <div class="gift-fmt__name">Любимым</div>
+                        <div class="gift-fmt__price"><span class="gift-fmt__old">7 100 ₽</span><span class="gift-fmt__now">5 900 ₽</span></div>
+                        <p class="gift-fmt__desc">4 продукта или микс линий, подпись создателя бренда и секретный подарок.</p>
+                    </button>
+                    <button type="button" class="gift-fmt" data-tier="royal">
+                        <span class="gift-fmt__check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+                        <div class="gift-fmt__name">По-королевски</div>
+                        <div class="gift-fmt__price"><span class="gift-fmt__old">10 800 ₽</span><span class="gift-fmt__now">8 900 ₽</span></div>
+                        <p class="gift-fmt__desc">Вся коллекция, монограмма на ленте и подпись из лимитированной партии.</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Шаг 3 -->
+            <div class="gift-step" data-reveal>
+                <div class="gift-step__head">
+                    <span class="gift-step__num">3</span>
+                    <h2 class="gift-step__title">Персонализация</h2>
+                </div>
+                <div class="gift-pers">
+                    <div class="gift-field">
+                        <label for="giftMessage">Открытка с пожеланием</label>
+                        <textarea id="giftMessage" placeholder="Напишите тёплые слова — мы напечатаем их на открытке внутри набора."></textarea>
+                    </div>
+                    <div class="gift-toggle is-on" id="giftSigToggle" role="switch" aria-checked="true">
+                        <div class="gift-toggle__txt"><strong>Подпись создателя бренда</strong><span>От руки, из лимитированной партии · бесплатно</span></div>
+                        <span class="gift-toggle__sw"></span>
+                    </div>
+                    <div class="gift-toggle" id="giftMonoToggle" role="switch" aria-checked="false">
+                        <div class="gift-toggle__txt"><strong>Монограмма / инициалы на ленте</strong><span>Персональный штрих на упаковке · бесплатно</span></div>
+                        <span class="gift-toggle__sw"></span>
+                    </div>
+                    <div class="gift-field gift-initials" id="giftInitialsWrap">
+                        <label for="giftInitials">Инициалы для ленты</label>
+                        <input type="text" id="giftInitials" maxlength="4" placeholder="Например: А.К.">
+                    </div>
+                    <div class="gift-toggle is-on" id="giftWrapToggle" role="switch" aria-checked="true">
+                        <div class="gift-toggle__txt"><strong>Подарочная упаковка с лентой</strong><span>Готов к вручению · бесплатно</span></div>
+                        <span class="gift-toggle__sw"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ИТОГ -->
+        <aside class="gift-summary" data-reveal="scale">
+            <h3 class="gift-summary__title">Ваш подарок</h3>
+            <div class="gift-summary__row"><span>Кому</span><strong id="sumRecipient">Ей</strong></div>
+            <div class="gift-summary__row"><span>Формат</span><strong id="sumFormat">Любимым</strong></div>
+            <div class="gift-summary__row"><span>Идея набора</span><strong id="sumIdea">нежный уход</strong></div>
+            <div class="gift-summary__row"><span>Открытка</span><strong id="sumCard">без текста</strong></div>
+            <div class="gift-summary__row"><span>Подпись блогера</span><strong id="sumSig">да</strong></div>
+            <div class="gift-summary__row"><span>Монограмма</span><strong id="sumMono">—</strong></div>
+            <div class="gift-summary__row"><span>Упаковка</span><strong id="sumWrap">да</strong></div>
+            <div class="gift-summary__price"><span class="price-old" id="giftOldPrice">7 100 ₽</span><span class="price-now" id="giftNowPrice">5 900 ₽</span></div>
+            <span class="price-save gift-summary__save" id="giftSave">выгода 1 200 ₽</span>
+            <div class="gift-summary__cta">
+                <button type="button" class="btn btn--gold w-100" id="giftAddVisible">
+                    В корзину
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </button>
+                <a href="checkout" class="btn btn--outline-dark w-100">Оформить заказ</a>
+            </div>
+            <p class="account-note" style="margin-top:14px">Упаковка, открытка и доставка под дверь — бесплатно. Состав согласуем после заказа.</p>
+        </aside>
+
+    </div>
+
+    <!-- скрытая кнопка: переиспользует логику корзины из script.js -->
+    <button id="giftAddBtn" class="js-add-to-cart gift-hidden" aria-hidden="true" tabindex="-1"
+            data-id="gift-love" data-name="Подарочный набор «Любимым»" data-price="5900" data-size="подарок" data-brand="TSOK Подарок" data-img="img/Pearl3.jpg">add</button>
+</section>
+
+<!-- ═══════ ЛИМИТ-ПАРТИЯ ═══════ -->
+<section class="section section--cream section--bordered-top">
+    <div class="ambient" aria-hidden="true"><div class="ambient__bloom ambient__bloom--clay"></div></div>
+    <div class="container text-center" data-reveal>
+        <span class="label center">Только для TSOK</span>
+        <h2 class="section-title">100 наборов.<br><em>Подписаны лично.</em></h2>
+        <p class="section-desc" style="margin:18px auto 0">Хотите тот самый набор с открыткой, подписанной от руки создателем бренда? Лимитированная партия — нумерованная, такого больше не повторится.</p>
+        <div class="action-group" style="justify-content:center;margin-top:26px">
+            <a href="index#signed" class="btn btn--dark">Посмотреть лимит-партию</a>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__grid">
+            <div>
+                <a href="index" class="footer__logo">TSOK <span class="footer__logo-sub">boutique</span></a>
+                <span class="footer__tagline">Два бренда. Одна философия.</span>
+                <div class="footer__brand-links">
+                    <a href="catalog" class="footer__link">Pearl by Tais</a>
+                    <a href="catalog-homme" class="footer__link">INTELEGENTOFF</a>
+                    <a href="subscription" class="footer__link text-gold">TSOK BOX</a>
+                </div>
+            </div>
+            <div>
+                <div class="footer__col-title">Подарки</div>
+                <nav class="footer__nav">
+                    <a href="gift">Собрать подарок</a>
+                    <a href="index#duo">Для двоих</a>
+                    <a href="index#signed">Лимит-партия</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">Бренды</div>
+                <nav class="footer__nav">
+                    <a href="catalog">Pearl by Tais</a>
+                    <a href="catalog-homme">INTELEGENTOFF</a>
+                    <a href="subscription">TSOK BOX</a>
+                </nav>
+            </div>
+            <div>
+                <div class="footer__col-title">Бутик</div>
+                <nav class="footer__nav">
+                    <a href="index#our-story">О нас</a>
+                    <a href="index#ingredients">Состав</a>
+                    <a href="subscription#faq">FAQ</a>
+                    <a href="contacts">Контакты</a>
+                </nav>
+            </div>
+        </div>
+        <div class="footer__bottom">
+            <span>© 2026 TSOK Boutique</span>
+            <div class="footer__legal">
+                <a href="privacy">Политика конфиденциальности</a>
+                <a href="oferta">Публичная оферта</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- ═══ ОВЕРЛЕИ ═══ -->
+<div class="global-overlay" id="globalOverlay"></div>
+
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-drawer__header">
+        <h3 class="cart-drawer__title">Корзина</h3>
+        <button class="close-btn" id="cartCloseBtn" aria-label="Закрыть">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <div class="cart-drawer__scroll">
+        <div id="cartItemsContainer">
+            <p class="cart-empty" id="emptyCartMessage">Ваша корзина пуста</p>
+        </div>
+    </div>
+    <div class="cart-drawer__footer">
+        <div class="cart-subtotal"><span>Итого</span><span id="cartTotalSum">0 ₽</span></div>
+        <a href="checkout" class="btn btn--dark w-100">Оформить заказ</a>
+    </div>
+</div>
+
+<div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu__header">
+        <div class="logo-main"><span class="logo-main__title">TSOK</span></div>
+        <button class="close-btn" id="mobileMenuClose" aria-label="Закрыть меню">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+    </div>
+    <div class="mobile-menu__body">
+        <nav class="mobile-nav">
+            <a href="index" class="mobile-nav__link">Главная</a>
+            <a href="catalog" class="mobile-nav__link">Pearl by Tais</a>
+            <a href="catalog-homme" class="mobile-nav__link">INTELEGENTOFF</a>
+            <a href="subscription" class="mobile-nav__link text-gold">TSOK BOX</a>
+            <a href="gift" class="mobile-nav__link">Подарки</a>
+            <a href="account" class="mobile-nav__link">Личный кабинет</a>
+        </nav>
+    </div>
+    <div class="mobile-menu__footer">
+        <div class="action-group-col">
+            <a href="gift" class="btn btn--gold w-100">Собрать подарок</a>
+            <a href="subscription" class="btn btn--outline-dark w-100">TSOK BOX</a>
+        </div>
+    </div>
+</div>
+
+<div id="toastContainer" class="toast-container"></div>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>
+(function () {
+    var TIERS = {
+        attention: { name: 'Знак внимания', now: 3900, old: 4600, save: 700 },
+        love:      { name: 'Любимым',       now: 5900, old: 7100, save: 1200 },
+        royal:     { name: 'По-королевски',  now: 8900, old: 10800, save: 1900 }
+    };
+    var RECIP = { her: 'Ей', him: 'Ему', mom: 'Маме', dad: 'Папе', grandma: 'Бабушке', couple: 'Паре', any: 'Без повода' };
+    var RECIPES = {
+        her:     { idea: 'нежный уход за собой',   items: ['Тоник для лица', 'Очищающая пенка', 'Масло для тела', 'Тёплая открытка'] },
+        him:     { idea: 'сдержанный ритуал',      items: ['Гель для умывания', 'Масло для бороды', 'Бальзам после бритья', 'Открытка'] },
+        mom:     { idea: 'забота и уют',           items: ['Крем для рук', 'Мыло ручной работы', 'Аромат для дома', 'Тёплая открытка'] },
+        dad:     { idea: 'спокойная классика',     items: ['Гель для душа', 'Бальзам после бритья', 'Аромадиффузор', 'Открытка'] },
+        grandma: { idea: 'тепло для дома',         items: ['Мыло ручной работы', 'Питательный крем для рук', 'Аромадиффузор для дома', 'Открытка с тёплыми словами'] },
+        couple:  { idea: 'один уход на двоих',     items: ['Набор Pearl для неё', 'INTELEGENTOFF для него', 'Аромат для дома', 'Открытка'] },
+        any:     { idea: 'хиты бутика',            items: ['Бестселлеры Pearl', 'Приятный сюрприз', 'Фирменная упаковка', 'Открытка'] }
+    };
+    var state = { recipient: 'her', tier: 'love', message: '', signature: true, monogram: false, initials: '', wrap: true };
+    var $ = function (s) { return document.querySelector(s); };
+    var fmt = function (n) { return n.toLocaleString('ru-RU') + ' ₽'; };
+
+    function render() {
+        document.querySelectorAll('.r-chip[data-recipient]').forEach(function (c) {
+            c.classList.toggle('is-active', c.dataset.recipient === state.recipient);
+        });
+        document.querySelectorAll('.gift-fmt[data-tier]').forEach(function (c) {
+            c.classList.toggle('is-selected', c.dataset.tier === state.tier);
+        });
+        $('#giftSigToggle').classList.toggle('is-on', state.signature);
+        $('#giftMonoToggle').classList.toggle('is-on', state.monogram);
+        $('#giftWrapToggle').classList.toggle('is-on', state.wrap);
+        $('#giftInitialsWrap').classList.toggle('is-shown', state.monogram);
+
+        var t = TIERS[state.tier];
+        var rec = RECIPES[state.recipient];
+        var msg = state.message.trim();
+        $('#sumRecipient').textContent = RECIP[state.recipient];
+        $('#sumFormat').textContent = t.name;
+        $('#sumIdea').textContent = rec.idea;
+
+        $('#curatedTitle').innerHTML = 'Набор «<em>' + rec.idea + '</em>»';
+        $('#curatedItems').innerHTML = rec.items.map(function (i) {
+            return '<span class="gift-curated__tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>' + i + '</span>';
+        }).join('');
+        $('#sumCard').textContent = msg ? ('«' + (msg.length > 36 ? msg.slice(0, 36) + '…' : msg) + '»') : 'без текста';
+        $('#sumSig').textContent = state.signature ? 'да' : '—';
+        $('#sumMono').textContent = state.monogram ? (state.initials.trim() ? state.initials.trim().toUpperCase() : 'да') : '—';
+        $('#sumWrap').textContent = state.wrap ? 'да' : '—';
+        $('#giftOldPrice').textContent = fmt(t.old);
+        $('#giftNowPrice').textContent = fmt(t.now);
+        $('#giftSave').textContent = 'выгода ' + fmt(t.save);
+    }
+
+    document.querySelectorAll('.r-chip[data-recipient]').forEach(function (c) {
+        c.addEventListener('click', function () { state.recipient = c.dataset.recipient; render(); });
+    });
+    document.querySelectorAll('.gift-fmt[data-tier]').forEach(function (c) {
+        c.addEventListener('click', function () { state.tier = c.dataset.tier; render(); });
+    });
+    $('#giftMessage').addEventListener('input', function (e) { state.message = e.target.value; render(); });
+    $('#giftSigToggle').addEventListener('click', function () { state.signature = !state.signature; render(); });
+    $('#giftMonoToggle').addEventListener('click', function () { state.monogram = !state.monogram; render(); });
+    $('#giftWrapToggle').addEventListener('click', function () { state.wrap = !state.wrap; render(); });
+    $('#giftInitials').addEventListener('input', function (e) { state.initials = e.target.value; render(); });
+
+    $('#giftAddVisible').addEventListener('click', function () {
+        var t = TIERS[state.tier];
+        var btn = $('#giftAddBtn');
+        btn.dataset.id = 'gift-' + state.tier;
+        var extra = '';
+        if (state.message.trim()) extra += ' · открытка: \"' + state.message.trim().slice(0, 80) + '\"';
+        if (state.monogram && state.initials.trim()) extra += ' · инициалы: ' + state.initials.trim().toUpperCase();
+        btn.dataset.name = 'Подарок «' + t.name + '» · ' + RECIP[state.recipient] + ' (' + RECIPES[state.recipient].idea + ')' + extra;
+        btn.dataset.price = t.now;
+        btn.dataset.size = 'подарок';
+        btn.dataset.brand = 'TSOK Подарок';
+        btn.dataset.img = 'img/Pearl3.jpg';
+        btn.click();
+    });
+
+    render();
+})();
+</script>
+</body>
+</html>

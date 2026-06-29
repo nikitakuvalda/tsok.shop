@@ -6,11 +6,18 @@
     <title>Оформление заказа · TSOK Boutique</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=DM+Sans:opsz,wght@9,300;9,400;9,500;9,600;9,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     {% if yandex_maps_api_key %}
     <script src="https://api-maps.yandex.ru/2.1/?apikey={{ yandex_maps_api_key }}&lang=ru_RU" type="text/javascript"></script>
     {% endif %}
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%23B07E3D%27%2F%3E%3Ctext%20x%3D%2716%27%20y%3D%2723%27%20font-family%3D%27Georgia%2Cserif%27%20font-size%3D%2718%27%20fill%3D%27%23FBF8F2%27%20text-anchor%3D%27middle%27%3ET%3C%2Ftext%3E%3C%2Fsvg%3E">
+    <meta name="theme-color" content="#FBF8F2">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TSOK Boutique">
+    <meta property="og:title" content="Оформление заказа · TSOK Boutique">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="/static/img/HeroFem.jpg">
+    <meta name="twitter:card" content="summary_large_image">
 </head>
 <body class="checkout-page-body">
 
@@ -18,7 +25,7 @@
 <div class="page-offset"></div>
 
 <section class="checkout-page">
-    <div class="checkout-head">
+    <div class="checkout-head" data-reveal>
         <span class="label">Шаг оформления</span>
         <h1 class="checkout-title">Оформление <em>заказа</em></h1>
     </div>
@@ -35,7 +42,7 @@
             <div class="checkout-success" id="paymentSuccessNotice" style="display:none;"></div>
             {% endif %}
 
-            <form id="checkoutForm" class="checkout-form">
+            <form id="checkoutForm" class="checkout-form" data-reveal>
                 <div>
                     <div class="checkout-section-title">Контактные данные</div>
                 </div>
@@ -110,13 +117,15 @@
                     <p class="checkout-benefits" id="checkoutBenefitsLine">Введите код друга или примените Coins — пересчитаем итог перед оплатой.</p>
                 </div>
 
-                <button id="checkoutSubmitBtn" type="submit" class="btn btn--dark w-100 checkout-buy-btn">Купить</button>
+                <label class="consent-check"><input type="checkbox" id="checkoutConsent" required><span>Я ознакомлен(а) и согласен(на) с <a href="oferta" target="_blank">офертой</a> и <a href="privacy" target="_blank">политикой обработки персональных данных</a>.</span></label>
+<button id="checkoutSubmitBtn" type="submit" class="btn btn--dark w-100 checkout-buy-btn">Купить</button>
+<p class="checkout-secure"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Оплата через защищённый шлюз · данные карты не сохраняются</p>
                 <p class="checkout-error" id="checkoutError" hidden></p>
             </form>
         </div>
 
         <!-- Правая колонка: итог -->
-        <aside class="checkout-summary">
+        <aside class="checkout-summary" data-reveal="scale">
             <div class="checkout-summary__title">Ваш заказ</div>
             <p class="checkout-box-note" id="checkoutBoxNote" hidden></p>
             <div id="checkoutSummaryItems" class="checkout-summary__items"></div>
@@ -168,8 +177,8 @@
         <div class="footer__bottom">
             <span>© 2026 TSOK Boutique</span>
             <div class="footer__legal">
-                <a href="#">Политика конфиденциальности</a>
-                <a href="#">Публичная оферта</a>
+                <a href="privacy">Политика конфиденциальности</a>
+                <a href="oferta">Публичная оферта</a>
             </div>
         </div>
     </div>
@@ -213,5 +222,6 @@
 <div id="toastContainer" class="toast-container"></div>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script>(function(){var cb=document.getElementById("checkoutConsent"),b=document.getElementById("checkoutSubmitBtn");if(cb&&b){b.disabled=!cb.checked;cb.addEventListener("change",function(){b.disabled=!cb.checked;});}})();</script>
 </body>
 </html>

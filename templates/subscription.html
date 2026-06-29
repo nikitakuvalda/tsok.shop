@@ -6,7 +6,6 @@
     <title>TSOK BOX — Персональная подписка · TSOK Boutique</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,400;1,6..96,500&family=DM+Sans:opsz,wght@9,300;9,400;9,500;9,600;9,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         .comparison-table{width:100%;border-collapse:collapse;margin-top:40px}
@@ -17,6 +16,14 @@
         .comparison-table tr td:first-child{color:var(--muted-d);font-size:13px}
         .vip-gift-note{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--clay-deep);font-weight:600;margin-bottom:10px}
     </style>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2032%2032%27%3E%3Crect%20width%3D%2732%27%20height%3D%2732%27%20rx%3D%277%27%20fill%3D%27%23B07E3D%27%2F%3E%3Ctext%20x%3D%2716%27%20y%3D%2723%27%20font-family%3D%27Georgia%2Cserif%27%20font-size%3D%2718%27%20fill%3D%27%23FBF8F2%27%20text-anchor%3D%27middle%27%3ET%3C%2Ftext%3E%3C%2Fsvg%3E">
+    <meta name="theme-color" content="#FBF8F2">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TSOK Boutique">
+    <meta property="og:title" content="TSOK BOX — Персональная подписка · TSOK Boutique">
+    <meta property="og:description" content="">
+    <meta property="og:image" content="/static/img/HeroFem.jpg">
+    <meta name="twitter:card" content="summary_large_image">
 </head>
 <body class="subscription-page">
 
@@ -35,13 +42,13 @@
         <div class="sub-hero__deco-ring"></div>
     </div>
     <div class="sub-hero__inner">
-        <div class="sub-hero__text">
-            <div class="sub-hero__eyebrow">Персональная подписка</div>
+        <div class="sub-hero__text" data-reveal>
+            <div class="sub-hero__eyebrow">Сервис ухода · подписка</div>
             <h1 class="sub-hero__title">
                 TSOK<br><em>BOX</em>
             </h1>
             <p class="sub-hero__desc">
-                Твой личный ритуал ухода — собранный один раз и приезжающий под дверь каждый месяц. Меняй состав, пропускай месяцы, получай подарки. Без звонков и штрафов.
+                Проблемную кожу не вылечить одним средством. TSOK BOX — это сервис: каждый месяц подбираем уход под вашу задачу и ведём к результату за 3 месяца. Меняйте состав, пропускайте месяцы — без звонков и штрафов.
             </p>
             <div class="sub-hero__perks">
                 <div class="sub-hero__perk"><div class="sub-hero__perk-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l2.09 6.26L20 9.27l-5 4.14L16.18 21 12 17.27 7.82 21 9 13.41l-5-4.14 5.91.01z"/></svg></div>Гибкий состав</div>
@@ -50,13 +57,13 @@
                 <div class="sub-hero__perk"><div class="sub-hero__perk-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L4.5 13.5H11l-1 8.5 8.5-11.5H12z"/></svg></div>Скидка до 30%</div>
             </div>
             <div class="sub-hero__cta">
-                <a href="#constructor" class="btn btn--accent">Собрать бокс
+                <a href="#podbor" class="btn btn--accent">Подобрать бокс за минуту
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                 </a>
                 <a href="#how" class="btn btn--outline-light">Как работает</a>
             </div>
         </div>
-        <div class="sub-hero__preview">
+        <div class="sub-hero__preview" data-reveal="scale">
             <img src="{{ url_for('static', filename='img/BoxAfter.jpg') }}" alt="TSOK BOX"
                  onerror="this.parentElement.style.background='linear-gradient(150deg,#262E22,#16150F)'">
         </div>
@@ -66,27 +73,27 @@
 <!-- ═══════════════ КАК РАБОТАЕТ ═══════════════ -->
 <section class="how-section" id="how">
     <div class="container">
-        <div class="section__header">
+        <div class="section__header" data-reveal>
             <span class="label">4 шага</span>
             <h2 class="section__title" style="margin-top:12px;">Как работает<br><em>TSOK BOX</em></h2>
         </div>
         <div class="how-grid">
-            <div class="how-step">
+            <div class="how-step" data-reveal>
                 <div class="how-step__num">01</div>
                 <div class="how-step__title">Собери рутину</div>
                 <p class="how-step__desc">Добавь минимум 3 товара: на 4-м включится бесплатная доставка, на 5-м откроется VIP-подарок.</p>
             </div>
-            <div class="how-step">
+            <div class="how-step" data-reveal>
                 <div class="how-step__num">02</div>
                 <div class="how-step__title">Выбери формат</div>
                 <p class="how-step__desc">Выбери разовую покупку, рекуррент −10% или предоплату 3/6/12 месяцев со скидкой до −30% и BNPL.</p>
             </div>
-            <div class="how-step">
+            <div class="how-step" data-reveal>
                 <div class="how-step__num">03</div>
                 <div class="how-step__title">Меняй состав</div>
                 <p class="how-step__desc">В личном кабинете в любой момент меняй состав бокса. Сумма следующего списания пересчитается автоматически.</p>
             </div>
-            <div class="how-step">
+            <div class="how-step" data-reveal>
                 <div class="how-step__num">04</div>
                 <div class="how-step__title">Получай бонусы</div>
                 <p class="how-step__desc">Больше товаров — больше перков. Сюрпризы, бесплатная доставка и право выбора полноразмерного VIP-подарка.</p>
@@ -103,11 +110,11 @@
         <div class="liquid-bg__blob liquid-bg__blob--clay"></div>
     </div>
     <div class="container">
-        <div class="section__header">
+        <div class="section__header" data-reveal>
             <span class="label on-dark">Почему подписка</span>
             <h2 class="section__title text-white" style="margin-top:12px;">Разовая покупка<br>или <em>TSOK BOX?</em></h2>
         </div>
-        <table class="comparison-table">
+        <table class="comparison-table" data-reveal>
             <thead>
                 <tr>
                     <th></th>
@@ -129,19 +136,19 @@
 <!-- ═══════════════ ГОТОВЫЕ БОКСЫ ═══════════════ -->
 <section class="section section--cream section--bordered-top" id="ready-boxes">
     <div class="container">
-        <div class="section__header">
+        <div class="section__header" data-reveal>
             <span class="label">Не хотите собирать сами?</span>
             <h2 class="section__title" style="margin-top:12px;">Готовые боксы<br><em>на месяц</em></h2>
         </div>
         <div class="ready-boxes-grid">
-            <div class="ready-box ready-box--pearl">
+            <div class="ready-box ready-box--pearl" data-reveal>
                 <div class="ready-box__bg"><img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" alt="" aria-hidden="true"></div>
                 <span class="ready-box__tag">Pearl by Tais</span>
                 <h3 class="ready-box__title">Женский ритуал</h3>
                 <p class="ready-box__desc">Тоник-реставратор, увлажняющая пенка, тоник для волос и мицеллярная вода — полный уход для неё.</p>
                 <button class="btn btn--dark" onclick="loadReadyBox('pearl')">Добавить этот бокс</button>
             </div>
-            <div class="ready-box ready-box--homme">
+            <div class="ready-box ready-box--homme" data-reveal>
                 <div class="ready-box__bg"><img src="{{ url_for('static', filename='img/HeroHomme.jpg') }}" alt="" aria-hidden="true"></div>
                 <span class="ready-box__tag">INTELEGENTOFF</span>
                 <h3 class="ready-box__title">Мужской ритуал</h3>
@@ -153,9 +160,85 @@
 </section>
 
 <!-- ═══════════════ КОНСТРУКТОР ═══════════════ -->
+
+<!-- ═══════════════ ПОДБОР БОКСА (квиз + программы) ═══════════════ -->
+<section class="box-choose" id="podbor">
+    <div class="liquid-bg" aria-hidden="true"><div class="liquid-bg__blob liquid-bg__blob--clay"></div></div>
+    <div class="box-choose__head" data-reveal>
+        <span class="label center">Подбор за минуту</span>
+        <h2 class="box-choose__title">Не нужно собирать самим.<br><em>Подберём под вашу задачу.</em></h2>
+        <p class="box-choose__sub">Ответьте на 3 вопроса — соберём программу ухода под вашу цель и будем вести к результату 3 месяца. Хотите полный контроль — переключитесь на ручную сборку.</p>
+        <div class="choose-toggle">
+            <button type="button" data-mode="auto" class="is-active">Подобрать за меня</button>
+            <button type="button" data-mode="manual">Собрать вручную</button>
+        </div>
+    </div>
+
+    <div id="autoFlow">
+        <div class="quiz" id="boxQuiz" data-reveal>
+            <div class="quiz__card">
+                <div class="quiz__progress"><span class="is-done"></span><span></span><span></span></div>
+
+                <div class="quiz__step is-active" data-step="1">
+                    <div class="quiz__q">Что хотите решить?</div>
+                    <div class="quiz__hint">Выберите главную задачу — под неё соберём программу</div>
+                    <div class="quiz__options"><button type="button" class="quiz__opt" data-concern="clear"><span class="quiz__opt-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><circle cx="9" cy="10" r="1"/><circle cx="15" cy="10" r="1"/></svg></span><span class="quiz__opt-txt"><strong>Проблемная кожа</strong><span>Акне, жирный блеск, поры</span></span></button><button type="button" class="quiz__opt" data-concern="glow"><span class="quiz__opt-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></span><span class="quiz__opt-txt"><strong>Сухость и тусклость</strong><span>Стянутость, нет сияния</span></span></button><button type="button" class="quiz__opt" data-concern="age"><span class="quiz__opt-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l2.5 6h6l-5 4 2 6.5-5.5-4-5.5 4 2-6.5-5-4h6z"/></svg></span><span class="quiz__opt-txt"><strong>Возраст и упругость</strong><span>Морщины, потеря тонуса</span></span></button><button type="button" class="quiz__opt" data-concern="hair"><span class="quiz__opt-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 20c0-8 4-16 8-16s8 8 8 16"/><path d="M8 20c0-6 2-11 4-11s4 5 4 11"/></svg></span><span class="quiz__opt-txt"><strong>Уход за волосами</strong><span>Ломкость, тусклость, объём</span></span></button><button type="button" class="quiz__opt" data-concern="support"><span class="quiz__opt-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 22l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></span><span class="quiz__opt-txt"><strong>Просто поддерживать</strong><span>Уже всё ок, хочу ритуал</span></span></button></div>
+                </div>
+
+                <div class="quiz__step" data-step="2">
+                    <div class="quiz__q" id="q2title">Ваш тип кожи?</div>
+                    <div class="quiz__hint">Поможет точнее подобрать текстуры</div>
+                    <div class="quiz__options" id="q2options"></div>
+                    <button type="button" class="quiz__back" data-back>&larr; назад</button>
+                </div>
+
+                <div class="quiz__step" data-step="3">
+                    <div class="quiz__q">Насколько глубоко идём?</div>
+                    <div class="quiz__hint">От лёгкой поддержки до интенсивного курса</div>
+                    <div class="quiz__options">
+                        <button type="button" class="quiz__opt" data-intensity="base"><span class="quiz__opt-txt"><strong>Базовая программа</strong><span>Хит. Всё необходимое для результата</span></span></button>
+                        <button type="button" class="quiz__opt" data-intensity="intense"><span class="quiz__opt-txt"><strong>Интенсив</strong><span>Усиленный уход + дополнительное средство</span></span></button>
+                    </div>
+                    <button type="button" class="quiz__back" data-back>&larr; назад</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="quiz-result" id="quizResult">
+            <div class="result-card">
+                <div class="result-card__top">
+                    <div class="result-card__eyebrow">Ваша персональная программа</div>
+                    <h3 class="result-card__name" id="rName"></h3>
+                    <p class="result-card__for" id="rFor"></p>
+                    <div class="result-card__why"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M22 4 12 14.01l-3-3"/></svg><span id="rWhy"></span></div>
+                </div>
+                <div class="result-arc" id="rArc"></div>
+                <div class="result-card__foot">
+                    <div class="result-card__price"><span class="o" id="rOld"></span><span class="n" id="rNow"></span> <span class="per">/ месяц</span><span class="note" id="rNote"></span></div>
+                    <div class="result-card__actions">
+                        <button type="button" class="btn btn--accent" id="rBuy">Оформить подписку
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center"><button type="button" class="result-restart" id="rRestart">&#8635; пройти заново</button></div>
+        </div>
+
+        <div class="programs" data-reveal>
+            <div class="programs__lead">Или выберите готовую программу</div>
+            <div class="programs__grid" id="programsGrid"></div>
+        </div>
+    </div>
+
+    <button id="boxAddBtn" class="js-add-to-cart gift-hidden" tabindex="-1" aria-hidden="true" data-id="box" data-name="TSOK BOX" data-price="3490" data-size="подписка" data-brand="TSOK BOX" data-img="img/BoxAfter.jpg">add</button>
+</section>
+
+<div id="manualBuilder" hidden>
+<p class="manual-note">Ручная сборка — для тех, кто хочет сам выбрать каждое средство в боксе.</p>
 <section class="constructor-section" id="constructor">
     <div class="container">
-        <div class="section__header">
+        <div class="section__header" data-reveal>
             <span class="label">Собери сам</span>
             <h2 class="section__title" style="margin-top:12px;">Конструктор<br><em>бокса</em></h2>
         </div>
@@ -172,7 +255,7 @@
                 <div class="constructor-products" id="constructorProducts"></div>
             </div>
 
-            <div class="constructor-panel">
+            <div class="constructor-panel" data-reveal>
                 <div class="progress-block">
                     <div class="progress-head">
                         <span class="progress-amount"><span id="progressAmount">0</span> / 5 товаров</span>
@@ -235,20 +318,22 @@
         </div>
     </div>
 </section>
+</div> <!-- /manualBuilder -->
+
 
 
 <section class="section section--cream section--bordered-top" id="tsok-club">
     <div class="container">
-        <div class="section__header">
+        <div class="section__header" data-reveal>
             <span class="label">TSOK CLUB</span>
             <h2 class="section__title" style="margin-top:12px;">Лояльность и удержание</h2>
         </div>
         <div class="club-grid">
-            <div class="club-card"><h3>TSOK Coins</h3><p>1 Coin = 1 ₽. Начисление через 14 дней после доставки, списание до 30% разового заказа, рекуррентные списания не оплачиваются баллами.</p></div>
-            <div class="club-card"><h3>Грейды</h3><p>Silver 3%, Gold 5% после 3+ месяцев или 15 000 ₽/год, Platinum 10% после 6+ месяцев или 30 000 ₽/год. При отмене подписки — откат до Silver.</p></div>
-            <div class="club-card"><h3>Refer-a-Friend</h3><p>Уникальный промокод даёт новичку −10% на первый заказ, пригласившему — 500 Coins после доставки. Anti-fraud: IP, device fingerprint, карта.</p></div>
+            <div class="club-card" data-reveal><h3>TSOK Coins</h3><p>1 Coin = 1 ₽. Начисление через 14 дней после доставки, списание до 30% разового заказа, рекуррентные списания не оплачиваются баллами.</p></div>
+            <div class="club-card" data-reveal><h3>Грейды</h3><p>Silver 3%, Gold 5% после 3+ месяцев или 15 000 ₽/год, Platinum 10% после 6+ месяцев или 30 000 ₽/год. При отмене подписки — откат до Silver.</p></div>
+            <div class="club-card" data-reveal><h3>Refer-a-Friend</h3><p>Уникальный промокод даёт новичку −10% на первый заказ, пригласившему — 500 Coins после доставки. Anti-fraud: IP, device fingerprint, карта.</p></div>
         </div>
-        <div class="routine-panel">
+        <div class="routine-panel" data-reveal>
             <h3>ЛК «Гибкая рутина»</h3>
             <p>Дата следующей сборки, состав бокса, баланс Coins, свап товаров с запретом ниже 3 шт., пауза на +30 дней и CRON-уведомление за 72 часа до списания.</p>
         </div>
@@ -258,40 +343,40 @@
 <!-- ═══════════════ FAQ ═══════════════ -->
 <section class="section section--light section--bordered-top" id="faq">
     <div class="container">
-        <div class="section__header text-center" style="max-width:640px;margin:0 auto;">
+        <div class="section__header text-center" data-reveal style="max-width:640px;margin:0 auto;">
             <span class="label center">Частые вопросы</span>
             <h2 class="section__title" style="margin-top:12px;">Всё о <em>TSOK BOX</em></h2>
         </div>
         <div class="faq-list">
-            <div class="faq-item">
+            <div class="faq-item" data-reveal>
                 <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
                     Можно ли менять состав каждый месяц?
                     <span class="faq-icon">+</span>
                 </button>
                 <div class="faq-answer"><div class="faq-answer__inner">Да. За 3 дня до отправки придёт напоминание — вы можете заменить любой продукт, добавить новый или убрать ненужный. Сумма следующего списания пересчитается автоматически.</div></div>
             </div>
-            <div class="faq-item">
+            <div class="faq-item" data-reveal>
                 <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
                     Что если я не успеваю израсходовать продукты?
                     <span class="faq-icon">+</span>
                 </button>
                 <div class="faq-answer"><div class="faq-answer__inner">Просто пропустите месяц в один клик в личном кабинете. Никаких штрафов и обязательных списаний — подписка остаётся гибкой.</div></div>
             </div>
-            <div class="faq-item">
+            <div class="faq-item" data-reveal>
                 <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
                     Как работает скидка «Долями»?
                     <span class="faq-icon">+</span>
                 </button>
                 <div class="faq-answer"><div class="faq-answer__inner">Формат «Долями» фиксирует цену на год со скидкой 20%, а оплата делится на равные части и списывается раз в месяц. Удобно, если хотите зафиксировать выгодную стоимость.</div></div>
             </div>
-            <div class="faq-item">
+            <div class="faq-item" data-reveal>
                 <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
                     Какой подарок внутри коробки?
                     <span class="faq-icon">+</span>
                 </button>
                 <div class="faq-answer"><div class="faq-answer__inner">От 4 товаров — приятный сюрприз от бренда. От 5 товаров вы сами выбираете полноразмерный VIP-подарок: скраб, набор масок или кварцевый роллер.</div></div>
             </div>
-            <div class="faq-item">
+            <div class="faq-item" data-reveal>
                 <button class="faq-question" aria-expanded="false" onclick="toggleFaq(this)">
                     Можно ли совмещать Pearl by Tais и INTELEGENTOFF в одном боксе?
                     <span class="faq-icon">+</span>
@@ -340,8 +425,8 @@
         <div class="footer__bottom">
             <span>© 2026 TSOK Boutique</span>
             <div class="footer__legal">
-                <a href="#">Политика конфиденциальности</a>
-                <a href="#">Публичная оферта</a>
+                <a href="privacy">Политика конфиденциальности</a>
+                <a href="oferta">Публичная оферта</a>
             </div>
         </div>
     </div>
@@ -395,7 +480,7 @@
             <input id="boxRegEmail" type="email" autocomplete="email" placeholder="Email" required>
         </div>
         <p class="registration-modal__error" id="boxRegistrationError"></p>
-        <button class="btn btn--dark w-100" type="submit">Зарегистрироваться и оформить бокс</button>
+        <label class="consent-check"><input type="checkbox" id="boxConsent" required><span>Я ознакомлен(а) и согласен(на) с <a href="oferta" target="_blank">офертой</a> и <a href="privacy" target="_blank">политикой обработки персональных данных</a>.</span></label><button class="btn btn--dark w-100" type="submit">Зарегистрироваться и оформить бокс</button>
         <button class="btn btn--outline-dark w-100" type="button" id="boxRegistrationClose" style="margin-top:10px;">Вернуться к конструктору</button>
     </form>
 </div>
@@ -406,19 +491,19 @@
     //  JS: КОНСТРУКТОР БОКСА И РАСЧЕТ ПОДПИСОК
     // ════════════════════════════════════════════
     const PRODUCTS = [
-        { id:'pearl-01', name:'Foam Mousse Moisture',      size:'150 мл', price:96,  img:'img/Pearl1.jpg', cat:'face',  brand:'pearl' },
-        { id:'pearl-02', name:'Face Tonic Toning',         size:'150 мл', price:93,  img:'img/Pearl2.jpg', cat:'face',  brand:'pearl' },
-        { id:'pearl-03', name:'Tonic Youth Restoring',     size:'150 мл', price:93,  img:'img/Pearl3.jpg', cat:'face',  brand:'pearl' },
-        { id:'pearl-04', name:'Foam Mousse Cleansing',     size:'150 мл', price:96,  img:'img/Pearl4.jpg', cat:'face',  brand:'pearl' },
-        { id:'pearl-05', name:'Hair Tonic Radiance',       size:'200 мл', price:88,  img:'img/Pearl5.jpg', cat:'hair',  brand:'pearl' },
-        { id:'pearl-06', name:'Velvet Oil Blend',          size:'60 мл',  price:69,  img:'img/Pearl6.jpg', cat:'hair',  brand:'pearl' },
-        { id:'pearl-07', name:'Micellar Water Extract Mix',size:'200 мл', price:99,  img:'img/Pearl7.jpg', cat:'face',  brand:'pearl' },
-        { id:'homme-01', name:'Face Wash Black',           size:'200 мл', price:78,  img:'img/prod-photo-2.jpg', cat:'homme', brand:'homme' },
-        { id:'homme-02', name:'Toner Control',             size:'150 мл', price:89,  img:'img/prod-photo-4.jpg', cat:'homme', brand:'homme' },
-        { id:'homme-03', name:'Beard Oil',                 size:'50 мл',  price:96,  img:'img/prod-photo-1.jpg', cat:'homme', brand:'homme' },
-        { id:'homme-04', name:'Beard Wax',                 size:'50 мл',  price:82,  img:'img/prod-photo-3.jpg', cat:'homme', brand:'homme' },
-        { id:'homme-05', name:'Face Serum Black',          size:'30 мл',  price:134, img:'img/prod-photo-1.jpg', cat:'homme', brand:'homme' },
-        { id:'homme-06', name:'After Shave Balm',          size:'100 мл', price:82,  img:'img/prod-photo-2.jpg', cat:'homme', brand:'homme' },
+        { id:'pearl-01', name:'Foam Mousse Moisture',      size:'150 мл', price:2290,  img:'img/Pearl1.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-02', name:'Face Tonic Toning',         size:'150 мл', price:2190,  img:'img/Pearl2.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-03', name:'Tonic Youth Restoring',     size:'150 мл', price:2390,  img:'img/Pearl3.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-04', name:'Foam Mousse Cleansing',     size:'150 мл', price:2290,  img:'img/Pearl4.jpg', cat:'face',  brand:'pearl' },
+        { id:'pearl-05', name:'Hair Tonic Radiance',       size:'200 мл', price:1990,  img:'img/Pearl5.jpg', cat:'hair',  brand:'pearl' },
+        { id:'pearl-06', name:'Velvet Oil Blend',          size:'60 мл',  price:2490,  img:'img/Pearl6.jpg', cat:'hair',  brand:'pearl' },
+        { id:'pearl-07', name:'Micellar Water Extract Mix',size:'200 мл', price:2190,  img:'img/Pearl7.jpg', cat:'face',  brand:'pearl' },
+        { id:'homme-01', name:'Face Wash Black',           size:'200 мл', price:1990,  img:'img/prod-photo-2.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-02', name:'Toner Control',             size:'150 мл', price:2190,  img:'img/prod-photo-4.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-03', name:'Beard Oil',                 size:'50 мл',  price:2290,  img:'img/prod-photo-1.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-04', name:'Beard Wax',                 size:'50 мл',  price:1890,  img:'img/prod-photo-3.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-05', name:'Face Serum Black',          size:'30 мл',  price:2790, img:'img/prod-photo-1.jpg', cat:'homme', brand:'homme' },
+        { id:'homme-06', name:'After Shave Balm',          size:'100 мл', price:1990,  img:'img/prod-photo-2.jpg', cat:'homme', brand:'homme' },
     ];
 
     // ── Состояние ──
@@ -751,5 +836,124 @@
         if (giftSelect) giftSelect.value = savedBoxState.vip_gift;
     }
     </script>
+
+<script>
+(function () {
+    var FLOW = document.getElementById('autoFlow'), MAN = document.getElementById('manualBuilder');
+    document.querySelectorAll('.choose-toggle button[data-mode]').forEach(function (b) {
+        b.addEventListener('click', function () {
+            document.querySelectorAll('.choose-toggle button').forEach(function (x) { x.classList.toggle('is-active', x === b); });
+            var manual = b.dataset.mode === 'manual';
+            if (MAN) MAN.hidden = !manual;
+            if (FLOW) FLOW.style.display = manual ? 'none' : '';
+            if (manual && MAN) MAN.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    var PROG = {
+        clear: { tag: 'Проблемная кожа', name: 'Чистая кожа', img: 'img/Pearl3.jpg',
+            forr: 'Для жирной и проблемной кожи, склонной к высыпаниям и расширенным порам.',
+            why: 'Проблемную кожу не убрать за один раз — программа работает накопительно: за 3 месяца кожа очищается и выравнивается.',
+            base: 3490, old: 3990,
+            months: [['Месяц 1', 'Очищение и баланс', 'Мягкое очищение, тоник и себорегуляция — снимаем воспаления.'], ['Месяц 2', 'Меньше высыпаний', 'Активы против несовершенств, восстановление барьера.'], ['Месяц 3', 'Ровный тон', 'Выравнивание текстуры и тона, закрепляем результат.']] },
+        glow: { tag: 'Сухость и тусклость', name: 'Сияние', img: 'img/Pearl1.jpg',
+            forr: 'Для сухой и тусклой кожи, которой не хватает увлажнения и блеска.',
+            why: 'Сияние возвращается не сразу — за 3 месяца восстанавливаем увлажнённость и здоровый блеск.',
+            base: 3290, old: 3790,
+            months: [['Месяц 1', 'Глубокое увлажнение', 'Гидролаты, сыворотка и питательный крем.'], ['Месяц 2', 'Восстановление', 'Липиды и антиоксиданты, барьер кожи крепнет.'], ['Месяц 3', 'Сияние', 'Выравнивание тона, кожа отдохнувшая и светящаяся.']] },
+        age: { tag: 'Возраст и упругость', name: 'Молодость', img: 'img/Pearl5.jpg',
+            forr: 'Для зрелой кожи: первые морщины, потеря упругости и плотности.',
+            why: 'Anti-age работает курсом — за 3 месяца кожа становится плотнее и более упругой.',
+            base: 4290, old: 4900,
+            months: [['Месяц 1', 'Питание', 'Насыщенные текстуры, пептиды, восстановление.'], ['Месяц 2', 'Упругость', 'Активы для плотности и тонуса кожи.'], ['Месяц 3', 'Лифтинг-эффект', 'Контуры ровнее, кожа выглядит моложе.']] },
+        hair: { tag: 'Уход за волосами', name: 'Сильные волосы', img: 'img/Pearl7.jpg',
+            forr: 'Для ослабленных волос: ломкость, тусклость, нужен объём и блеск.',
+            why: 'Волосы восстанавливаются месяцами — за 3 месяца возвращаем силу, блеск и объём.',
+            base: 2990, old: 3490,
+            months: [['Месяц 1', 'Очищение и питание', 'Бессульфатный уход, питательная маска.'], ['Месяц 2', 'Укрепление', 'Уход против ломкости, кожа головы в балансе.'], ['Месяц 3', 'Блеск и объём', 'Волосы крепче, живой блеск и объём.']] }
+    };
+    PROG.support = PROG.glow;
+
+    var TYPE_SKIN = [['oily', 'Жирная'], ['combo', 'Комбинированная'], ['dry', 'Сухая'], ['normal', 'Нормальная'], ['sensitive', 'Чувствительная']];
+    var TYPE_HAIR = [['oily', 'Жирные у корней'], ['dry', 'Сухие и ломкие'], ['color', 'Окрашенные'], ['normal', 'Нормальные']];
+    var state = { concern: 'clear', type: null, intensity: 'base' };
+
+    function go(n) {
+        document.querySelectorAll('.quiz__step').forEach(function (s) { s.classList.toggle('is-active', +s.dataset.step === n); });
+        document.querySelectorAll('.quiz__progress span').forEach(function (s, i) { s.classList.toggle('is-done', i < n); });
+    }
+    function fmt(n) { return n.toLocaleString('ru-RU') + ' \u20BD'; }
+    function priceNow(p) { return state.intensity === 'intense' ? p.base + 800 : p.base; }
+
+    document.querySelectorAll('.quiz__opt[data-concern]').forEach(function (o) {
+        o.addEventListener('click', function () {
+            state.concern = o.dataset.concern;
+            var hair = state.concern === 'hair';
+            document.getElementById('q2title').textContent = hair ? 'Какие у вас волосы?' : 'Ваш тип кожи?';
+            var list = hair ? TYPE_HAIR : TYPE_SKIN;
+            document.getElementById('q2options').innerHTML = list.map(function (t) {
+                return '<button type="button" class="quiz__opt" data-type="' + t[0] + '"><span class="quiz__opt-txt"><strong>' + t[1] + '</strong></span></button>';
+            }).join('');
+            document.querySelectorAll('#q2options .quiz__opt').forEach(function (b) {
+                b.addEventListener('click', function () { state.type = b.dataset.type; go(3); });
+            });
+            go(2);
+        });
+    });
+    document.querySelectorAll('.quiz__opt[data-intensity]').forEach(function (o) {
+        o.addEventListener('click', function () { state.intensity = o.dataset.intensity; showResult(); });
+    });
+    document.querySelectorAll('.quiz__back[data-back]').forEach(function (b) {
+        b.addEventListener('click', function () { var cur = +document.querySelector('.quiz__step.is-active').dataset.step; go(Math.max(1, cur - 1)); });
+    });
+
+    function showResult() {
+        var p = PROG[state.concern] || PROG.clear;
+        var now = priceNow(p), label = state.intensity === 'intense' ? 'интенсив' : 'базовая';
+        document.getElementById('rName').innerHTML = 'Программа \u00AB<em>' + p.name + '</em>\u00BB';
+        document.getElementById('rFor').textContent = p.forr;
+        document.getElementById('rWhy').textContent = p.why;
+        document.getElementById('rArc').innerHTML = p.months.map(function (m) {
+            return '<div class="arc-month"><div class="arc-month__n">' + m[0] + '</div><div class="arc-month__t">' + m[1] + '</div><div class="arc-month__d">' + m[2] + '</div></div>';
+        }).join('');
+        document.getElementById('rOld').textContent = fmt(p.old + (state.intensity === 'intense' ? 800 : 0));
+        document.getElementById('rNow').textContent = fmt(now);
+        document.getElementById('rNote').textContent = '3 месяца \u00B7 отмена в любой момент \u00B7 доставка бесплатно';
+        document.getElementById('rBuy').onclick = function () { addBox(p, now, label); };
+        document.getElementById('boxQuiz').style.display = 'none';
+        var r = document.getElementById('quizResult'); r.classList.add('is-shown'); r.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    document.getElementById('rRestart').addEventListener('click', function () {
+        document.getElementById('quizResult').classList.remove('is-shown');
+        document.getElementById('boxQuiz').style.display = '';
+        state = { concern: 'clear', type: null, intensity: 'base' }; go(1);
+        document.getElementById('boxQuiz').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+
+    function addBox(p, now, label) {
+        var b = document.getElementById('boxAddBtn');
+        b.dataset.id = 'box-' + p.name;
+        b.dataset.name = 'TSOK BOX \u00B7 \u00AB' + p.name + '\u00BB (3 мес, ' + label + ')';
+        b.dataset.price = now; b.dataset.size = 'подписка/мес'; b.dataset.brand = 'TSOK BOX'; b.dataset.img = p.img;
+        b.click();
+        setTimeout(function () { window.location.href = 'checkout'; }, 350);
+    }
+
+    var grid = document.getElementById('programsGrid');
+    if (grid) {
+        grid.innerHTML = ['clear', 'glow', 'age', 'hair'].map(function (k) {
+            var p = PROG[k], src = (window.tsokImg ? window.tsokImg(p.img) : '/static/' + p.img);
+            return '<article class="program"><div class="program__media"><img src="' + src + '" alt="' + p.name + '"><span class="program__tag">' + p.tag + '</span></div>' +
+                '<div class="program__body"><div class="program__name">' + p.name + '</div><p class="program__for">' + p.forr + '</p>' +
+                '<div class="program__price"><span class="n">' + fmt(p.base) + '</span><span class="per">/ мес</span></div>' +
+                '<button type="button" class="btn btn--dark w-100" data-prog="' + k + '">Выбрать программу</button></div></article>';
+        }).join('');
+        grid.querySelectorAll('[data-prog]').forEach(function (btn) {
+            btn.addEventListener('click', function () { var p = PROG[btn.dataset.prog]; addBox(p, p.base, 'базовая'); });
+        });
+    }
+})();
+</script>
+
 </body>
 </html>
