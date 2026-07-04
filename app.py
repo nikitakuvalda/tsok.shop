@@ -55,6 +55,7 @@ SUBSCRIPTION_PLANS = {
     "3m": {"label": "Подписка 3 месяца", "discount": Decimal("0.15"), "months": 3, "bnpl_required": True},
     "6m": {"label": "Подписка 6 месяцев", "discount": Decimal("0.20"), "months": 6, "bnpl_required": True},
     "12m": {"label": "VIP 12 месяцев", "discount": Decimal("0.30"), "months": 12, "bnpl_required": True},
+    "test_3m": {"label": "Тестовая подписка 3 месяца", "discount": Decimal("0"), "months": 3, "bnpl_required": False, "is_test": True},
 }
 VIP_GIFTS = {"body-scrub", "mask-set", "quartz-roller"}
 GIFT_LABELS = {
@@ -71,12 +72,15 @@ def _selected_count(items):
 def _calculate_box_quote(items, plan_code="once", vip_gift=""):
     plan = SUBSCRIPTION_PLANS.get(plan_code) or SUBSCRIPTION_PLANS["once"]
     count = _selected_count(items)
-    if count < MIN_BOX_ITEMS:
+    if plan.get("is_test"):
+        if count != 1 or not any(item["id"] == "test-subscription-box-3m" for item in items):
+            raise ValueError("Тестовая подписка доступна только для скрытого тестового бокса.")
+    elif count < MIN_BOX_ITEMS:
         raise ValueError("Минимальный состав TSOK BOX — 3 товара.")
     base_total = sum(item["line_total"] for item in items)
     discount_amount = (base_total * plan["discount"]).quantize(Decimal("0.01"))
     discounted_total = base_total - discount_amount
-    free_delivery = count >= 4 or plan_code in {"6m", "12m"}
+    free_delivery = bool(plan.get("is_test")) or count >= 4 or plan_code in {"6m", "12m"}
     delivery_fee = Decimal("0") if free_delivery else DELIVERY_FEE
     gift_enabled = count >= 5
     gift = vip_gift if gift_enabled and vip_gift in VIP_GIFTS else ""
