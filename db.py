@@ -23,6 +23,7 @@ PRODUCT_SEED = {
     "homme-05": {"name": "Face Serum Black", "price": Decimal("134"), "size": "30 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Сыворотка для лица.", "image": "img/prod-photo-1.jpg"},
     "homme-06": {"name": "After Shave Balm", "price": Decimal("82"), "size": "100 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Бальзам после бритья.", "image": "img/prod-photo-2.jpg"},
     "homme-kit-01": {"name": "INTELEGENTOFF Starter Kit", "price": Decimal("254"), "size": "Набор 3 продукта", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Стартовый набор.", "image": "img/logoIntelegent.png"},
+    "tsok-test-subscription-box-3m": {"name": "TSOK TEST BOX 3M", "price": Decimal("1"), "size": "3 месяца · тест оплаты", "brand": "TSOK BOX", "category": "hidden-test", "description": "Скрытая тестовая подписка-бокс: 1 ₽ сейчас и по 1 ₽ в следующие 2 месяца.", "image": ""},
 }
 
 @contextmanager
@@ -56,10 +57,11 @@ def init_database():
 
 def init_products_table(): init_database()
 
-def list_products(category=None, include_inactive=False):
+def list_products(category=None, include_inactive=False, include_hidden=False):
     init_database(); sql="SELECT * FROM products WHERE 1=1"; args=[]
     if category: sql += " AND category=?"; args.append(category)
     if not include_inactive: sql += " AND is_active=1"
+    if not include_hidden: sql += " AND category != 'hidden-test'"
     sql += " ORDER BY category, name"
     with get_connection() as conn: return [_row(r) for r in conn.execute(sql,args).fetchall()]
 

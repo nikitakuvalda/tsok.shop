@@ -40,6 +40,50 @@ function addToCart(id, name, price, size, brand, img) {
     showToast(`«${name}» добавлен в корзину`, 'cart');
 }
 
+function addTsokTestSubscriptionBox() {
+    const testBox = {
+        id: 'tsok-test-subscription-box-3m',
+        name: 'TSOK TEST BOX 3M',
+        price: 1,
+        size: '3 месяца · тест оплаты',
+        brand: 'TSOK BOX',
+        img: '',
+        qty: 1
+    };
+    cart = cart.filter(item => item.id !== testBox.id);
+    cart.push(testBox);
+    boxMeta = {
+        plan: 'test-3m',
+        plan_label: 'Тестовая подписка 3 месяца',
+        item_count: 1,
+        base_total: 3,
+        total: 1,
+        discount_percent: 0,
+        delivery: 'Бесплатно',
+        coins: '',
+        bnpl: '',
+        vip_gift: '',
+        gift_note: '',
+        bnpl_required: false,
+        checkout_note: 'Тестовая TSOK BOX · 3 месяца · 1 ₽ сейчас, затем 1 ₽/мес · всего 3 ₽',
+        constructor_url: 'subscription#constructor',
+        is_test_subscription_box: true
+    };
+    localStorage.setItem('tsok_box_meta', JSON.stringify(boxMeta));
+    localStorage.setItem('tsok_box_state', JSON.stringify({
+        items: { [testBox.id]: 1 },
+        plan: 'test-3m',
+        vip_gift: '',
+        updated_at: new Date().toISOString(),
+        is_test_subscription_box: true
+    }));
+    saveCart();
+    openCart();
+    showToast('Тестовая подписка-бокс добавлена в корзину', 'cart');
+}
+
+window.addTsokTestSubscriptionBox = addTsokTestSubscriptionBox;
+
 function removeFromCart(id) {
     cart = cart.filter(i => i.id !== id);
     saveCart();
