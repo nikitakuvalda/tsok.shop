@@ -40,39 +40,6 @@ function addToCart(id, name, price, size, brand, img) {
     showToast(`«${name}» добавлен в корзину`, 'cart');
 }
 
-
-function addTestSubscriptionBoxToCart() {
-    const testBox = {
-        id: 'test-subscription-box-3m',
-        name: 'Скрытый тестовый TSOK BOX — 3 месяца',
-        price: 3,
-        size: '3 месяца',
-        brand: 'TSOK BOX',
-        img: '',
-        qty: 1
-    };
-
-    cart = cart.filter(item => item.id !== testBox.id);
-    cart.push(testBox);
-    boxMeta = {
-        plan: 'test_3m',
-        vip_gift: '',
-        checkout_note: 'Скрытый тестовый TSOK BOX для проверки рекуррентных платежей',
-        item_count: 1,
-        discount_percent: 0,
-        delivery: 'бесплатно',
-        bnpl_required: false,
-        constructor_url: '/checkout'
-    };
-    localStorage.setItem('tsok_box_meta', JSON.stringify(boxMeta));
-    saveCart();
-    renderCartItems();
-    showToast('Скрытый тестовый TSOK BOX добавлен в корзину', 'cart');
-    return 'Готово: скрытый тестовый TSOK BOX на 3 месяца добавлен в корзину. Перейдите к оплате.';
-}
-
-window.tsokAddTestSubscriptionBox = addTestSubscriptionBoxToCart;
-
 function removeFromCart(id) {
     cart = cart.filter(i => i.id !== id);
     saveCart();

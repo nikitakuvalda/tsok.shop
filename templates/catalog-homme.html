@@ -82,7 +82,7 @@
         <span class="catalog-count-dark">7 продуктов</span>
         <div class="catalog-filters">
             <button class="filter-btn-dark is-active" data-filter="all">Все</button>
-            <button class="filter-btn-dark" data-filter="face">Лицо</button>
+            <button class="filter-btn-dark" data-filter="body">Тело и волосы</button>
             <button class="filter-btn-dark" data-filter="beard">Борода</button>
             <button class="filter-btn-dark" data-filter="kit">Наборы</button>
         </div>
@@ -92,134 +92,185 @@
 <!-- ═══════════════ GRID (dark) ═══════════════ -->
 <div class="catalog-grid-dark" id="catalogGridHomme">
 
-    <!-- homme-01 Face Wash Black -->
-    <div class="product-card-homme" data-category="face" data-reveal>
-        <div class="product-card-homme__image-wrap">
-            <a href="product-tonic?id=homme-01"><img src="{{ url_for('static', filename='img/prod-photo-2.jpg') }}" alt="Face Wash Black"
-                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
-            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-01" data-name="Face Wash Black"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
-        </div>
-        <div class="product-card-homme__info">
-            <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <a href="product-tonic?id=homme-01"><h3 class="product-card-homme__title">Face Wash Black</h3></a>
-            <p class="product-card-homme__desc">Глубокое очищение для мужской кожи. Удаляет излишки себума и загрязнения.</p>
-            <div class="product-card-homme__footer">
-                <div><span class="product-card-homme__size">200 мл</span><span class="product-card-homme__price">1 990 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-01" data-name="Face Wash Black" data-price="1990" data-size="200 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-2.jpg">+ В корзину</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- homme-02 Toner Control -->
-    <div class="product-card-homme" data-category="face" data-reveal>
-        <div class="product-card-homme__image-wrap">
-            <a href="product-tonic?id=homme-02"><img src="{{ url_for('static', filename='img/prod-photo-4.jpg') }}" alt="Toner Control"
-                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
-            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-02" data-name="Toner Control"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
-        </div>
-        <div class="product-card-homme__info">
-            <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <a href="product-tonic?id=homme-02"><h3 class="product-card-homme__title">Toner Control</h3></a>
-            <p class="product-card-homme__desc">Тоник для контроля жирного блеска. Сужает поры и матирует кожу.</p>
-            <div class="product-card-homme__footer">
-                <div><span class="product-card-homme__size">150 мл</span><span class="product-card-homme__price">2 190 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-02" data-name="Toner Control" data-price="2190" data-size="150 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-4.jpg">+ В корзину</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- homme-03 Beard Oil -->
+    <!-- homme-beard-oil Масло для бороды -->
     <div class="product-card-homme" data-category="beard" data-reveal>
         <div class="product-card-homme__image-wrap">
-            <a href="product-tonic?id=homme-03"><img src="{{ url_for('static', filename='img/prod-photo-1.jpg') }}" alt="Beard Oil"
-                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
-            <div class="product-card-homme__badge">Бестселлер</div>
-            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-03" data-name="Beard Oil"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+            <a href="product-tonic?id=homme-beard-oil"><img src="{{ url_for('static', filename='img/INTELEGENT масло.png') }}" alt="Масло для бороды"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-beard-oil" data-name="Масло для бороды"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <a href="product-tonic?id=homme-03"><h3 class="product-card-homme__title">Beard Oil</h3></a>
-            <p class="product-card-homme__desc">Масло для бороды. Смягчает жёсткий волос, питает кожу под бородой.</p>
+            <a href="product-tonic?id=homme-beard-oil"><h3 class="product-card-homme__title">Масло для бороды</h3></a>
+            <p class="product-card-homme__desc">Смягчает бороду и кожу под ней, дисциплинирует и придаёт ухоженный вид.</p>
             <div class="product-card-homme__footer">
-                <div><span class="product-card-homme__size">50 мл</span><span class="product-card-homme__price">2 290 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-03" data-name="Beard Oil" data-price="2290" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-1.jpg">+ В корзину</button>
+                <div><span class="product-card-homme__size">50 мл</span><span class="product-card-homme__price">1 680 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-beard-oil" data-name="Масло для бороды" data-price="1680" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT масло.png">+ В корзину</button>
             </div>
         </div>
     </div>
 
-    <!-- homme-04 Beard Wax -->
+    <!-- homme-beard-foam Пенка для бороды -->
     <div class="product-card-homme" data-category="beard" data-reveal>
         <div class="product-card-homme__image-wrap">
-            <a href="product-tonic?id=homme-04"><img src="{{ url_for('static', filename='img/prod-photo-3.jpg') }}" alt="Beard Wax"
-                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
-            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-04" data-name="Beard Wax"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+            <a href="product-tonic?id=homme-beard-foam"><img src="{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" alt="Пенка для бороды"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-beard-foam" data-name="Пенка для бороды"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <a href="product-tonic?id=homme-04"><h3 class="product-card-homme__title">Beard Wax</h3></a>
-            <p class="product-card-homme__desc">Воск для укладки бороды. Фиксация и матовый финиш на весь день.</p>
+            <a href="product-tonic?id=homme-beard-foam"><h3 class="product-card-homme__title">Пенка для бороды</h3></a>
+            <p class="product-card-homme__desc">Мягко очищает бороду без пересушивания. Свежесть и лёгкость каждый день.</p>
             <div class="product-card-homme__footer">
-                <div><span class="product-card-homme__size">50 мл</span><span class="product-card-homme__price">1 890 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-04" data-name="Beard Wax" data-price="1890" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-3.jpg">+ В корзину</button>
+                <div><span class="product-card-homme__size">150 мл</span><span class="product-card-homme__price">1 720 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-beard-foam" data-name="Пенка для бороды" data-price="1720" data-size="150 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT Пенка.png">+ В корзину</button>
             </div>
         </div>
     </div>
 
-    <!-- homme-05 Face Serum Black -->
-    <div class="product-card-homme" data-category="face" data-reveal>
+    <!-- homme-beard-tonic Тоник-уход для бороды -->
+    <div class="product-card-homme" data-category="beard" data-reveal>
         <div class="product-card-homme__image-wrap">
-            <a href="product-tonic?id=homme-05"><img src="{{ url_for('static', filename='img/prod-photo-1.jpg') }}" alt="Face Serum Black"
-                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
-            <div class="product-card-homme__badge">Хит</div>
-            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-05" data-name="Face Serum Black"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+            <a href="product-tonic?id=homme-beard-tonic"><img src="{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" alt="Тоник-уход для бороды"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-beard-tonic" data-name="Тоник-уход для бороды"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <a href="product-tonic?id=homme-05"><h3 class="product-card-homme__title">Face Serum Black</h3></a>
-            <p class="product-card-homme__desc">Концентрированная сыворотка для лица. Антивозрастной комплекс высокой концентрации.</p>
+            <a href="product-tonic?id=homme-beard-tonic"><h3 class="product-card-homme__title">Тоник-уход для бороды</h3></a>
+            <p class="product-card-homme__desc">Увлажняет и укрепляет, убирает зуд и раздражение под бородой.</p>
             <div class="product-card-homme__footer">
-                <div><span class="product-card-homme__size">30 мл</span><span class="product-card-homme__price">2 790 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-05" data-name="Face Serum Black" data-price="2790" data-size="30 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-1.jpg">+ В корзину</button>
+                <div><span class="product-card-homme__size">150 мл</span><span class="product-card-homme__price">1 670 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-beard-tonic" data-name="Тоник-уход для бороды" data-price="1670" data-size="150 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT тоник.png">+ В корзину</button>
             </div>
         </div>
     </div>
 
-    <!-- homme-06 After Shave Balm -->
-    <div class="product-card-homme" data-category="face" data-reveal>
+    <!-- homme-beard-wax Воск для бороды -->
+    <div class="product-card-homme" data-category="beard" data-reveal>
         <div class="product-card-homme__image-wrap">
-            <a href="product-tonic?id=homme-06"><img src="{{ url_for('static', filename='img/prod-photo-2.jpg') }}" alt="After Shave Balm"
-                onerror="this.parentElement.classList.add('product-card-homme__placeholder')"></a>
-            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-06" data-name="After Shave Balm"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+            <a href="product-tonic?id=homme-beard-wax"><img src="{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" alt="Воск для бороды"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-beard-wax" data-name="Воск для бороды"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <a href="product-tonic?id=homme-06"><h3 class="product-card-homme__title">After Shave Balm</h3></a>
-            <p class="product-card-homme__desc">Бальзам после бритья. Успокаивает раздражение и восстанавливает кожу.</p>
+            <a href="product-tonic?id=homme-beard-wax"><h3 class="product-card-homme__title">Воск для бороды</h3></a>
+            <p class="product-card-homme__desc">Фиксирует форму и укладку в течение дня. Матовый финиш.</p>
             <div class="product-card-homme__footer">
-                <div><span class="product-card-homme__size">100 мл</span><span class="product-card-homme__price">1 990 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-06" data-name="After Shave Balm" data-price="1990" data-size="100 мл" data-brand="INTELEGENTOFF" data-img="img/prod-photo-2.jpg">+ В корзину</button>
+                <div><span class="product-card-homme__size">50 мл</span><span class="product-card-homme__price">1 650 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-beard-wax" data-name="Воск для бороды" data-price="1650" data-size="50 мл" data-brand="INTELEGENTOFF" data-img="img/INTELEGENT Воск.png">+ В корзину</button>
             </div>
         </div>
     </div>
 
-    <!-- homme-kit-01 Starter Kit -->
+    <!-- homme-shower-gel Гель для душа -->
+    <div class="product-card-homme" data-category="body" data-reveal>
+        <div class="product-card-homme__image-wrap">
+            <a href="product-tonic?id=homme-shower-gel"><img src="{{ url_for('static', filename='img/intel-gel.jpg') }}" alt="Гель для душа"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-shower-gel" data-name="Гель для душа"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <a href="product-tonic?id=homme-shower-gel"><h3 class="product-card-homme__title">Гель для душа</h3></a>
+            <p class="product-card-homme__desc">Бодрящее очищение тела, не сушит кожу. Сдержанный мужской аромат.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">250 мл</span><span class="product-card-homme__price">1 380 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-shower-gel" data-name="Гель для душа" data-price="1380" data-size="250 мл" data-brand="INTELEGENTOFF" data-img="img/intel-gel.jpg">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- homme-liquid-soap Жидкое мыло -->
+    <div class="product-card-homme" data-category="body" data-reveal>
+        <div class="product-card-homme__image-wrap">
+            <a href="product-tonic?id=homme-liquid-soap"><img src="{{ url_for('static', filename='img/intel-liquid-soap.jpg') }}" alt="Жидкое мыло"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-liquid-soap" data-name="Жидкое мыло"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <a href="product-tonic?id=homme-liquid-soap"><h3 class="product-card-homme__title">Жидкое мыло</h3></a>
+            <p class="product-card-homme__desc">Мягко очищает руки и тело, ухаживает за кожей. Для дозатора.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">250 мл</span><span class="product-card-homme__price">1 380 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-liquid-soap" data-name="Жидкое мыло" data-price="1380" data-size="250 мл" data-brand="INTELEGENTOFF" data-img="img/intel-liquid-soap.jpg">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- homme-shampoo Шампунь мужской -->
+    <div class="product-card-homme" data-category="body" data-reveal>
+        <div class="product-card-homme__image-wrap">
+            <a href="product-tonic?id=homme-shampoo"><img src="{{ url_for('static', filename='img/intel-shampoo.jpg') }}" alt="Шампунь мужской"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-shampoo" data-name="Шампунь мужской"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <a href="product-tonic?id=homme-shampoo"><h3 class="product-card-homme__title">Шампунь мужской</h3></a>
+            <p class="product-card-homme__desc">Очищает кожу головы и укрепляет волосы. Объём и свежесть без утяжеления.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">250 мл</span><span class="product-card-homme__price">1 680 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-shampoo" data-name="Шампунь мужской" data-price="1680" data-size="250 мл" data-brand="INTELEGENTOFF" data-img="img/intel-shampoo.jpg">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- homme-bar-soap Мыло кусковое -->
+    <div class="product-card-homme" data-category="body" data-reveal>
+        <div class="product-card-homme__image-wrap">
+            <a href="product-tonic?id=homme-bar-soap"><img src="{{ url_for('static', filename='img/intel-bar-soap.jpg') }}" alt="Мыло кусковое"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-bar-soap" data-name="Мыло кусковое"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <a href="product-tonic?id=homme-bar-soap"><h3 class="product-card-homme__title">Мыло кусковое</h3></a>
+            <p class="product-card-homme__desc">Плотное брусковое мыло для тела и рук. Долго не смыливается.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">100 г</span><span class="product-card-homme__price">550 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-bar-soap" data-name="Мыло кусковое" data-price="550" data-size="100 г" data-brand="INTELEGENTOFF" data-img="img/intel-bar-soap.jpg">+ В корзину</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- homme-kit-beard Набор для бороды -->
     <div class="product-card-homme" data-category="kit" data-reveal>
-        <div class="product-card-homme__image-wrap" style="background:linear-gradient(150deg,#16150F,#262E22);display:flex;align-items:center;justify-content:center;padding:40px;">
-            <img src="{{ url_for('static', filename='img/logoIntelegent.png') }}" alt="Starter Kit" style="width:70%;height:auto;object-fit:contain;"
-                onerror="this.style.display='none'">
-            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-kit-01" data-name="INTELEGENTOFF Starter Kit"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        <div class="product-card-homme__image-wrap">
+            <a href="product-tonic?id=homme-kit-beard"><img src="{{ url_for('static', filename='img/intel-kit-beard.jpg') }}" alt="Набор для бороды"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-kit-beard" data-name="Набор для бороды"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
         </div>
         <div class="product-card-homme__info">
             <span class="product-card-homme__brand">INTELEGENTOFF</span>
-            <h3 class="product-card-homme__title">Starter Kit</h3>
-            <p class="product-card-homme__desc">Стартовый набор: 3 продукта для полного ритуала ухода. Выгоднее, чем по отдельности.</p>
+            <a href="product-tonic?id=homme-kit-beard"><h3 class="product-card-homme__title">Набор для бороды</h3></a>
+            <p class="product-card-homme__desc">Полный уход за бородой в одной коробке — пенка, тоник, масло и воск. Арт. 2204НК.</p>
             <div class="product-card-homme__footer">
-                <div><span class="product-card-homme__size">Набор 3 продукта</span><span class="product-card-homme__price">5 990 ₽</span></div>
-                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-kit-01" data-name="INTELEGENTOFF Starter Kit" data-price="5990" data-size="Набор 3 продукта" data-brand="INTELEGENTOFF" data-img="img/logoIntelegent.png">+ В корзину</button>
+                <div><span class="product-card-homme__size">Пенка · тоник · масло · воск</span><span class="product-card-homme__price">5 900 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-kit-beard" data-name="Набор для бороды" data-price="5900" data-size="Пенка · тоник · масло · воск" data-brand="INTELEGENTOFF" data-img="img/intel-kit-beard.jpg">+ В корзину</button>
             </div>
         </div>
     </div>
 
+    <!-- homme-kit-shower Набор для душа -->
+    <div class="product-card-homme" data-category="kit" data-reveal>
+        <div class="product-card-homme__image-wrap">
+            <a href="product-tonic?id=homme-kit-shower"><img src="{{ url_for('static', filename='img/intel-kit-shower.jpg') }}" alt="Набор для душа"
+                onerror="var w=this.closest('.product-card-homme__image-wrap');w.classList.add('product-card-homme__placeholder');w.dataset.ph=(this.alt||'').trim().charAt(0)"></a>
+            <button class="product-card-homme__bookmark js-bookmark" data-id="homme-kit-shower" data-name="Набор для душа"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+        </div>
+        <div class="product-card-homme__info">
+            <span class="product-card-homme__brand">INTELEGENTOFF</span>
+            <a href="product-tonic?id=homme-kit-shower"><h3 class="product-card-homme__title">Набор для душа</h3></a>
+            <p class="product-card-homme__desc">Базовый мужской уход под дверь — гель для душа, шампунь и жидкое мыло. Арт. 3303НК.</p>
+            <div class="product-card-homme__footer">
+                <div><span class="product-card-homme__size">Гель · шампунь · мыло</span><span class="product-card-homme__price">4 200 ₽</span></div>
+                <button class="btn btn--accent btn--add-card js-add-to-cart" data-id="homme-kit-shower" data-name="Набор для душа" data-price="4200" data-size="Гель · шампунь · мыло" data-brand="INTELEGENTOFF" data-img="img/intel-kit-shower.jpg">+ В корзину</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <!-- ═══════════════ LIFESTYLE / БРЕНД ═══════════════ -->
@@ -250,19 +301,19 @@
         </a>
     </div>
     <div class="lookbook__grid">
-        <a href="product-tonic?id=homme-02" class="lookbook__item anim-fade-up">
+        <a href="product-tonic?id=homme-beard-tonic" class="lookbook__item anim-fade-up">
             <img src="{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" alt="Тоник для бороды">
             <span class="lookbook__cap">Тоник</span>
         </a>
-        <a href="product-tonic?id=homme-03" class="lookbook__item anim-fade-up anim-delay-1">
+        <a href="product-tonic?id=homme-beard-oil" class="lookbook__item anim-fade-up anim-delay-1">
             <img src="{{ url_for('static', filename='img/INTELEGENT масло.png') }}" alt="Масло для бороды">
             <span class="lookbook__cap">Масло</span>
         </a>
-        <a href="product-tonic?id=homme-01" class="lookbook__item anim-fade-up anim-delay-2">
+        <a href="product-tonic?id=homme-beard-foam" class="lookbook__item anim-fade-up anim-delay-2">
             <img src="{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" alt="Пенка для бороды">
             <span class="lookbook__cap">Пенка</span>
         </a>
-        <a href="product-tonic?id=homme-04" class="lookbook__item anim-fade-up anim-delay-3">
+        <a href="product-tonic?id=homme-beard-wax" class="lookbook__item anim-fade-up anim-delay-3">
             <img src="{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" alt="Воск для бороды">
             <span class="lookbook__cap">Воск</span>
         </a>

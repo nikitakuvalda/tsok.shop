@@ -111,25 +111,35 @@
     </div>
     <div class="container">
         <div class="section__header" data-reveal>
-            <span class="label on-dark">Почему подписка</span>
-            <h2 class="section__title text-white" style="margin-top:12px;">Разовая покупка<br>или <em>TSOK BOX?</em></h2>
+            <span class="label on-dark">Ваша выгода</span>
+            <h2 class="section__title text-white" style="margin-top:12px;">Посчитаем на реальном <em>боксе</em></h2>
         </div>
-        <table class="comparison-table" data-reveal>
-            <thead>
-                <tr>
-                    <th></th>
-                    <th>Разовая покупка</th>
-                    <th class="col-box">TSOK BOX</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr><td>Цена</td><td>Базовая</td><td class="col-box">−10% / −30%</td></tr>
-                <tr><td>Доставка</td><td>Платная</td><td class="col-box">Бесплатно от 4 товаров или в тарифах 6/12 мес.</td></tr>
-                <tr><td>Подарок внутри</td><td>—</td><td class="col-box">VIP-подарок при 5+ товарах</td></tr>
-                <tr><td>Гибкость состава</td><td>Каждый раз заново</td><td class="col-box">Меняй в один клик</td></tr>
-                <tr><td>Нужно помнить о заказе</td><td>Да</td><td class="col-box">Привозим сами</td></tr>
-            </tbody>
-        </table>
+        <div class="savings" data-reveal>
+            <div class="savings__card">
+                <span class="savings__tag">Пример: средний бокс — 4 средства</span>
+                <div class="savings__row savings__row--old">
+                    <span>По отдельности + платная доставка</span>
+                    <s>10 600 ₽</s>
+                </div>
+                <div class="savings__row savings__row--now">
+                    <span>В боксе по подписке · доставка 0 ₽</span>
+                    <strong>6 900 ₽</strong>
+                </div>
+                <div class="savings__result">
+                    <div>
+                        <span class="savings__save-l">Экономия каждый месяц</span>
+                        <span class="savings__save-v">3 700 ₽</span>
+                    </div>
+                    <span class="savings__gift">+ подарок внутри</span>
+                </div>
+            </div>
+            <div class="savings__perks">
+                <div class="save-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><div><strong>до −30% к цене</strong><span>каждого средства в боксе</span></div></div>
+                <div class="save-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 3v5h-7z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg><div><strong>Бесплатная доставка</strong><span>привезём под дверь, 0 ₽</span></div></div>
+                <div class="save-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.5 2.8L3 8"/><path d="M3 4v4h4"/></svg><div><strong>Меняйте состав</strong><span>в один клик · пропускайте месяцы</span></div></div>
+                <div class="save-perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 6 9 17l-5-5"/></svg><div><strong>Не нужно помнить</strong><span>соберём и привезём сами</span></div></div>
+            </div>
+        </div>
     </div>
 </section>
 
@@ -143,17 +153,21 @@
         <div class="ready-boxes-grid">
             <div class="ready-box ready-box--pearl" data-reveal>
                 <div class="ready-box__bg"><img src="{{ url_for('static', filename='img/Pearl5.jpg') }}" alt="" aria-hidden="true"></div>
-                <span class="ready-box__tag">Pearl by Tais</span>
-                <h3 class="ready-box__title">Женский ритуал</h3>
-                <p class="ready-box__desc">Тоник-реставратор, увлажняющая пенка, тоник для волос и мицеллярная вода — полный уход для неё.</p>
-                <button class="btn btn--dark" onclick="loadReadyBox('pearl')">Добавить этот бокс</button>
+                <div class="ready-box__body">
+                    <span class="ready-box__tag">Pearl by Tais</span>
+                    <h3 class="ready-box__title">Женский ритуал</h3>
+                    <p class="ready-box__desc">Тоник-реставратор, увлажняющая пенка, тоник для волос и мицеллярная вода. Дамасская роза и пантенол — увлажнение и сияние без стянутости. Полный уход на месяц — привезём под дверь.</p>
+                    <button class="btn btn--dark" onclick="loadReadyBox('pearl')">Добавить этот бокс</button>
+                </div>
             </div>
             <div class="ready-box ready-box--homme" data-reveal>
                 <div class="ready-box__bg"><img src="{{ url_for('static', filename='img/HeroHomme.jpg') }}" alt="" aria-hidden="true"></div>
-                <span class="ready-box__tag">INTELEGENTOFF</span>
-                <h3 class="ready-box__title">Мужской ритуал</h3>
-                <p class="ready-box__desc">Очищение, увлажнение и масло для бороды — концентрированный уход без компромиссов для него.</p>
-                <button class="btn btn--accent" onclick="loadReadyBox('homme')">Добавить этот бокс</button>
+                <div class="ready-box__body">
+                    <span class="ready-box__tag">INTELEGENTOFF</span>
+                    <h3 class="ready-box__title">Мужской ритуал</h3>
+                    <p class="ready-box__desc">Гель для душа, шампунь и жидкое мыло INTELEGENTOFF. Концентрированный уход без лишнего — очищение и свежесть на месяц. Привезём под дверь.</p>
+                    <button class="btn btn--accent" onclick="loadReadyBox('homme')">Добавить этот бокс</button>
+                </div>
             </div>
         </div>
     </div>
@@ -326,16 +340,16 @@
     <div class="container">
         <div class="section__header" data-reveal>
             <span class="label">TSOK CLUB</span>
-            <h2 class="section__title" style="margin-top:12px;">Лояльность и удержание</h2>
+            <h2 class="section__title" style="margin-top:12px;">Чем дольше с нами — <em>тем выгоднее</em></h2>
         </div>
         <div class="club-grid">
-            <div class="club-card" data-reveal><h3>TSOK Coins</h3><p>1 Coin = 1 ₽. Начисление через 14 дней после доставки, списание до 30% разового заказа, рекуррентные списания не оплачиваются баллами.</p></div>
-            <div class="club-card" data-reveal><h3>Грейды</h3><p>Silver 3%, Gold 5% после 3+ месяцев или 15 000 ₽/год, Platinum 10% после 6+ месяцев или 30 000 ₽/год. При отмене подписки — откат до Silver.</p></div>
-            <div class="club-card" data-reveal><h3>Refer-a-Friend</h3><p>Уникальный промокод даёт новичку −10% на первый заказ, пригласившему — 500 Coins после доставки. Anti-fraud: IP, device fingerprint, карта.</p></div>
+            <div class="club-card" data-reveal><h3>Кэшбэк баллами</h3><p>Возвращаем до 10% с каждого заказа баллами. 1 балл = 1 ₽ — оплачивайте ими до 30% следующей покупки.</p></div>
+            <div class="club-card" data-reveal><h3>Статус и скидка</h3><p>Чем дольше вы с нами, тем больше личная скидка на всё — от 3% до 10%. Просто оставайтесь на подписке.</p></div>
+            <div class="club-card" data-reveal><h3>Приведите подругу</h3><p>Ей — −10% на первый заказ, вам — 500 баллов после её доставки. Делитесь своим промокодом.</p></div>
         </div>
         <div class="routine-panel" data-reveal>
-            <h3>ЛК «Гибкая рутина»</h3>
-            <p>Дата следующей сборки, состав бокса, баланс Coins, свап товаров с запретом ниже 3 шт., пауза на +30 дней и CRON-уведомление за 72 часа до списания.</p>
+            <h3>Всё под контролем в личном кабинете</h3>
+            <p>Дата следующего бокса, его состав и баланс баллов — на одном экране. Меняйте средства, ставьте паузу или отменяйте в пару кликов. Напомним за 3 дня до списания.</p>
         </div>
     </div>
 </section>

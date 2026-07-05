@@ -1509,7 +1509,7 @@ input,select,textarea{font-family:inherit}
 /* ═══════════════════════════════════════════════════════════════
    v11 — ЮРИДИЧЕСКИЕ СТРАНИЦЫ (оферта / политика / контакты)
    ═══════════════════════════════════════════════════════════════ */
-.legal-page{position:relative;overflow:hidden}
+.legal-page{position:relative;overflow-x:hidden}
 .legal-hero{padding:clamp(48px,7vw,90px) var(--pad-x) clamp(20px,3vw,32px);text-align:center;position:relative}
 .legal-hero__inner{max-width:760px;margin:0 auto;position:relative;z-index:2}
 .legal-hero h1{font-family:var(--font-d);font-weight:300;font-size:clamp(34px,5vw,58px);line-height:1.04;color:var(--ink);margin-top:14px}
@@ -1552,7 +1552,7 @@ input,select,textarea{font-family:inherit}
    ═══════════════════════════════════════════════════════════════ */
 
 /* читаемость: градиентный блюр-скрим под текстом на изображениях */
-.intent__ov,.entry-cta__overlay,.catalog-hero__overlay,.ready-box::after{
+.entry-cta__overlay,.catalog-hero__overlay{
   -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
   -webkit-mask-image:linear-gradient(to top,#000,#000 42%,transparent 78%);
           mask-image:linear-gradient(to top,#000,#000 42%,transparent 78%);
@@ -1684,3 +1684,133 @@ input,select,textarea{font-family:inherit}
 
 @media(max-width:900px){.programs__grid{grid-template-columns:1fr 1fr}.result-arc{grid-template-columns:1fr}}
 @media(max-width:560px){.quiz__options{grid-template-columns:1fr}.programs__grid{grid-template-columns:1fr}.choose-toggle button{padding:11px 16px;font-size:12px}}
+
+/* ── шапка: скрытие при скролле вниз, возврат при скролле вверх ── */
+.site-top{transition:transform .45s var(--ease)}
+.site-top.is-hidden{transform:translateY(-115%)}
+
+/* ── подсказка под чипсами получателя ── */
+.recipient-hint{text-align:center;max-width:580px;margin:16px auto 4px;font-size:14px;line-height:1.6;color:var(--ink-soft);transition:opacity .25s}
+.recipient-chips .r-chip{cursor:pointer;user-select:none}
+
+/* ── фирменный знак ЦОК (svg) в секции характера ── */
+.tsok-sound__mark{display:block;width:clamp(70px,9vw,104px);height:auto;margin:0 auto clamp(10px,2vw,18px);opacity:.9}
+
+/* ═══ showcase: ховер-плашка с пользой состава + кнопка (фикс перекрытия) ═══ */
+.pcard__media-link{display:block;width:100%;height:100%}
+.pcard__media-link img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease)}
+.pcard:hover .pcard__media-link img{transform:scale(1.07)}
+.pcard__cue{position:absolute;bottom:12px;right:12px;width:34px;height:34px;border-radius:var(--r-pill);background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;color:var(--ink);transition:opacity .3s,transform .3s;z-index:2;box-shadow:0 6px 16px -8px rgba(0,0,0,.3)}
+.pcard:hover .pcard__cue{opacity:0;transform:scale(.9)}
+.pcard__reveal{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:18px 14px 14px;display:flex;flex-direction:column;gap:11px;
+  background:linear-gradient(to top,rgba(20,18,14,.9),rgba(20,18,14,.55) 55%,rgba(20,18,14,0));
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);
+  transform:translateY(101%);transition:transform .45s var(--ease)}
+.pcard:hover .pcard__reveal{transform:translateY(0)}
+.pcard__benefit{font-size:12px;line-height:1.45;color:#fff;font-weight:500;text-shadow:0 1px 8px rgba(0,0,0,.3)}
+.pcard__reveal .pcard__add{position:static;opacity:1;transform:none;width:100%;padding:12px;border-radius:var(--r-pill);background:var(--cream);color:var(--ink);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;transition:background .25s,transform .2s}
+.pcard__reveal .pcard__add:hover{background:#fff;transform:translateY(-1px)}
+@media(max-width:860px){
+  .pcard__reveal{position:static;transform:none;background:none;-webkit-backdrop-filter:none;backdrop-filter:none;padding:14px 16px 0;gap:10px}
+  .pcard__benefit{color:var(--ink-soft);text-shadow:none}
+  .pcard__reveal .pcard__add{background:var(--ink);color:var(--cream)}
+  .pcard__cue{display:none}
+}
+
+/* ═══ v15: боксы «фото сверху — текст снизу», равная высота, чистые отступы ═══ */
+.ready-boxes-grid{grid-template-columns:1fr 1fr;gap:20px;align-items:stretch}
+.ready-box{padding:0;display:flex;flex-direction:column;justify-content:flex-start;min-height:0;background:var(--glass);border:1px solid var(--glass-bd)}
+.ready-box--homme{background:#16140F;border-color:rgba(255,255,255,.08)}
+.ready-box::after{display:none!important}
+.ready-box__bg{position:relative;inset:auto;width:100%;aspect-ratio:16/11;overflow:hidden;z-index:0}
+.ready-box__bg img{width:100%;height:100%;object-fit:cover}
+.ready-box__body{position:relative;z-index:2;padding:clamp(22px,2.6vw,30px);display:flex;flex-direction:column;flex:1}
+.ready-box__desc{margin-bottom:22px;flex:1}
+.ready-box .btn{align-self:flex-start;margin-top:auto}
+@media(max-width:760px){.ready-boxes-grid{grid-template-columns:1fr;gap:16px}.ready-box__bg{aspect-ratio:16/10}}
+
+/* ── тарифы/дуо: золотой бейдж премиума, блок цены дуо, отступ подсказки ── */
+.tier__badge--gold{background:linear-gradient(120deg,var(--gold),var(--clay-deep));color:#fff}
+.duo__price{display:flex;flex-direction:column;align-items:center;gap:4px;margin-top:20px}
+.duo__sep{font-size:13px;color:var(--muted)}
+.duo__sep s{color:var(--muted)}
+.duo__now{font-family:var(--font-d);font-size:34px;color:var(--ink);line-height:1.1}
+.duo__price .price-save{margin-top:4px}
+.recipient-hint{margin:20px auto 30px}
+
+/* ═══ v16: карточки-входы — единый чистый премиальный вид (без грязного блюра) ═══ */
+.intent__ov,.intent__ov--gift,.intent__ov--dark{
+  background:linear-gradient(to top,rgba(18,15,11,.86) 0%,rgba(18,15,11,.5) 34%,rgba(18,15,11,.12) 62%,rgba(18,15,11,0) 88%);
+  -webkit-backdrop-filter:none;backdrop-filter:none}
+.intent__card{box-shadow:0 22px 50px -34px rgba(60,45,25,.5)}
+.intent__eyebrow,
+.intent__ov--dark ~ .intent__body .intent__eyebrow{color:var(--gold)}
+.intent__title,
+.intent__ov--dark ~ .intent__body .intent__title{color:#FBF8F2}
+.intent__title em,
+.intent__ov--dark ~ .intent__body .intent__title em{color:var(--gold)}
+.intent__sub,
+.intent__ov--dark ~ .intent__body .intent__sub{color:rgba(251,248,242,.82)}
+.intent__arrow,
+.intent__ov--dark ~ .intent__body .intent__arrow{color:#FBF8F2}
+
+/* ═══ v17: оффер-воронка под герой ═══ */
+.hero-offer{position:relative;z-index:3;max-width:var(--maxw);margin:clamp(18px,3vw,30px) auto 0;padding:0 var(--pad-x)}
+.hero-offer__inner{display:grid;grid-template-columns:1.35fr 1fr;gap:clamp(24px,3vw,44px);align-items:center;padding:clamp(26px,3.4vw,44px);border-radius:var(--r-lg)}
+.hero-offer__eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--clay-deep)}
+.hero-offer__title{font-family:var(--font-d);font-weight:300;font-size:clamp(26px,3.4vw,42px);line-height:1.06;color:var(--ink);margin:12px 0 12px}
+.hero-offer__title em{font-style:italic;color:var(--clay-deep)}
+.hero-offer__sub{font-size:14px;line-height:1.65;color:var(--ink-soft);max-width:460px}
+.hero-offer__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:22px}
+.hero-offer__points{display:flex;flex-direction:column;gap:14px;padding-left:clamp(0px,2vw,28px);border-left:1px solid var(--line)}
+.hero-offer__point{display:flex;align-items:center;gap:14px}
+.hero-offer__point svg{width:26px;height:26px;color:var(--clay-deep);flex-shrink:0}
+.hero-offer__point strong{display:block;font-family:var(--font-d);font-size:20px;color:var(--ink);line-height:1.1}
+.hero-offer__point span{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+@media(max-width:820px){.hero-offer__inner{grid-template-columns:1fr;gap:24px}.hero-offer__points{border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:22px;flex-direction:row;flex-wrap:wrap}.hero-offer__point{flex:1;min-width:130px}}
+
+/* ═══ v18: наглядный расчёт выгоды по подписке ═══ */
+.savings{display:grid;grid-template-columns:1.15fr 1fr;gap:clamp(22px,3vw,40px);margin-top:clamp(30px,4vw,44px);align-items:center}
+.savings__card{background:linear-gradient(160deg,#FBF8F2,#F3E9DC);border-radius:var(--r-lg);padding:clamp(26px,3vw,38px);box-shadow:0 30px 70px -34px rgba(0,0,0,.5)}
+.savings__tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--clay-deep);margin-bottom:16px}
+.savings__row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:15px 0;border-bottom:1px solid var(--line)}
+.savings__row span{font-size:13.5px;color:var(--ink-soft)}
+.savings__row--old s{font-size:18px;color:var(--muted);white-space:nowrap}
+.savings__row--now strong{font-family:var(--font-d);font-size:25px;color:var(--ink);white-space:nowrap}
+.savings__result{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:20px;padding:18px 22px;border-radius:var(--r);background:var(--sage-pale)}
+.savings__save-l{display:block;font-size:11px;color:#3f4d27;text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.savings__save-v{display:block;font-family:var(--font-d);font-size:32px;color:#2c3719;line-height:1.1;margin-top:2px}
+.savings__gift{font-size:13px;font-weight:600;color:var(--clay-deep)}
+.savings__perks{display:flex;flex-direction:column;gap:17px}
+.save-perk{display:flex;align-items:center;gap:14px}
+.save-perk svg{width:26px;height:26px;color:var(--gold);flex-shrink:0}
+.save-perk strong{display:block;font-size:15px;color:var(--paper);font-weight:600}
+.save-perk span{display:block;font-size:12.5px;color:var(--text-d);margin-top:2px}
+@media(max-width:820px){.savings{grid-template-columns:1fr}}
+
+/* ── мужская секция: убрать скачок центр→лево на мобиле ── */
+@media(max-width:820px){
+  .room__transition{text-align:left;max-width:none;margin-bottom:38px}
+  .room__transition .label{justify-content:flex-start}
+}
+
+/* ── мужская тёмная сетка: фон во всю ширину, без белых боков ── */
+.catalog-grid-dark{position:relative;background:none}
+.catalog-grid-dark::before{content:'';position:absolute;inset:0 calc(50% - 50vw);background:var(--ink);z-index:0}
+.catalog-grid-dark > *{position:relative;z-index:1}
+
+/* ═══ красивые заглушки для недостающих фото (стиль: крупная бледная буква + бренд) ═══ */
+.product-card-homme__placeholder{background:radial-gradient(130% 120% at 30% 0%,#26252b,#0d0d10)!important}
+.product-card-homme__placeholder img{opacity:0}
+.product-card-homme__placeholder::after{content:attr(data-ph);position:absolute;top:43%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-d);font-weight:300;font-size:clamp(72px,13vw,120px);color:rgba(201,154,91,.20);line-height:1;z-index:1}
+.product-card-homme__placeholder::before{content:'INTELEGENTOFF';position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.32);z-index:1}
+
+.pcard__media--ph{position:relative;overflow:hidden;background:linear-gradient(150deg,#F4E6DC,#E7D6C4)!important}
+.pcard__media--ph img{opacity:0}
+.pcard__media--ph::after{content:attr(data-ph);position:absolute;top:43%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-d);font-weight:300;font-size:clamp(72px,13vw,120px);color:rgba(176,126,61,.26);line-height:1;z-index:1}
+.pcard__media--ph::before{content:'PEARL by Tais';position:absolute;bottom:16px;left:0;right:0;text-align:center;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:rgba(120,90,45,.55);z-index:1}
+
+/* ── запасной премиум-вид главной картинки товара (нет фото) ── */
+.product-gallery__main.gallery-ph{position:relative;min-height:420px;background:linear-gradient(150deg,#F4E6DC,#E7D6C4);border-radius:inherit;overflow:hidden}
+.product-gallery__main.gallery-ph::after{content:attr(data-ph);position:absolute;top:43%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-d);font-weight:300;font-size:clamp(120px,20vw,210px);color:rgba(176,126,61,.24);line-height:1}
+.product-gallery__main.gallery-ph::before{content:'TSOK · фото скоро';position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,90,45,.5)}

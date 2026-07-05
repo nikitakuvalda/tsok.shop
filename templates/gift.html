@@ -77,20 +77,20 @@
                     <button type="button" class="gift-fmt" data-tier="attention">
                         <span class="gift-fmt__check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
                         <div class="gift-fmt__name">Знак внимания</div>
-                        <div class="gift-fmt__price"><span class="gift-fmt__old">4 600 ₽</span><span class="gift-fmt__now">3 900 ₽</span></div>
+                        <div class="gift-fmt__price"><span class="gift-fmt__now">2 900 ₽</span></div>
                         <p class="gift-fmt__desc">2 продукта Pearl, открытка и фирменная упаковка с лентой.</p>
                     </button>
                     <button type="button" class="gift-fmt is-selected" data-tier="love">
                         <span class="gift-fmt__badge">Хит выбора</span>
                         <span class="gift-fmt__check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
                         <div class="gift-fmt__name">Любимым</div>
-                        <div class="gift-fmt__price"><span class="gift-fmt__old">7 100 ₽</span><span class="gift-fmt__now">5 900 ₽</span></div>
+                        <div class="gift-fmt__price"><span class="gift-fmt__old">7 400 ₽</span><span class="gift-fmt__now">6 400 ₽</span></div>
                         <p class="gift-fmt__desc">4 продукта или микс линий, подпись создателя бренда и секретный подарок.</p>
                     </button>
                     <button type="button" class="gift-fmt" data-tier="royal">
                         <span class="gift-fmt__check"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
                         <div class="gift-fmt__name">По-королевски</div>
-                        <div class="gift-fmt__price"><span class="gift-fmt__old">10 800 ₽</span><span class="gift-fmt__now">8 900 ₽</span></div>
+                        <div class="gift-fmt__price"><span class="gift-fmt__old">9 900 ₽</span><span class="gift-fmt__now">7 700 ₽</span></div>
                         <p class="gift-fmt__desc">Вся коллекция, монограмма на ленте и подпись из лимитированной партии.</p>
                     </button>
                 </div>
@@ -271,9 +271,9 @@
 <script>
 (function () {
     var TIERS = {
-        attention: { name: 'Знак внимания', now: 3900, old: 4600, save: 700 },
-        love:      { name: 'Любимым',       now: 5900, old: 7100, save: 1200 },
-        royal:     { name: 'По-королевски',  now: 8900, old: 10800, save: 1900 }
+        attention: { name: 'Знак внимания', now: 2900, old: 2900, save: 0 },
+        love:      { name: 'Любимым',       now: 6400, old: 7400, save: 1000 },
+        royal:     { name: 'По-королевски',  now: 7700, old: 9900, save: 2200 }
     };
     var RECIP = { her: 'Ей', him: 'Ему', mom: 'Маме', dad: 'Папе', grandma: 'Бабушке', couple: 'Паре', any: 'Без повода' };
     var RECIPES = {
@@ -316,9 +316,11 @@
         $('#sumSig').textContent = state.signature ? 'да' : '—';
         $('#sumMono').textContent = state.monogram ? (state.initials.trim() ? state.initials.trim().toUpperCase() : 'да') : '—';
         $('#sumWrap').textContent = state.wrap ? 'да' : '—';
-        $('#giftOldPrice').textContent = fmt(t.old);
         $('#giftNowPrice').textContent = fmt(t.now);
-        $('#giftSave').textContent = 'выгода ' + fmt(t.save);
+        var hasDisc = t.save > 0;
+        $('#giftOldPrice').style.display = hasDisc ? '' : 'none';
+        $('#giftSave').style.display = hasDisc ? '' : 'none';
+        if (hasDisc) { $('#giftOldPrice').textContent = fmt(t.old); $('#giftSave').textContent = 'вы экономите ' + fmt(t.save); }
     }
 
     document.querySelectorAll('.r-chip[data-recipient]').forEach(function (c) {

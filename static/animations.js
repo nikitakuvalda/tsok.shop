@@ -74,7 +74,22 @@
     update();
   }
 
-  function init() { reveal(); parallax(); }
+  /* шапка: прячется при скролле вниз, возвращается при скролле вверх */
+  function headerScroll() {
+    var top = document.querySelector('.site-top'); if (!top) return;
+    var last = window.pageYOffset || 0, ticking = false, TH = 8;
+    function upd() {
+      var y = window.pageYOffset || 0;
+      if (y > last + TH && y > 130) top.classList.add('is-hidden');
+      else if (y < last - TH) top.classList.remove('is-hidden');
+      last = y; ticking = false;
+    }
+    window.addEventListener('scroll', function () {
+      if (!ticking) { requestAnimationFrame(upd); ticking = true; }
+    }, { passive: true });
+  }
+
+  function init() { reveal(); parallax(); headerScroll(); }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();

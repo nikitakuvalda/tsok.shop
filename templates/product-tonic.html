@@ -55,7 +55,7 @@
         <!-- Галерея -->
         <div class="product-gallery" data-reveal>
             <div class="product-gallery__main">
-                <img src="" id="prodMainImg" class="product-gallery__img" alt="">
+                <img src="" id="prodMainImg" class="product-gallery__img" alt="" onerror="this.style.opacity=0;var m=this.closest('.product-gallery__main');m.classList.add('gallery-ph');m.dataset.ph=((document.getElementById('prodMainTitle').textContent)||'·').trim().charAt(0)">
             </div>
             <div class="product-gallery__thumbs" id="prodThumbs"></div>
         </div>
@@ -142,8 +142,8 @@
                     <a href="product-tonic?id=pearl-03"><h3 class="product-card__title">Tonic Youth Restoring</h3></a>
                     <p class="product-card__desc">Тоник-реставратор молодости.</p>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">2 390 ₽</span></div>
-                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-03" data-name="Tonic Youth Restoring" data-price="2390" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl3.jpg">+ В корзину</button>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">2 490 ₽</span></div>
+                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-03" data-name="Tonic Youth Restoring" data-price="2490" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl3.jpg">+ В корзину</button>
                     </div>
                 </div>
             </div>
@@ -157,8 +157,8 @@
                     <a href="product-tonic?id=pearl-01"><h3 class="product-card__title">Foam Mousse Moisture</h3></a>
                     <p class="product-card__desc">Увлажняющая пенка для лица.</p>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">2 290 ₽</span></div>
-                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-01" data-name="Foam Mousse Moisture" data-price="2290" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl1.jpg">+ В корзину</button>
+                        <div><span class="product-card__size">150 мл</span><span class="product-card__price">2 590 ₽</span></div>
+                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-01" data-name="Foam Mousse Moisture" data-price="2590" data-size="150 мл" data-brand="Pearl by Tais" data-img="img/Pearl1.jpg">+ В корзину</button>
                     </div>
                 </div>
             </div>
@@ -172,8 +172,8 @@
                     <a href="product-tonic?id=pearl-05"><h3 class="product-card__title">Hair Tonic Radiance</h3></a>
                     <p class="product-card__desc">Укрепляющий тоник для волос.</p>
                     <div class="product-card__footer">
-                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">1 990 ₽</span></div>
-                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-05" data-name="Hair Tonic Radiance" data-price="1990" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl5.jpg">+ В корзину</button>
+                        <div><span class="product-card__size">200 мл</span><span class="product-card__price">2 350 ₽</span></div>
+                        <button class="btn btn--dark btn--add-card js-add-to-cart" data-id="pearl-05" data-name="Hair Tonic Radiance" data-price="2350" data-size="200 мл" data-brand="Pearl by Tais" data-img="img/Pearl5.jpg">+ В корзину</button>
                     </div>
                 </div>
             </div>
@@ -267,20 +267,25 @@
 <script>
 // ── Данные товаров (с корректными статическими путями через url_for) ──
 const PRODUCTS = {
-    "pearl-01": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Moisture",  desc:"Увлажняющая пенка для лица. Бережное очищение без чувства стянутости.", price:2290, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl1.jpg') }}" },
-    "pearl-02": { brand:"Pearl by Tais", t1:"Face Tonic",  t2:"Toning",    desc:"Тоник для лица «Тонус». Устраняет следы усталости и освежает кожу.", price:2190, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl2.jpg') }}" },
-    "pearl-03": { brand:"Pearl by Tais", t1:"Tonic Youth", t2:"Restoring", desc:"Тоник-реставратор молодости. Восстанавливает pH-баланс после умывания и сужает поры. Первый шаг к живой коже.", price:2390, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl3.jpg') }}" },
-    "pearl-04": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Cleansing", desc:"Пенка для умывания «Мягкое очищение». Идеально для чувствительной и реактивной кожи.", price:2290, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl4.jpg') }}" },
-    "pearl-05": { brand:"Pearl by Tais", t1:"Hair Tonic",  t2:"Radiance",  desc:"Тоник для волос «Укрепляющий». Стимулирует рост, укрепляет корни и придаёт блеск.", price:1990, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl5.jpg') }}" },
-    "pearl-06": { brand:"Pearl by Tais", t1:"Velvet Oil",  t2:"Blend",     desc:"Микс масел для волос. Глубокое питание и защита секущихся кончиков.", price:2490, size:"60 мл", img:"{{ url_for('static', filename='img/Pearl6.jpg') }}" },
-    "pearl-07": { brand:"Pearl by Tais", t1:"Micellar Water", t2:"Extract Mix", desc:"Мицеллярная вода «С экстрактами». Лёгкий демакияж глаз и деликатное тонизирование.", price:2190, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl7.jpg') }}" },
-    "homme-01": { brand:"INTELEGENTOFF", t1:"Face Wash",   t2:"Black",     desc:"Глубокое очищение для мужской кожи. Удаляет излишки себума и загрязнения.", price:1990, size:"200 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" },
-    "homme-02": { brand:"INTELEGENTOFF", t1:"Toner",       t2:"Control",   desc:"Тоник для контроля жирного блеска. Сужает поры и матирует кожу.", price:2190, size:"150 мл", img:"{{ url_for('static', filename='img/prod-photo-4.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" },
-    "homme-03": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Oil",       desc:"Масло для бороды. Смягчает жёсткий волос, питает кожу под бородой.", price:2290, size:"50 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT масло.png') }}" },
-    "homme-04": { brand:"INTELEGENTOFF", t1:"Beard",       t2:"Wax",       desc:"Воск для укладки бороды. Фиксация и матовый финиш на весь день.", price:1890, size:"50 мл", img:"{{ url_for('static', filename='img/prod-photo-3.jpg') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" },
-    "homme-05": { brand:"INTELEGENTOFF", t1:"Face Serum",  t2:"Black",     desc:"Концентрированная сыворотка для лица. Антивозрастной комплекс высокой концентрации.", price:2790, size:"30 мл", img:"{{ url_for('static', filename='img/prod-photo-1.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
-    "homme-06": { brand:"INTELEGENTOFF", t1:"After Shave", t2:"Balm",      desc:"Бальзам после бритья. Успокаивает раздражение и восстанавливает кожу.", price:1990, size:"100 мл", img:"{{ url_for('static', filename='img/prod-photo-2.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
-    "homme-kit-01": { brand:"INTELEGENTOFF", t1:"Starter", t2:"Kit",       desc:"Стартовый набор: 3 продукта для полного ритуала ухода. Выгоднее, чем по отдельности.", price:5990, size:"Набор 3 продукта", img:"{{ url_for('static', filename='img/logoIntelegent.png') }}", poster:"{{ url_for('static', filename='img/IntelegentSergay.png') }}" }
+    "pearl-01": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Moisture",  desc:"Увлажняющая пенка «Увлажнение». Бережное очищение без чувства стянутости, с гидролатом зелёного чая и пантенолом.", price:2590, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl1.jpg') }}" },
+    "pearl-02": { brand:"Pearl by Tais", t1:"Face Tonic",  t2:"Toning",    desc:"Тоник для лица «Тонус». Устраняет следы усталости и освежает кожу гидролатом жасмина и мелиссой.", price:2490, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl2.jpg') }}" },
+    "pearl-03": { brand:"Pearl by Tais", t1:"Tonic Youth", t2:"Restoring", desc:"Тоник-реставратор «Молодость». Дамасская роза и авокадо возвращают упругость и сияние зрелой кожи.", price:2490, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl3.jpg') }}" },
+    "pearl-04": { brand:"Pearl by Tais", t1:"Foam Mousse", t2:"Cleansing", desc:"Пенка «Мягкое очищение». Гидролат малины и ромашка — идеально для чувствительной и реактивной кожи.", price:2290, size:"150 мл", img:"{{ url_for('static', filename='img/Pearl4.jpg') }}" },
+    "pearl-05": { brand:"Pearl by Tais", t1:"Hair Tonic",  t2:"Radiance",  desc:"Тоник для волос «Укрепляющий». Корень лопуха и можжевельник работают против ломкости и придают блеск.", price:2350, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl5.jpg') }}" },
+    "pearl-06": { brand:"Pearl by Tais", t1:"Velvet Oil",  t2:"Blend",     desc:"Микс масел для волос. Макадамия, миндаль и персик — глубокое питание и защита секущихся кончиков.", price:2490, size:"50 мл", img:"{{ url_for('static', filename='img/Pearl6.jpg') }}" },
+    "pearl-07": { brand:"Pearl by Tais", t1:"Micellar Water", t2:"Extract Mix", desc:"Мицеллярная вода «С экстрактами». Василёк и ромашка мягко снимают макияж и успокаивают кожу.", price:2650, size:"200 мл", img:"{{ url_for('static', filename='img/Pearl7.jpg') }}" },
+    "pearl-set-1": { brand:"Pearl by Tais", t1:"Pearl Set", t2:"№1", desc:"Набор для комплексного ухода: очищение, тонизирование и увлажнение. Всё на натуральных гидролатах.", price:7850, size:"Набор средств", img:"{{ url_for('static', filename='img/PearlSet1.jpg') }}" },
+    "pearl-set-2": { brand:"Pearl by Tais", t1:"Pearl Set", t2:"№2", desc:"Набор для тонуса и сияния: тоники и уходовые средства для свежего, отдохнувшего вида кожи.", price:7850, size:"Набор средств", img:"{{ url_for('static', filename='img/PearlSet2.jpg') }}" },
+    "homme-beard-oil":  { brand:"INTELEGENTOFF", t1:"Масло",  t2:"для бороды",  desc:"Смягчает бороду и кожу под ней, дисциплинирует волос и придаёт ухоженный вид.", price:1680, size:"50 мл", img:"{{ url_for('static', filename='img/INTELEGENT масло.png') }}",  poster:"{{ url_for('static', filename='img/INTELEGENT масло.png') }}" },
+    "homme-beard-foam": { brand:"INTELEGENTOFF", t1:"Пенка",  t2:"для бороды",  desc:"Мягко очищает бороду без пересушивания. Свежесть и лёгкость каждый день.", price:1720, size:"150 мл", img:"{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Пенка.png') }}" },
+    "homme-beard-tonic":{ brand:"INTELEGENTOFF", t1:"Тоник",  t2:"для бороды",  desc:"Увлажняет и укрепляет, убирает зуд и раздражение под бородой.", price:1670, size:"150 мл", img:"{{ url_for('static', filename='img/INTELEGENT тоник.png') }}", poster:"{{ url_for('static', filename='img/INTELEGENT тоник.png') }}" },
+    "homme-beard-wax":  { brand:"INTELEGENTOFF", t1:"Воск",   t2:"для бороды",  desc:"Фиксирует форму и укладку в течение дня. Матовый финиш без жирного блеска.", price:1650, size:"50 мл", img:"{{ url_for('static', filename='img/INTELEGENT Воск.png') }}", poster:"{{ url_for('static', filename='img/INTELEGENT Воск.png') }}" },
+    "homme-shower-gel": { brand:"INTELEGENTOFF", t1:"Гель",   t2:"для душа",    desc:"Бодрящее очищение тела, не сушит кожу. Сдержанный мужской аромат.", price:1380, size:"250 мл", img:"{{ url_for('static', filename='img/intel-gel.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
+    "homme-liquid-soap":{ brand:"INTELEGENTOFF", t1:"Жидкое", t2:"мыло",        desc:"Мягко очищает руки и тело, ухаживает за кожей. Для дозатора.", price:1380, size:"250 мл", img:"{{ url_for('static', filename='img/intel-liquid-soap.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
+    "homme-shampoo":    { brand:"INTELEGENTOFF", t1:"Шампунь", t2:"мужской",     desc:"Очищает кожу головы и укрепляет волосы. Объём и свежесть без утяжеления.", price:1680, size:"250 мл", img:"{{ url_for('static', filename='img/intel-shampoo.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
+    "homme-bar-soap":   { brand:"INTELEGENTOFF", t1:"Мыло",   t2:"кусковое",    desc:"Плотное брусковое мыло для тела и рук. Долго не смыливается.", price:550, size:"100 г", img:"{{ url_for('static', filename='img/intel-bar-soap.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
+    "homme-kit-beard":  { brand:"INTELEGENTOFF", t1:"Набор",  t2:"для бороды",  desc:"Полный уход за бородой в одной коробке — пенка, тоник, масло и воск. Арт. 2204НК.", price:5900, size:"Набор 4 средства", img:"{{ url_for('static', filename='img/intel-kit-beard.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
+    "homme-kit-shower": { brand:"INTELEGENTOFF", t1:"Набор",  t2:"для душа",    desc:"Базовый мужской уход под дверь — гель для душа, шампунь и жидкое мыло. Арт. 3303НК.", price:4200, size:"Набор 3 средства", img:"{{ url_for('static', filename='img/intel-kit-shower.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" }
 };
 
 // Опорные кадры из архива для галереи и блока «Состав»
@@ -292,20 +297,25 @@ const ARCHIVE = {
 
 // Состав по товарам (кратко, честно)
 const COMPOSITION = {
-    "pearl-01":"Гидролат розы, пантенол (B5), глицерин растительного происхождения, экстракт алоэ вера, мягкие ПАВ кокосового происхождения. Без сульфатов, парабенов и силиконов.",
-    "pearl-02":"Гидролаты василька и мяты, ниацинамид, аллантоин, экстракт зелёного чая, пантенол. Без спирта и отдушек.",
-    "pearl-03":"Гидролат нероли, пептидный комплекс, гиалуроновая кислота, экстракт центеллы азиатской, ниацинамид, витамин E.",
-    "pearl-04":"Гидролат ромашки, бисаболол, пантенол, экстракт овса, мягкие аминокислотные ПАВ. Гипоаллергенная формула.",
-    "pearl-05":"Гидролат крапивы и розмарина, кофеин, биотин, пантенол, экстракт хвоща полевого, ниацинамид.",
-    "pearl-06":"Масла арганы, жожоба, авокадо и макадамии, витамин E, экстракт льняного семени. Несмываемая формула.",
-    "pearl-07":"Мицеллы, гидролат лепестков розы, экстракты огурца и зелёного чая, пантенол, аллантоин.",
-    "homme-01":"Активированный уголь, салициловая кислота, экстракт гуараны, ментол, аминокислотные ПАВ. Глубокое, но не пересушивающее очищение.",
-    "homme-02":"Гидролат гамамелиса, ниацинамид, цинк PCA, экстракт зелёного чая, кофеин. Контроль себума и матовый финиш.",
-    "homme-03":"Масла жожоба, арганы, виноградной косточки и аргинин, витамин E, древесно-цитрусовый аромат. Смягчает жёсткий волос.",
-    "homme-04":"Пчелиный воск, ланолин, масло ши и касторовое масло. Средне-сильная фиксация и матовый финиш на весь день.",
-    "homme-05":"Пептидный комплекс, ниацинамид 5%, гиалуроновая кислота, кофеин, витамин E. Высокая концентрация активов.",
-    "homme-06":"Аллантоин, пантенол, бисаболол, алоэ вера, ментол. Снимает раздражение и стянутость после бритья.",
-    "homme-kit-01":"Полный мужской ритуал: очищение, концентрированный уход и средство для бороды в единой тёмной эстетике."
+    "pearl-01":"Гидролат зелёного чая, экстракты шалфея, лаванды и дамасской розы, клюква, календула, пантенол, коллоидное серебро. Без сульфатов и парабенов.",
+    "pearl-02":"Гидролат жасмина, экстракты мелиссы, лаванды, календулы, вербены и липы, коллоидное серебро. Освежает и снимает следы усталости.",
+    "pearl-03":"Гидролат дамасской розы, экстракты шиповника, зелёного чая, рододендрона, амаранта и авокадо, коллоидное серебро. Упругость и сияние зрелой кожи.",
+    "pearl-04":"Гидролат малины, экстракты ромашки, апельсина, вербены и кокоса, пантенол, коллоидное серебро. Для чувствительной кожи.",
+    "pearl-05":"Гидролат можжевельника, экстракты корня лопуха, шалфея, донника, лаванды и кокоса, коллоидное серебро. Против ломкости, для силы волос.",
+    "pearl-06":"Масла макадамии, абрикоса, сладкого миндаля и персика, экстракты крапивы, ромашки и шалфея, витамин E. Питание и живой блеск.",
+    "pearl-07":"Гидролаты василька и жасмина, экстракты шиповника, шалфея, ромашки, календулы и вербены, пантенол, коллоидное серебро. Снимает макияж и успокаивает.",
+    "pearl-set-1":"Пенка для умывания, тоник и увлажняющее средство — комплексный уход на натуральных гидролатах, без сульфатов и парабенов.",
+    "pearl-set-2":"Тоники и уходовые средства для тонуса и сияния кожи. Натуральные гидролаты и растительные экстракты.",
+    "homme-beard-oil":"Растительные масла-основа, экстракты и витамин E. Смягчает жёсткий волос и питает кожу под бородой.",
+    "homme-beard-foam":"Мягкая очищающая база с растительными экстрактами и пантенолом. Свежесть без пересушивания.",
+    "homme-beard-tonic":"Увлажняющий тоник с растительными экстрактами. Убирает зуд и раздражение, укрепляет волос.",
+    "homme-beard-wax":"Пчелиный воск и растительные масла. Средне-сильная фиксация и матовый финиш на весь день.",
+    "homme-shower-gel":"Мягкие ПАВ и растительные экстракты. Бодрящее очищение тела, не сушит кожу.",
+    "homme-liquid-soap":"Деликатная моющая база с ухаживающими компонентами. Для рук и тела, подходит для дозатора.",
+    "homme-shampoo":"Очищающая база с растительными экстрактами. Объём, свежесть и здоровье кожи головы.",
+    "homme-bar-soap":"Плотное брусковое мыло на растительной основе. Для тела и рук, долго не смыливается.",
+    "homme-kit-beard":"Полный уход за бородой: пенка, тоник, масло и воск в единой тёмной эстетике INTELEGENTOFF.",
+    "homme-kit-shower":"Базовый мужской ритуал: гель для душа, шампунь и жидкое мыло. Уход под дверь."
 };
 
 // Ритуал применения по брендам
@@ -385,7 +395,7 @@ function renderTsokProduct() {
     if (backLink && p.brand === 'INTELEGENTOFF'){ backLink.setAttribute('href','catalog-homme'); backLink.lastChild.textContent = ' Вернуться в INTELEGENTOFF'; }
 
     // Цены/объёмы
-    document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = p.price + ' ₽');
+    document.querySelectorAll('.js-dyn-price').forEach(el => el.textContent = p.price.toLocaleString('ru-RU') + ' \u20BD');
     document.querySelectorAll('.js-dyn-size').forEach(el => el.textContent = p.size);
 
     // Имя в плавающей панели + хлебных крошках

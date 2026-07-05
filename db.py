@@ -23,7 +23,6 @@ PRODUCT_SEED = {
     "homme-05": {"name": "Face Serum Black", "price": Decimal("134"), "size": "30 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Сыворотка для лица.", "image": "img/prod-photo-1.jpg"},
     "homme-06": {"name": "After Shave Balm", "price": Decimal("82"), "size": "100 мл", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Бальзам после бритья.", "image": "img/prod-photo-2.jpg"},
     "homme-kit-01": {"name": "INTELEGENTOFF Starter Kit", "price": Decimal("254"), "size": "Набор 3 продукта", "brand": "INTELEGENTOFF", "category": "intelegent", "description": "Стартовый набор.", "image": "img/logoIntelegent.png"},
-    "test-subscription-box-3m": {"name": "Скрытый тестовый TSOK BOX — 3 месяца", "price": Decimal("3"), "size": "3 месяца", "brand": "TSOK BOX", "category": "hidden", "description": "Скрытый тестовый бокс для проверки рекуррентных платежей.", "image": "", "is_hidden": 1},
 }
 
 @contextmanager
@@ -46,27 +45,21 @@ def init_database():
     with get_connection() as conn:
         c = conn.cursor()
         c.execute("""CREATE TABLE IF NOT EXISTS users (id TEXT PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL, phone TEXT DEFAULT '', city TEXT DEFAULT '', address TEXT DEFAULT '', loyalty_tier TEXT DEFAULT 'Silver', tsok_coins INTEGER DEFAULT 0, annual_spend INTEGER DEFAULT 0, subscription_status TEXT DEFAULT 'none', role TEXT DEFAULT 'customer', created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
-        c.execute("""CREATE TABLE IF NOT EXISTS products (id TEXT PRIMARY KEY, name TEXT NOT NULL, price NUMERIC NOT NULL, size TEXT DEFAULT '', brand TEXT DEFAULT '', category TEXT DEFAULT 'tais', description TEXT DEFAULT '', image TEXT DEFAULT '', is_active INTEGER DEFAULT 1, is_hidden INTEGER DEFAULT 0, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
-        existing_product_columns = {row['name'] for row in c.execute("PRAGMA table_info(products)").fetchall()}
-        if 'is_hidden' not in existing_product_columns:
-            c.execute("ALTER TABLE products ADD COLUMN is_hidden INTEGER DEFAULT 0")
+        c.execute("""CREATE TABLE IF NOT EXISTS products (id TEXT PRIMARY KEY, name TEXT NOT NULL, price NUMERIC NOT NULL, size TEXT DEFAULT '', brand TEXT DEFAULT '', category TEXT DEFAULT 'tais', description TEXT DEFAULT '', image TEXT DEFAULT '', is_active INTEGER DEFAULT 1, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
         c.execute("""CREATE TABLE IF NOT EXISTS orders (id TEXT PRIMARY KEY, user_id TEXT, customer_name TEXT DEFAULT '', customer_email TEXT DEFAULT '', type TEXT DEFAULT 'one_time', status TEXT DEFAULT 'new', total NUMERIC DEFAULT 0, items_count INTEGER DEFAULT 0, payment_provider TEXT DEFAULT '', comment TEXT DEFAULT '', created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
         c.execute("""CREATE TABLE IF NOT EXISTS subscriptions (id TEXT PRIMARY KEY, user_id TEXT, status TEXT DEFAULT 'active', plan_code TEXT DEFAULT '3m', next_charge_at TEXT, vip_gift TEXT DEFAULT '', items TEXT DEFAULT '[]', payment_token_id TEXT DEFAULT '', updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
         c.execute("""CREATE TABLE IF NOT EXISTS payment_sessions (order_number TEXT PRIMARY KEY, payment_id TEXT UNIQUE, type TEXT DEFAULT 'one_time', status TEXT DEFAULT 'pending', total NUMERIC DEFAULT 0, customer_name TEXT DEFAULT '', customer_email TEXT DEFAULT '', customer_phone TEXT DEFAULT '', items_count INTEGER DEFAULT 0, items TEXT DEFAULT '[]', quote TEXT DEFAULT '{}', created_at TEXT DEFAULT CURRENT_TIMESTAMP, updated_at TEXT DEFAULT CURRENT_TIMESTAMP)""")
         for pid, p in PRODUCT_SEED.items():
-            c.execute("""INSERT OR IGNORE INTO products(id,name,price,size,brand,category,description,image,is_hidden) VALUES(?,?,?,?,?,?,?,?,?)""", (pid,p['name'],str(p['price']),p['size'],p['brand'],p['category'],p['description'],p['image'],int(p.get('is_hidden', 0))))
-            if p.get('is_hidden'):
-                c.execute("""UPDATE products SET name=?, price=?, size=?, brand=?, category=?, description=?, image=?, is_active=1, is_hidden=1, updated_at=CURRENT_TIMESTAMP WHERE id=?""", (p['name'],str(p['price']),p['size'],p['brand'],p['category'],p['description'],p['image'],pid))
+            c.execute("""INSERT OR IGNORE INTO products(id,name,price,size,brand,category,description,image) VALUES(?,?,?,?,?,?,?,?)""", (pid,p['name'],str(p['price']),p['size'],p['brand'],p['category'],p['description'],p['image']))
         admin_email=os.getenv('TSOK_ADMIN_EMAIL','admin@tsok.shop').lower(); admin_pass=os.getenv('TSOK_ADMIN_PASSWORD','admin123')
         c.execute("""INSERT OR IGNORE INTO users(id,name,email,password_hash,role,phone,loyalty_tier,tsok_coins,annual_spend,subscription_status) VALUES('admin','TSOK Admin',?,?, 'admin','', 'Gold',0,0,'none')""", (admin_email, generate_password_hash(admin_pass)))
 
 def init_products_table(): init_database()
 
-def list_products(category=None, include_inactive=False, include_hidden=False):
+def list_products(category=None, include_inactive=False):
     init_database(); sql="SELECT * FROM products WHERE 1=1"; args=[]
     if category: sql += " AND category=?"; args.append(category)
     if not include_inactive: sql += " AND is_active=1"
-    if not include_hidden: sql += " AND COALESCE(is_hidden,0)=0"
     sql += " ORDER BY category, name"
     with get_connection() as conn: return [_row(r) for r in conn.execute(sql,args).fetchall()]
 
