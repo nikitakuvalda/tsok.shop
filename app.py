@@ -64,6 +64,7 @@ GIFT_LABELS = {
 }
 DELIVERY_FEE = Decimal("700")
 MIN_BOX_ITEMS = 3
+TEST_SUBSCRIPTION_BOX_PRODUCT_ID = "tsok-test-subscription-box-3m"
 
 def _selected_count(items):
     return sum(item["qty"] for item in items)
@@ -71,6 +72,24 @@ def _selected_count(items):
 def _calculate_box_quote(items, plan_code="once", vip_gift=""):
     plan = SUBSCRIPTION_PLANS.get(plan_code) or SUBSCRIPTION_PLANS["once"]
     count = _selected_count(items)
+    if plan_code == "test-3m" and len(items) == 1 and items[0].get("id") == TEST_SUBSCRIPTION_BOX_PRODUCT_ID:
+        return {
+            "plan_code": "test-3m",
+            "plan_label": "Тестовая подписка 3 месяца",
+            "item_count": count,
+            "base_total": Decimal("3"),
+            "discount_percent": 0,
+            "discount_amount": Decimal("0"),
+            "delivery_fee": Decimal("0"),
+            "free_delivery": True,
+            "gift_enabled": False,
+            "vip_gift": "",
+            "payable_total": Decimal("1"),
+            "monthly_payment": Decimal("1"),
+            "subscription_months": 3,
+            "subscription_total": Decimal("3"),
+            "bnpl": None,
+        }
     if count < MIN_BOX_ITEMS:
         raise ValueError("Минимальный состав TSOK BOX — 3 товара.")
     base_total = sum(item["line_total"] for item in items)
