@@ -29,7 +29,36 @@ function saveFavs() {
     updateFavUI();
 }
 
+function clearBoxMeta() {
+    boxMeta = null;
+    localStorage.removeItem('tsok_box_meta');
+    localStorage.removeItem('tsok_box_state');
+}
+
+function boxMetaMatchesCart() {
+    if (!boxMeta) return false;
+    if (boxMeta.plan === 'test-3m') {
+        return cart.length === 1 && cart[0]?.id === 'tsok-test-subscription-box-3m' && Number(cart[0]?.qty || 0) === 1;
+    }
+    const savedBoxState = JSON.parse(localStorage.getItem('tsok_box_state') || 'null');
+    if (!savedBoxState?.items || typeof savedBoxState.items !== 'object') return false;
+    const expected = Object.entries(savedBoxState.items)
+        .filter(([, qty]) => Number(qty) > 0)
+        .map(([id, qty]) => [id, Number(qty)])
+        .sort(([a], [b]) => a.localeCompare(b));
+    const actual = cart
+        .filter(item => Number(item.qty || 0) > 0)
+        .map(item => [item.id, Number(item.qty)])
+        .sort(([a], [b]) => a.localeCompare(b));
+    return expected.length === actual.length && expected.every(([id, qty], idx) => actual[idx]?.[0] === id && actual[idx]?.[1] === qty);
+}
+
+function ensureFreshBoxMeta() {
+    if (boxMeta && !boxMetaMatchesCart()) clearBoxMeta();
+}
+
 function addToCart(id, name, price, size, brand, img) {
+    clearBoxMeta();
     const existing = cart.find(i => i.id === id);
     if (existing) {
         existing.qty += 1;
@@ -709,6 +738,7 @@ function cartSubtotal() {
 }
 
 function renderCheckoutSummary() {
+    ensureFreshBoxMeta();
     const container = document.getElementById('checkoutSummaryItems');
     const totalEl = document.getElementById('checkoutSummaryTotal');
     const emptyEl = document.getElementById('checkoutEmptyMessage');
@@ -719,23 +749,8 @@ function renderCheckoutSummary() {
     if (totalEl) totalEl.textContent = `${total.toFixed(0)} ₽`;
     const boxNote = document.getElementById('checkoutBoxNote');
     if (boxNote) {
-        if (boxMeta) {
-            const details = [
-                boxMeta.checkout_note,
-                boxMeta.item_count ? `${boxMeta.item_count} товар(а)` : '',
-                boxMeta.discount_percent ? `скидка −${boxMeta.discount_percent}%` : '',
-                boxMeta.delivery ? `доставка: ${boxMeta.delivery}` : '',
-                boxMeta.coins ? `TSOK Coins: ${boxMeta.coins}` : '',
-                boxMeta.bnpl ? `BNPL: ${boxMeta.bnpl}` : '',
-                boxMeta.vip_gift ? `VIP-подарок: ${boxMeta.vip_gift}` : (boxMeta.gift_note || ''),
-                boxMeta.bnpl_required ? 'доступна оплата частями' : ''
-            ].filter(Boolean);
-            boxNote.hidden = false;
-            boxNote.innerHTML = `<strong>TSOK BOX из конструктора</strong><br>${details.map(escapeHtml).join('<br>')}`;
-        } else {
-            boxNote.hidden = true;
-            boxNote.textContent = '';
-        }
+        boxNote.hidden = true;
+        boxNote.textContent = '';
     }
     if (submitBtn) {
         submitBtn.textContent = cart.length ? `Купить за ${total.toFixed(0)} ₽` : 'Купить';
@@ -792,6 +807,7 @@ function initCheckoutPage() {
         if (emailInput && !emailInput.value) emailInput.value = savedCustomerProfile.email || '';
     }
 
+    ensureFreshBoxMeta();
     if (editCartBtn && boxMeta) editCartBtn.textContent = 'Редактировать бокс';
 
     editCartBtn?.addEventListener('click', () => {
@@ -814,6 +830,8 @@ function initCheckoutPage() {
             submitBtn.disabled = true;
             submitBtn.textContent = 'Создаём платёж…';
         }
+
+        ensureFreshBoxMeta();
 
         const payload = {
             items: cart.map(item => ({ id: item.id, qty: item.qty })),
