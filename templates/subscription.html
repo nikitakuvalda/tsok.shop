@@ -526,6 +526,18 @@
     let mode = savedBoxState?.plan || 'monthly';
     let curFilter = 'all';
     const MIN_ITEMS = 3;
+    (function applyDbProductsToConstructor() {
+        const dbProducts = window.TSOK_PRODUCTS || {};
+        PRODUCTS.forEach(p => {
+            const dbProduct = dbProducts[p.id];
+            if (!dbProduct) return;
+            p.price = Number(dbProduct.price || p.price);
+            p.name = dbProduct.name || p.name;
+            p.size = dbProduct.size || p.size;
+            if (dbProduct.image) p.img = dbProduct.image;
+        });
+    })();
+
     const PLANS = { once:{discount:0,label:'Разовая покупка'}, monthly:{discount:.10,label:'Рекуррент ежемесячно'}, '3m':{discount:.15,label:'Подписка 3 месяца',bnpl:true,months:3}, '6m':{discount:.20,label:'Подписка 6 месяцев',bnpl:true,months:6,freeDelivery:true}, '12m':{discount:.30,label:'VIP 12 месяцев',bnpl:true,months:12,freeDelivery:true} };
     const DELIVERY_FEE = 700;
 

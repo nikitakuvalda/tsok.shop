@@ -287,6 +287,14 @@ const PRODUCTS = {
     "homme-kit-beard":  { brand:"INTELEGENTOFF", t1:"Набор",  t2:"для бороды",  desc:"Полный уход за бородой в одной коробке — пенка, тоник, масло и воск. Арт. 2204НК.", price:5900, size:"Набор 4 средства", img:"{{ url_for('static', filename='img/intel-kit-beard.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" },
     "homme-kit-shower": { brand:"INTELEGENTOFF", t1:"Набор",  t2:"для душа",    desc:"Базовый мужской уход под дверь — гель для душа, шампунь и жидкое мыло. Арт. 3303НК.", price:4200, size:"Набор 3 средства", img:"{{ url_for('static', filename='img/intel-kit-shower.jpg') }}", poster:"{{ url_for('static', filename='img/HeroHomme.jpg') }}" }
 };
+Object.keys(window.TSOK_PRODUCTS || {}).forEach(function (id) {
+    if (!PRODUCTS[id]) return;
+    var dbProduct = window.TSOK_PRODUCTS[id];
+    PRODUCTS[id].price = Number(dbProduct.price || PRODUCTS[id].price);
+    PRODUCTS[id].size = dbProduct.size || PRODUCTS[id].size;
+    PRODUCTS[id].brand = dbProduct.brand || PRODUCTS[id].brand;
+    if (dbProduct.image_url) PRODUCTS[id].img = dbProduct.image_url;
+});
 
 // Опорные кадры из архива для галереи и блока «Состав»
 const ARCHIVE = {
