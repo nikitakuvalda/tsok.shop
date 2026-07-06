@@ -843,7 +843,6 @@ function initCheckoutPage() {
             },
             delivery: {
                 city: document.getElementById('deliveryCity')?.value.trim() || '',
-                zip: document.getElementById('deliveryZip')?.value.trim() || '',
                 address: document.getElementById('deliveryAddress')?.value.trim() || '',
                 comment: document.getElementById('deliveryComment')?.value.trim() || '',
                 pvz_provider: document.getElementById('deliveryPvzProvider')?.value || '',
