@@ -296,6 +296,33 @@ def _payment_field(payment, field_name):
     return getattr(payment, field_name, None)
 
 
+
+
+def _product_payload(product):
+    price = Decimal(str(product["price"]))
+    image = product.get("image") or ""
+    return {
+        "id": product["id"],
+        "name": product["name"],
+        "price": int(price) if price == price.to_integral_value() else float(price),
+        "price_label": f"{int(price) if price == price.to_integral_value() else price} ₽".replace(".", ","),
+        "size": product.get("size", ""),
+        "brand": product.get("brand", ""),
+        "category": product.get("category", ""),
+        "description": product.get("description", ""),
+        "image": image,
+        "image_url": url_for("static", filename=image) if image else "",
+    }
+
+
+@application.context_processor
+def inject_product_prices():
+    products = [_product_payload(product) for product in list_products()]
+    return {
+        "db_products": products,
+        "db_products_by_id": {product["id"]: product for product in products},
+    }
+
 def _client_rate_limit_key():
     forwarded_for = request.headers.get("X-Forwarded-For", "")
     client_ip = forwarded_for.split(",", 1)[0].strip() or request.remote_addr or "unknown"
@@ -303,7 +330,7 @@ def _client_rate_limit_key():
 
 
 def _render_cached_template(template_name):
-    cache_key = f"page:v1:{template_name}"
+    cache_key = f"page:v2:{template_name}:products"
     cached_html = cache_get_text(cache_key)
     if cached_html is not None:
         return Response(cached_html, mimetype="text/html")
