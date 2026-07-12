@@ -43,3 +43,27 @@ def test_yookassa_metadata_is_compact_for_full_checkout_payload():
     assert all(isinstance(value, str) and len(value) <= 512 for value in metadata.values())
     assert metadata["delivery_pvz"].startswith("cdek | ПВЗ у метро")
     assert "tier:Platinum" in metadata["loyalty_info"]
+
+
+def test_yookassa_subscription_payment_requests_payment_method_save(monkeypatch):
+    import app
+
+    captured = {}
+
+    def fake_create(payload, idempotence_key):
+        captured.update(payload)
+        return {"id": "pay-1", "confirmation": {"confirmation_url": "https://pay.example"}}
+
+    monkeypatch.setattr(app, "YOOKASSA_SHOP_ID", "shop")
+    monkeypatch.setattr(app, "YOOKASSA_SECRET_KEY", "secret")
+    monkeypatch.setattr(app, "YOOKASSA_RETURN_URL", "https://tsok.example/payment/success")
+    monkeypatch.setattr(app.Payment, "create", fake_create)
+
+    items = [{"id": "pearl-01", "name": "Foam", "qty": 1, "price": Decimal("100"), "line_total": Decimal("100")}]
+    customer = {"fio": "Анна", "phone": "+79990000000", "email": "anna@example.com"}
+    delivery = {"city": "Москва", "address": "Тверская, 1"}
+    quote = {"payable_total": Decimal("100"), "plan_code": "monthly", "plan_label": "Рекуррент ежемесячно", "item_count": 1, "discount_percent": 0, "free_delivery": False, "vip_gift": ""}
+
+    app._create_yookassa_payment(items, Decimal("100"), customer, delivery, quote=quote)
+
+    assert captured["save_payment_method"] is True
