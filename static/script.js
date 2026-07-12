@@ -693,6 +693,14 @@ function renderCheckoutSummary() {
             boxNote.textContent = '';
         }
     }
+    const subscriptionWarning = document.getElementById('checkoutSubscriptionWarning');
+    const secureText = document.getElementById('checkoutSecureText');
+    if (subscriptionWarning) subscriptionWarning.hidden = !boxMeta;
+    if (secureText) {
+        secureText.lastChild.textContent = boxMeta
+            ? 'Оплата через защищённый шлюз · способ оплаты будет сохранён для автосписаний'
+            : 'Оплата через защищённый шлюз · данные карты не сохраняются';
+    }
     if (submitBtn) {
         submitBtn.textContent = cart.length ? `Купить за ${total.toFixed(0)} ₽` : 'Купить';
         submitBtn.disabled = cart.length === 0;
