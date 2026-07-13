@@ -1,5 +1,8 @@
+import atexit
 import json
+import logging
 import os
+import threading
 import time
 import uuid
 from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
@@ -38,6 +41,7 @@ class StaticSiteFlask(Flask):
 
 
 application = StaticSiteFlask(__name__)
+logger = logging.getLogger(__name__)
 
 dotenv.load_dotenv(override=True)
 application.secret_key = os.getenv("FLASK_SECRET_KEY", "tsok-dev-secret-change-me")
@@ -600,6 +604,94 @@ def charge_due_subscriptions(now=None):
             charged.append({"subscription_id": subscription.get("id"), "error": str(error)})
     return charged
 
+class SubscriptionChargeScheduler:
+    """Lightweight in-process scheduler for TSOK BOX recurring charges."""
+
+    def __init__(self, interval_seconds=300):
+        self.interval_seconds = max(30, int(interval_seconds))
+        self._stop_event = threading.Event()
+        self._run_lock = threading.Lock()
+        self._thread = None
+        self.last_run_at = None
+        self.last_result = []
+        self.last_error = ""
+
+    @property
+    def is_running(self):
+        return bool(self._thread and self._thread.is_alive())
+
+    def start(self):
+        if self.is_running:
+            return False
+        self._stop_event.clear()
+        self._thread = threading.Thread(target=self._run_loop, name="tsok-subscription-scheduler", daemon=True)
+        self._thread.start()
+        return True
+
+    def stop(self):
+        self._stop_event.set()
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=5)
+
+    def run_once(self):
+        if not self._run_lock.acquire(blocking=False):
+            return {"status": "skipped", "message": "Планировщик уже выполняет автосписания."}
+        try:
+            self.last_run_at = datetime.now(timezone.utc).isoformat()
+            self.last_error = ""
+            self.last_result = charge_due_subscriptions()
+            return {"status": "ok", "charged": self.last_result, "last_run_at": self.last_run_at}
+        except Exception as error:
+            self.last_error = str(error)
+            logger.exception("Subscription scheduler failed")
+            return {"status": "error", "error": self.last_error, "last_run_at": self.last_run_at}
+        finally:
+            self._run_lock.release()
+
+    def snapshot(self):
+        return {
+            "enabled": _subscription_scheduler_enabled(),
+            "running": self.is_running,
+            "interval_seconds": self.interval_seconds,
+            "last_run_at": self.last_run_at,
+            "last_result": self.last_result,
+            "last_error": self.last_error,
+        }
+
+    def _run_loop(self):
+        logger.info("TSOK subscription scheduler started with %s second interval", self.interval_seconds)
+        while not self._stop_event.wait(self.interval_seconds):
+            self.run_once()
+        logger.info("TSOK subscription scheduler stopped")
+
+
+def _subscription_scheduler_enabled():
+    return os.getenv("TSOK_SUBSCRIPTION_SCHEDULER_ENABLED", "true").lower() in {"1", "true", "yes", "on"}
+
+
+def _should_autostart_subscription_scheduler():
+    if not _subscription_scheduler_enabled():
+        return False
+    if os.getenv("FLASK_DEBUG") == "1" and os.getenv("WERKZEUG_RUN_MAIN") != "true":
+        return False
+    return True
+
+
+def _scheduler_interval_seconds():
+    try:
+        return int(os.getenv("TSOK_SUBSCRIPTION_SCHEDULER_INTERVAL_SECONDS", "300"))
+    except ValueError:
+        return 300
+
+
+subscription_scheduler = SubscriptionChargeScheduler(_scheduler_interval_seconds())
+
+
+def start_subscription_scheduler_if_enabled():
+    if _should_autostart_subscription_scheduler():
+        subscription_scheduler.start()
+
+
 # ═══════════════════════════════════════════════════════════════════════
 #  CLI
 # ═══════════════════════════════════════════════════════════════════════
@@ -613,10 +705,13 @@ def init_db_command():
 
 @application.cli.command("charge-due-subscriptions")
 def charge_due_subscriptions_command():
-    """Charge active TSOK BOX subscriptions whose next_charge_at is due. Intended for cron."""
-    result = charge_due_subscriptions()
+    """Charge active TSOK BOX subscriptions whose next_charge_at is due."""
+    result = subscription_scheduler.run_once()
     print(json.dumps(result, ensure_ascii=False))
 
+
+start_subscription_scheduler_if_enabled()
+atexit.register(subscription_scheduler.stop)
 
 # ═══════════════════════════════════════════════════════════════════════
 #  Страницы — существующие
