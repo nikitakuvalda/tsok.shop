@@ -111,9 +111,13 @@
                     <p class="checkout-benefits" id="checkoutBenefitsLine">Введите код друга или примените Coins — пересчитаем итог перед оплатой.</p>
                 </div>
 
+                <div class="checkout-subscription-warning" id="checkoutSubscriptionWarning" hidden>
+                    <strong>Важное условие TSOK BOX</strong>
+                    <span>При совершении платежа вы даёте согласие на сохранение способа оплаты для последующих автоматических списаний. Отказаться от подписки и отвязать карту можно в любой момент в личном кабинете.</span>
+                </div>
                 <label class="consent-check"><input type="checkbox" id="checkoutConsent" required><span>Я ознакомлен(а) и согласен(на) с <a href="oferta" target="_blank">офертой</a> и <a href="privacy" target="_blank">политикой обработки персональных данных</a>.</span></label>
 <button id="checkoutSubmitBtn" type="submit" class="btn btn--dark w-100 checkout-buy-btn">Купить</button>
-<p class="checkout-secure"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Оплата через защищённый шлюз · данные карты не сохраняются</p>
+<p class="checkout-secure" id="checkoutSecureText"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Оплата через защищённый шлюз · данные карты не сохраняются</p>
                 <p class="checkout-error" id="checkoutError" hidden></p>
             </form>
         </div>

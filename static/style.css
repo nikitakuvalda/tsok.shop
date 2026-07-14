@@ -1605,6 +1605,9 @@ input,select,textarea{font-family:inherit}
 .subscribe-consent a{color:var(--clay);text-decoration:underline;text-underline-offset:2px}
 
 /* ── строка доверия об оплате (checkout) ── */
+.checkout-subscription-warning{display:flex;flex-direction:column;gap:5px;padding:12px 14px;border:1px solid rgba(176,126,61,.35);background:rgba(176,126,61,.09);border-radius:var(--r-sm);font-size:12.5px;line-height:1.45;color:var(--ink-soft);margin:10px 0}
+.checkout-subscription-warning[hidden]{display:none}
+.checkout-subscription-warning strong{color:var(--clay-deep);font-size:12px;text-transform:uppercase;letter-spacing:.08em}
 .checkout-secure{display:flex;align-items:center;justify-content:center;gap:7px;font-size:11.5px;color:var(--muted);margin-top:14px;text-align:center}
 .checkout-secure svg{color:var(--sage-deep);flex-shrink:0}
 

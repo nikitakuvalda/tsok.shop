@@ -1,5 +1,8 @@
+import atexit
 import json
+import logging
 import os
+import threading
 import time
 import uuid
 from urllib.parse import urlencode, urlsplit, urlunsplit, parse_qsl
@@ -38,6 +41,7 @@ class StaticSiteFlask(Flask):
 
 
 application = StaticSiteFlask(__name__)
+logger = logging.getLogger(__name__)
 
 dotenv.load_dotenv(override=True)
 application.secret_key = os.getenv("FLASK_SECRET_KEY", "tsok-dev-secret-change-me")
@@ -115,6 +119,7 @@ def _calculate_box_quote(items, plan_code="once", vip_gift=""):
         "plan_label": plan["label"],
         "item_count": count,
         "base_total": base_total,
+        "box_total": base_total,
         "discount_percent": int(plan["discount"] * 100),
         "discount_amount": discount_amount,
         "delivery_fee": delivery_fee,
@@ -495,6 +500,13 @@ def _persist_successful_payment(session_row, payment):
             quote = json.loads(session_row["quote"] or "{}")
             next_charge_at = (datetime.now(timezone.utc) + timedelta(days=30)).isoformat()
             subscription_id = f"SUB-{order_number}"
+            payment_method = _payment_field(payment, "payment_method") or {}
+            payment_token_id = _payment_field(payment_method, "id") or payment_id
+            try:
+                user_row = conn.execute("SELECT id FROM users WHERE lower(email)=lower(?) AND role='customer'", (session_row["customer_email"],)).fetchone()
+            except Exception:
+                user_row = None
+            subscription_user_id = user_row["id"] if user_row else None
             conn.execute(
                 """
                 INSERT INTO subscriptions(id,user_id,status,plan_code,next_charge_at,vip_gift,items,payment_token_id)
@@ -506,15 +518,17 @@ def _persist_successful_payment(session_row, payment):
                 """,
                 (
                     subscription_id,
-                    None,
+                    subscription_user_id,
                     "active",
                     quote.get("plan_code", "once"),
                     next_charge_at,
                     quote.get("vip_gift", ""),
                     session_row["items"],
-                    payment_id,
+                    payment_token_id,
                 ),
             )
+            if subscription_user_id:
+                conn.execute("UPDATE users SET subscription_status='active', updated_at=CURRENT_TIMESTAMP WHERE id=?", (subscription_user_id,))
         conn.execute("UPDATE payment_sessions SET status='succeeded', updated_at=CURRENT_TIMESTAMP WHERE order_number=?", (order_number,))
 
 
@@ -591,6 +605,8 @@ def _create_yookassa_payment(items, total, customer, delivery, quote=None, benef
         "description":  description,
         "metadata":     metadata,
     }
+    if quote:
+        payload["save_payment_method"] = True
     if os.getenv("YOOKASSA_SEND_RECEIPT", "false").lower() in {"1", "true", "yes", "on"}:
         receipt_customer = _receipt_customer(customer)
         if not receipt_customer:
@@ -611,6 +627,130 @@ def _create_yookassa_payment(items, total, customer, delivery, quote=None, benef
     return payment, order_number
 
 
+
+def _create_recurring_yookassa_payment(subscription, amount):
+    if not subscription.get("payment_token_id"):
+        raise RuntimeError("У подписки нет сохранённого способа оплаты.")
+    Configuration.account_id = YOOKASSA_SHOP_ID
+    Configuration.secret_key = YOOKASSA_SECRET_KEY
+    payload = {
+        "amount": {"value": _format_amount(amount), "currency": YOOKASSA_CURRENCY},
+        "capture": True,
+        "payment_method_id": subscription["payment_token_id"],
+        "description": f"Автосписание TSOK BOX {subscription['id']}"[:128],
+        "metadata": {"subscription_id": subscription["id"], "type": "subscription_autopay"},
+    }
+    return Payment.create(payload, str(uuid.uuid4()))
+
+
+def charge_due_subscriptions(now=None):
+    now = now or datetime.now(timezone.utc)
+    charged = []
+    with get_connection() as conn:
+        rows = conn.execute("SELECT * FROM subscriptions WHERE status='active' AND payment_token_id<>'' AND next_charge_at<=?", (now.isoformat(),)).fetchall()
+    for row in rows:
+        subscription = dict(row)
+        try:
+            subscription["items"] = json.loads(subscription.get("items") or "[]")
+            items = _subscription_items_with_products(subscription)
+            quote = _calculate_box_quote(items, subscription.get("plan_code", "monthly"), subscription.get("vip_gift", ""))
+            payment = _create_recurring_yookassa_payment(subscription, quote["payable_total"])
+            next_charge_at = (now + timedelta(days=30)).isoformat()
+            with get_connection() as conn:
+                conn.execute("UPDATE subscriptions SET next_charge_at=?, updated_at=CURRENT_TIMESTAMP WHERE id=?", (next_charge_at, subscription["id"]))
+            charged.append({"subscription_id": subscription["id"], "payment_id": _payment_field(payment, "id"), "next_charge_at": next_charge_at})
+        except Exception as error:
+            charged.append({"subscription_id": subscription.get("id"), "error": str(error)})
+    return charged
+
+class SubscriptionChargeScheduler:
+    """Lightweight in-process scheduler for TSOK BOX recurring charges."""
+
+    def __init__(self, interval_seconds=300):
+        self.interval_seconds = max(30, int(interval_seconds))
+        self._stop_event = threading.Event()
+        self._run_lock = threading.Lock()
+        self._thread = None
+        self.last_run_at = None
+        self.last_result = []
+        self.last_error = ""
+
+    @property
+    def is_running(self):
+        return bool(self._thread and self._thread.is_alive())
+
+    def start(self):
+        if self.is_running:
+            return False
+        self._stop_event.clear()
+        self._thread = threading.Thread(target=self._run_loop, name="tsok-subscription-scheduler", daemon=True)
+        self._thread.start()
+        return True
+
+    def stop(self):
+        self._stop_event.set()
+        if self._thread and self._thread.is_alive():
+            self._thread.join(timeout=5)
+
+    def run_once(self):
+        if not self._run_lock.acquire(blocking=False):
+            return {"status": "skipped", "message": "Планировщик уже выполняет автосписания."}
+        try:
+            self.last_run_at = datetime.now(timezone.utc).isoformat()
+            self.last_error = ""
+            self.last_result = charge_due_subscriptions()
+            return {"status": "ok", "charged": self.last_result, "last_run_at": self.last_run_at}
+        except Exception as error:
+            self.last_error = str(error)
+            logger.exception("Subscription scheduler failed")
+            return {"status": "error", "error": self.last_error, "last_run_at": self.last_run_at}
+        finally:
+            self._run_lock.release()
+
+    def snapshot(self):
+        return {
+            "enabled": _subscription_scheduler_enabled(),
+            "running": self.is_running,
+            "interval_seconds": self.interval_seconds,
+            "last_run_at": self.last_run_at,
+            "last_result": self.last_result,
+            "last_error": self.last_error,
+        }
+
+    def _run_loop(self):
+        logger.info("TSOK subscription scheduler started with %s second interval", self.interval_seconds)
+        while not self._stop_event.wait(self.interval_seconds):
+            self.run_once()
+        logger.info("TSOK subscription scheduler stopped")
+
+
+def _subscription_scheduler_enabled():
+    return os.getenv("TSOK_SUBSCRIPTION_SCHEDULER_ENABLED", "true").lower() in {"1", "true", "yes", "on"}
+
+
+def _should_autostart_subscription_scheduler():
+    if not _subscription_scheduler_enabled():
+        return False
+    if os.getenv("FLASK_DEBUG") == "1" and os.getenv("WERKZEUG_RUN_MAIN") != "true":
+        return False
+    return True
+
+
+def _scheduler_interval_seconds():
+    try:
+        return int(os.getenv("TSOK_SUBSCRIPTION_SCHEDULER_INTERVAL_SECONDS", "300"))
+    except ValueError:
+        return 300
+
+
+subscription_scheduler = SubscriptionChargeScheduler(_scheduler_interval_seconds())
+
+
+def start_subscription_scheduler_if_enabled():
+    if _should_autostart_subscription_scheduler():
+        subscription_scheduler.start()
+
+
 # ═══════════════════════════════════════════════════════════════════════
 #  CLI
 # ═══════════════════════════════════════════════════════════════════════
@@ -621,6 +761,16 @@ def init_db_command():
     init_database()
     print("Database is ready.")
 
+
+@application.cli.command("charge-due-subscriptions")
+def charge_due_subscriptions_command():
+    """Charge active TSOK BOX subscriptions whose next_charge_at is due."""
+    result = subscription_scheduler.run_once()
+    print(json.dumps(result, ensure_ascii=False))
+
+
+start_subscription_scheduler_if_enabled()
+atexit.register(subscription_scheduler.stop)
 
 # ═══════════════════════════════════════════════════════════════════════
 #  Страницы — существующие
@@ -1055,24 +1205,50 @@ def _user_has_active_subscription(db_user):
     return bool(db_user and db_user.get("subscription_status") in {"active", "paused"})
 
 
+def _load_user_subscription(user_id):
+    if not user_id:
+        return None
+    with get_connection() as conn:
+        row = conn.execute(
+            """
+            SELECT * FROM subscriptions
+            WHERE user_id=? AND status IN ('active','paused')
+            ORDER BY COALESCE(next_charge_at, updated_at) DESC
+            LIMIT 1
+            """,
+            (user_id,),
+        ).fetchone()
+    if not row:
+        return None
+    subscription = dict(row)
+    try:
+        subscription["items"] = json.loads(subscription.get("items") or "[]")
+    except (TypeError, json.JSONDecodeError):
+        subscription["items"] = []
+    return subscription
+
+
 def _current_subscription_state():
-    db_user = _db_user(_current_user_id()) if _current_user_id() else None
+    user_id = _current_user_id()
+    db_user = _db_user(user_id) if user_id else None
     customer = {**DEMO_CUSTOMER}
     if db_user:
         customer.update({"name": db_user["name"], "email": db_user["email"], "phone": db_user.get("phone", ""), "city": db_user.get("city", ""), "address": db_user.get("address", ""), "loyalty_tier": db_user["loyalty_tier"], "tsok_coins": db_user["tsok_coins"], "annual_spend": db_user["annual_spend"]})
 
-    has_subscription = _user_has_active_subscription(db_user)
+    stored_subscription = _load_user_subscription(user_id)
+    has_subscription = bool(stored_subscription) or _user_has_active_subscription(db_user)
+    active_subscription = stored_subscription or DEMO_SUBSCRIPTION
     if has_subscription:
-        items = _subscription_items_with_products(DEMO_SUBSCRIPTION)
-        quote = _calculate_box_quote(items, DEMO_SUBSCRIPTION["plan_code"], DEMO_SUBSCRIPTION.get("vip_gift", ""))
-        next_charge = datetime.fromisoformat(DEMO_SUBSCRIPTION["next_charge_at"])
+        items = _subscription_items_with_products(active_subscription)
+        quote = _calculate_box_quote(items, active_subscription["plan_code"], active_subscription.get("vip_gift", ""))
+        next_charge = datetime.fromisoformat(active_subscription["next_charge_at"])
         subscription = {
-            **DEMO_SUBSCRIPTION,
+            **active_subscription,
             "has_subscription": True,
             "next_charge_date": next_charge.strftime("%d.%m.%Y"),
             "items": _quote_items_to_json(items),
             "quote": _quote_to_json(quote),
-            "vip_gift_label": GIFT_LABELS.get(DEMO_SUBSCRIPTION.get("vip_gift", ""), ""),
+            "vip_gift_label": GIFT_LABELS.get(active_subscription.get("vip_gift", ""), ""),
         }
     else:
         subscription = {
@@ -1215,6 +1391,7 @@ def account_subscription():
 
 
 @application.post("/api/account/subscription/swap")
+@login_required
 def account_subscription_swap():
     if not _user_has_active_subscription(_db_user(_current_user_id())):
         return jsonify({"error": "У вас пока нет активной подписки TSOK BOX."}), 400
@@ -1236,26 +1413,42 @@ def account_subscription_swap():
         for item in items:
             item["price"] = Decimal(str(item["price"]))
             item["line_total"] = item["price"] * item["qty"]
-        quote = _calculate_box_quote(items, DEMO_SUBSCRIPTION["plan_code"], DEMO_SUBSCRIPTION.get("vip_gift", ""))
+        stored_subscription = _load_user_subscription(_current_user_id())
+        plan_code = (stored_subscription or DEMO_SUBSCRIPTION)["plan_code"]
+        vip_gift = (stored_subscription or DEMO_SUBSCRIPTION).get("vip_gift", "")
+        quote = _calculate_box_quote(items, plan_code, vip_gift)
     except (ValueError, InvalidOperation, TypeError) as error:
         return jsonify({"error": str(error)}), 400
-    DEMO_SUBSCRIPTION["items"] = [{"id": item["id"], "qty": item["qty"]} for item in items]
+    new_items = [{"id": item["id"], "qty": item["qty"]} for item in items]
+    if stored_subscription:
+        with get_connection() as conn:
+            conn.execute("UPDATE subscriptions SET items=?, updated_at=CURRENT_TIMESTAMP WHERE id=?", (json.dumps(new_items, ensure_ascii=False), stored_subscription["id"]))
+    else:
+        DEMO_SUBSCRIPTION["items"] = new_items
     return jsonify({"message": "Состав обновлён, сумма следующего автосписания пересчитана.", "quote": _quote_to_json(quote), "state": _current_subscription_state()})
 
 
 @application.post("/api/account/subscription/pause")
+@login_required
 def account_subscription_pause():
     if not _user_has_active_subscription(_db_user(_current_user_id())):
         return jsonify({"error": "У вас пока нет активной подписки TSOK BOX."}), 400
     skip_count = int(DEMO_SUBSCRIPTION.get("skip_count", 0))
     if skip_count >= 2:
         return jsonify({"error": "Лимит пропусков исчерпан: месяц можно пропустить не больше двух раз."}), 400
-    next_charge = datetime.fromisoformat(DEMO_SUBSCRIPTION["next_charge_at"]) + timedelta(days=30)
-    DEMO_SUBSCRIPTION["next_charge_at"] = next_charge.isoformat()
+    stored_subscription = _load_user_subscription(_current_user_id())
+    active_subscription = stored_subscription or DEMO_SUBSCRIPTION
+    next_charge = datetime.fromisoformat(active_subscription["next_charge_at"]) + timedelta(days=30)
     DEMO_SUBSCRIPTION["skip_count"] = skip_count + 1
-    DEMO_SUBSCRIPTION["status"] = "paused"
-    with get_connection() as conn:
-        conn.execute("UPDATE users SET subscription_status='paused', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
+    if stored_subscription:
+        with get_connection() as conn:
+            conn.execute("UPDATE subscriptions SET status='paused', next_charge_at=?, updated_at=CURRENT_TIMESTAMP WHERE id=?", (next_charge.isoformat(), stored_subscription["id"]))
+            conn.execute("UPDATE users SET subscription_status='paused', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
+    else:
+        DEMO_SUBSCRIPTION["next_charge_at"] = next_charge.isoformat()
+        DEMO_SUBSCRIPTION["status"] = "paused"
+        with get_connection() as conn:
+            conn.execute("UPDATE users SET subscription_status='paused', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
     return jsonify({"message": f"Месяц пропущен ({DEMO_SUBSCRIPTION['skip_count']}/2), следующее списание сдвинуто на 30 дней.", "state": _current_subscription_state()})
 
 
@@ -1270,9 +1463,13 @@ def account_loyalty_recalculate_tier():
 
 
 @application.post("/api/account/subscription/resume")
+@login_required
 def account_subscription_resume():
+    stored_subscription = _load_user_subscription(_current_user_id())
     DEMO_SUBSCRIPTION["status"] = "active"
     with get_connection() as conn:
+        if stored_subscription:
+            conn.execute("UPDATE subscriptions SET status='active', updated_at=CURRENT_TIMESTAMP WHERE id=?", (stored_subscription["id"],))
         conn.execute("UPDATE users SET subscription_status='active', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
     DEMO_CUSTOMER["loyalty_tier"] = determine_loyalty_tier(
         DEMO_CUSTOMER.get("subscription_months", 0),
@@ -1283,14 +1480,21 @@ def account_subscription_resume():
 
 
 @application.post("/api/account/subscription/cancel")
+@login_required
 def account_subscription_cancel():
     if not _user_has_active_subscription(_db_user(_current_user_id())):
         return jsonify({"error": "У вас пока нет активной подписки TSOK BOX."}), 400
-    DEMO_SUBSCRIPTION["status"] = "cancelled"
-    DEMO_SUBSCRIPTION["payment_token_id"] = ""
+    stored_subscription = _load_user_subscription(_current_user_id())
+    if stored_subscription:
+        with get_connection() as conn:
+            conn.execute("UPDATE subscriptions SET status='cancelled', payment_token_id='', updated_at=CURRENT_TIMESTAMP WHERE id=?", (stored_subscription["id"],))
+            conn.execute("UPDATE users SET subscription_status='cancelled', loyalty_tier='Silver', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
+    else:
+        DEMO_SUBSCRIPTION["status"] = "cancelled"
+        DEMO_SUBSCRIPTION["payment_token_id"] = ""
+        with get_connection() as conn:
+            conn.execute("UPDATE users SET subscription_status='cancelled', loyalty_tier='Silver', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
     DEMO_CUSTOMER["loyalty_tier"] = "Silver"
-    with get_connection() as conn:
-        conn.execute("UPDATE users SET subscription_status='cancelled', loyalty_tier='Silver', updated_at=CURRENT_TIMESTAMP WHERE id=?", (_current_user_id(),))
     return jsonify({"message": "Карта отвязана в платёжном шлюзе, подписка отменена, loyalty_tier понижен до Silver.", "state": _current_subscription_state()})
 
 
