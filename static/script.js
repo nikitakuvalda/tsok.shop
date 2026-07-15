@@ -10,6 +10,17 @@
 let cart = JSON.parse(localStorage.getItem('tsok_cart') || '[]');
 let favorites = JSON.parse(localStorage.getItem('tsok_favs') || '[]');
 let boxMeta = JSON.parse(localStorage.getItem('tsok_box_meta') || 'null');
+const tsokShowPrices = window.TSOK_SHOW_PRICES !== false;
+const tsokPriceText = 'Цена по запросу';
+
+function tsokFormatPrice(value) {
+    return tsokShowPrices ? `${Number(value || 0).toFixed(0)} ₽` : tsokPriceText;
+}
+
+function tsokStripPriceDetails(value) {
+    if (tsokShowPrices || !value) return value || '';
+    return String(value).replace(/\s*·\s*[\d\s.,]+₽/g, '');
+}
 
 /* Нормализация пути к картинке: data-img хранится как 'img/Pearl3.jpg',
    но в корзине/чекауте/конструкторе рендерится напрямую и без /static/ даёт 404. */
@@ -73,7 +84,7 @@ function updateCartUI() {
     document.querySelectorAll('.cart-count').forEach(el => el.textContent = total);
     document.querySelectorAll('#cartTotalSum').forEach(el => {
         const sum = cart.reduce((s, i) => s + i.qty * i.price, 0);
-        el.textContent = sum.toFixed(0) + ' ₽';
+        el.textContent = tsokFormatPrice(sum);
     });
 }
 
@@ -111,7 +122,7 @@ function renderCartItems() {
                 <div class="cart-item__info">
                     <div class="cart-item__top">
                         <h4 class="cart-item__name">${item.name}</h4>
-                        <span class="cart-item__price">${(item.price * item.qty).toFixed(0)} ₽</span>
+                        <span class="cart-item__price">${tsokFormatPrice(item.price * item.qty)}</span>
                     </div>
                     <span class="cart-item__size">${item.size || ''}</span>
                     <div class="cart-item__controls">
@@ -316,7 +327,7 @@ function initCatalogFilter() {
     if (priceRange) {
         priceRange.addEventListener('input', () => {
             const max = parseInt(priceRange.value);
-            if (priceLabel) priceLabel.textContent = max + ' ₽';
+            if (priceLabel) priceLabel.textContent = tsokFormatPrice(max);
             cards.forEach(card => {
                 const priceEl = card.querySelector('.product-card__price');
                 if (!priceEl) return;
@@ -672,12 +683,12 @@ function renderCheckoutSummary() {
     if (!container && !totalEl && !submitBtn) return;
 
     const total = cartSubtotal();
-    if (totalEl) totalEl.textContent = `${total.toFixed(0)} ₽`;
+    if (totalEl) totalEl.textContent = tsokFormatPrice(total);
     const boxNote = document.getElementById('checkoutBoxNote');
     if (boxNote) {
         if (boxMeta) {
             const details = [
-                boxMeta.checkout_note,
+                tsokStripPriceDetails(boxMeta.checkout_note),
                 boxMeta.item_count ? `${boxMeta.item_count} товар(а)` : '',
                 boxMeta.discount_percent ? `скидка −${boxMeta.discount_percent}%` : '',
                 boxMeta.delivery ? `доставка: ${boxMeta.delivery}` : '',
@@ -702,7 +713,7 @@ function renderCheckoutSummary() {
             : 'Оплата через защищённый шлюз · данные карты не сохраняются';
     }
     if (submitBtn) {
-        submitBtn.textContent = cart.length ? `Купить за ${total.toFixed(0)} ₽` : 'Купить';
+        submitBtn.textContent = cart.length && tsokShowPrices ? `Купить за ${total.toFixed(0)} ₽` : 'Купить';
         submitBtn.disabled = cart.length === 0;
     }
     if (!container) return;
@@ -722,7 +733,7 @@ function renderCheckoutSummary() {
                 <div class="checkout-summary-item__name">${item.name}</div>
                 <span class="checkout-summary-item__meta">${item.brand || ''}${item.size ? ' · ' + item.size : ''} · ${item.qty} шт.</span>
             </div>
-            <div class="checkout-summary-item__price">${(item.price * item.qty).toFixed(0)} ₽</div>`;
+            <div class="checkout-summary-item__price">${tsokFormatPrice(item.price * item.qty)}</div>`;
         container.appendChild(el);
     });
 }

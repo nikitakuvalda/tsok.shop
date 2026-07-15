@@ -3,6 +3,10 @@
      ═══════════════════════════════════════════ -->
 <script>
 (function () {
+    window.TSOK_SHOW_PRICES = {{ show_prices|tojson }};
+    if (!window.TSOK_SHOW_PRICES) {
+        document.documentElement.classList.add('prices-hidden');
+    }
     /* включаем reveal-режим только если браузер умеет и движение не отключено;
        иначе контент остаётся видимым по умолчанию (без скрытия) */
     if ('IntersectionObserver' in window &&
