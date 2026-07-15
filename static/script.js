@@ -10,6 +10,17 @@
 let cart = JSON.parse(localStorage.getItem('tsok_cart') || '[]');
 let favorites = JSON.parse(localStorage.getItem('tsok_favs') || '[]');
 let boxMeta = JSON.parse(localStorage.getItem('tsok_box_meta') || 'null');
+const tsokShowPrices = window.TSOK_SHOW_PRICES !== false;
+const tsokPriceText = 'Цена по запросу';
+
+function tsokFormatPrice(value) {
+    return tsokShowPrices ? `${Number(value || 0).toFixed(0)} ₽` : tsokPriceText;
+}
+
+function tsokStripPriceDetails(value) {
+    if (tsokShowPrices || !value) return value || '';
+    return String(value).replace(/\s*·\s*[\d\s.,]+₽/g, '');
+}
 
 /* Нормализация пути к картинке: data-img хранится как 'img/Pearl3.jpg',
    но в корзине/чекауте/конструкторе рендерится напрямую и без /static/ даёт 404. */
@@ -29,36 +40,7 @@ function saveFavs() {
     updateFavUI();
 }
 
-function clearBoxMeta() {
-    boxMeta = null;
-    localStorage.removeItem('tsok_box_meta');
-    localStorage.removeItem('tsok_box_state');
-}
-
-function boxMetaMatchesCart() {
-    if (!boxMeta) return false;
-    if (boxMeta.plan === 'test-3m') {
-        return cart.length === 1 && cart[0]?.id === 'tsok-test-subscription-box-3m' && Number(cart[0]?.qty || 0) === 1;
-    }
-    const savedBoxState = JSON.parse(localStorage.getItem('tsok_box_state') || 'null');
-    if (!savedBoxState?.items || typeof savedBoxState.items !== 'object') return false;
-    const expected = Object.entries(savedBoxState.items)
-        .filter(([, qty]) => Number(qty) > 0)
-        .map(([id, qty]) => [id, Number(qty)])
-        .sort(([a], [b]) => a.localeCompare(b));
-    const actual = cart
-        .filter(item => Number(item.qty || 0) > 0)
-        .map(item => [item.id, Number(item.qty)])
-        .sort(([a], [b]) => a.localeCompare(b));
-    return expected.length === actual.length && expected.every(([id, qty], idx) => actual[idx]?.[0] === id && actual[idx]?.[1] === qty);
-}
-
-function ensureFreshBoxMeta() {
-    if (boxMeta && !boxMetaMatchesCart()) clearBoxMeta();
-}
-
 function addToCart(id, name, price, size, brand, img) {
-    clearBoxMeta();
     const existing = cart.find(i => i.id === id);
     if (existing) {
         existing.qty += 1;
@@ -68,50 +50,6 @@ function addToCart(id, name, price, size, brand, img) {
     saveCart();
     showToast(`«${name}» добавлен в корзину`, 'cart');
 }
-
-function addTsokTestSubscriptionBox() {
-    const testBox = {
-        id: 'tsok-test-subscription-box-3m',
-        name: 'TSOK TEST BOX 3M',
-        price: 1,
-        size: '3 месяца · тест оплаты',
-        brand: 'TSOK BOX',
-        img: '',
-        qty: 1
-    };
-    cart = cart.filter(item => item.id !== testBox.id);
-    cart.push(testBox);
-    boxMeta = {
-        plan: 'test-3m',
-        plan_label: 'Тестовая подписка 3 месяца',
-        item_count: 1,
-        base_total: 3,
-        total: 1,
-        discount_percent: 0,
-        delivery: 'Бесплатно',
-        coins: '',
-        bnpl: '',
-        vip_gift: '',
-        gift_note: '',
-        bnpl_required: false,
-        checkout_note: 'Тестовая TSOK BOX · 3 месяца · 1 ₽ сейчас, затем 1 ₽/мес · всего 3 ₽',
-        constructor_url: 'subscription#constructor',
-        is_test_subscription_box: true
-    };
-    localStorage.setItem('tsok_box_meta', JSON.stringify(boxMeta));
-    localStorage.setItem('tsok_box_state', JSON.stringify({
-        items: { [testBox.id]: 1 },
-        plan: 'test-3m',
-        vip_gift: '',
-        updated_at: new Date().toISOString(),
-        is_test_subscription_box: true
-    }));
-    saveCart();
-    openCart();
-    showToast('Тестовая подписка-бокс добавлена в корзину', 'cart');
-}
-
-window.addTsokTestSubscriptionBox = addTsokTestSubscriptionBox;
 
 function removeFromCart(id) {
     cart = cart.filter(i => i.id !== id);
@@ -146,7 +84,7 @@ function updateCartUI() {
     document.querySelectorAll('.cart-count').forEach(el => el.textContent = total);
     document.querySelectorAll('#cartTotalSum').forEach(el => {
         const sum = cart.reduce((s, i) => s + i.qty * i.price, 0);
-        el.textContent = sum.toFixed(0) + ' ₽';
+        el.textContent = tsokFormatPrice(sum);
     });
 }
 
@@ -184,7 +122,7 @@ function renderCartItems() {
                 <div class="cart-item__info">
                     <div class="cart-item__top">
                         <h4 class="cart-item__name">${item.name}</h4>
-                        <span class="cart-item__price">${(item.price * item.qty).toFixed(0)} ₽</span>
+                        <span class="cart-item__price">${tsokFormatPrice(item.price * item.qty)}</span>
                     </div>
                     <span class="cart-item__size">${item.size || ''}</span>
                     <div class="cart-item__controls">
@@ -389,7 +327,7 @@ function initCatalogFilter() {
     if (priceRange) {
         priceRange.addEventListener('input', () => {
             const max = parseInt(priceRange.value);
-            if (priceLabel) priceLabel.textContent = max + ' ₽';
+            if (priceLabel) priceLabel.textContent = tsokFormatPrice(max);
             cards.forEach(card => {
                 const priceEl = card.querySelector('.product-card__price');
                 if (!priceEl) return;
@@ -738,7 +676,6 @@ function cartSubtotal() {
 }
 
 function renderCheckoutSummary() {
-    ensureFreshBoxMeta();
     const container = document.getElementById('checkoutSummaryItems');
     const totalEl = document.getElementById('checkoutSummaryTotal');
     const emptyEl = document.getElementById('checkoutEmptyMessage');
@@ -746,11 +683,26 @@ function renderCheckoutSummary() {
     if (!container && !totalEl && !submitBtn) return;
 
     const total = cartSubtotal();
-    if (totalEl) totalEl.textContent = `${total.toFixed(0)} ₽`;
+    if (totalEl) totalEl.textContent = tsokFormatPrice(total);
     const boxNote = document.getElementById('checkoutBoxNote');
     if (boxNote) {
-        boxNote.hidden = true;
-        boxNote.textContent = '';
+        if (boxMeta) {
+            const details = [
+                tsokStripPriceDetails(boxMeta.checkout_note),
+                boxMeta.item_count ? `${boxMeta.item_count} товар(а)` : '',
+                boxMeta.discount_percent ? `скидка −${boxMeta.discount_percent}%` : '',
+                boxMeta.delivery ? `доставка: ${boxMeta.delivery}` : '',
+                boxMeta.coins ? `TSOK Coins: ${boxMeta.coins}` : '',
+                boxMeta.bnpl ? `BNPL: ${boxMeta.bnpl}` : '',
+                boxMeta.vip_gift ? `VIP-подарок: ${boxMeta.vip_gift}` : (boxMeta.gift_note || ''),
+                boxMeta.bnpl_required ? 'доступна оплата частями' : ''
+            ].filter(Boolean);
+            boxNote.hidden = false;
+            boxNote.innerHTML = `<strong>TSOK BOX из конструктора</strong><br>${details.map(escapeHtml).join('<br>')}`;
+        } else {
+            boxNote.hidden = true;
+            boxNote.textContent = '';
+        }
     }
     const subscriptionWarning = document.getElementById('checkoutSubscriptionWarning');
     const secureText = document.getElementById('checkoutSecureText');
@@ -761,7 +713,7 @@ function renderCheckoutSummary() {
             : 'Оплата через защищённый шлюз · данные карты не сохраняются';
     }
     if (submitBtn) {
-        submitBtn.textContent = cart.length ? `Купить за ${total.toFixed(0)} ₽` : 'Купить';
+        submitBtn.textContent = cart.length && tsokShowPrices ? `Купить за ${total.toFixed(0)} ₽` : 'Купить';
         submitBtn.disabled = cart.length === 0;
     }
     if (!container) return;
@@ -781,7 +733,7 @@ function renderCheckoutSummary() {
                 <div class="checkout-summary-item__name">${item.name}</div>
                 <span class="checkout-summary-item__meta">${item.brand || ''}${item.size ? ' · ' + item.size : ''} · ${item.qty} шт.</span>
             </div>
-            <div class="checkout-summary-item__price">${(item.price * item.qty).toFixed(0)} ₽</div>`;
+            <div class="checkout-summary-item__price">${tsokFormatPrice(item.price * item.qty)}</div>`;
         container.appendChild(el);
     });
 }
@@ -815,7 +767,6 @@ function initCheckoutPage() {
         if (emailInput && !emailInput.value) emailInput.value = savedCustomerProfile.email || '';
     }
 
-    ensureFreshBoxMeta();
     if (editCartBtn && boxMeta) editCartBtn.textContent = 'Редактировать бокс';
 
     editCartBtn?.addEventListener('click', () => {
@@ -839,8 +790,6 @@ function initCheckoutPage() {
             submitBtn.textContent = 'Создаём платёж…';
         }
 
-        ensureFreshBoxMeta();
-
         const payload = {
             items: cart.map(item => ({ id: item.id, qty: item.qty })),
             box: boxMeta ? { plan: boxMeta.plan, vip_gift: boxMeta.vip_gift } : null,
@@ -851,6 +800,7 @@ function initCheckoutPage() {
             },
             delivery: {
                 city: document.getElementById('deliveryCity')?.value.trim() || '',
+                zip: document.getElementById('deliveryZip')?.value.trim() || '',
                 address: document.getElementById('deliveryAddress')?.value.trim() || '',
                 comment: document.getElementById('deliveryComment')?.value.trim() || '',
                 pvz_provider: document.getElementById('deliveryPvzProvider')?.value || '',

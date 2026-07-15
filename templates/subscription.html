@@ -752,7 +752,7 @@
             vip_gift: boxState.vip_gift,
             gift_note: giftInfo.trim(),
             bnpl_required: !!(PLANS[mode] || {}).bnpl,
-            checkout_note: `TSOK BOX · ${modeText} · ${total} ₽`,
+            checkout_note: window.TSOK_SHOW_PRICES === false ? `TSOK BOX · ${modeText}` : `TSOK BOX · ${modeText} · ${total} ₽`,
             constructor_url: 'subscription#constructor'
         };
         localStorage.setItem('tsok_cart', JSON.stringify(cartItems));
