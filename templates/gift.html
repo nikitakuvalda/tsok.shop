@@ -287,7 +287,8 @@
     };
     var state = { recipient: 'her', tier: 'love', message: '', signature: true, monogram: false, initials: '', wrap: true };
     var $ = function (s) { return document.querySelector(s); };
-    var fmt = function (n) { return n.toLocaleString('ru-RU') + ' ₽'; };
+    var showPrices = window.TSOK_SHOW_PRICES !== false;
+    var fmt = function (n) { return showPrices ? n.toLocaleString('ru-RU') + ' ₽' : 'Цена по запросу'; };
 
     function render() {
         document.querySelectorAll('.r-chip[data-recipient]').forEach(function (c) {
@@ -320,7 +321,7 @@
         var hasDisc = t.save > 0;
         $('#giftOldPrice').style.display = hasDisc ? '' : 'none';
         $('#giftSave').style.display = hasDisc ? '' : 'none';
-        if (hasDisc) { $('#giftOldPrice').textContent = fmt(t.old); $('#giftSave').textContent = 'вы экономите ' + fmt(t.save); }
+        if (hasDisc) { $('#giftOldPrice').textContent = fmt(t.old); $('#giftSave').textContent = showPrices ? 'вы экономите ' + fmt(t.save) : ''; }
     }
 
     document.querySelectorAll('.r-chip[data-recipient]').forEach(function (c) {
