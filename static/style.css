@@ -1817,3 +1817,33 @@ input,select,textarea{font-family:inherit}
 .product-gallery__main.gallery-ph{position:relative;min-height:420px;background:linear-gradient(150deg,#F4E6DC,#E7D6C4);border-radius:inherit;overflow:hidden}
 .product-gallery__main.gallery-ph::after{content:attr(data-ph);position:absolute;top:43%;left:50%;transform:translate(-50%,-50%);font-family:var(--font-d);font-weight:300;font-size:clamp(120px,20vw,210px);color:rgba(176,126,61,.24);line-height:1}
 .product-gallery__main.gallery-ph::before{content:'TSOK · фото скоро';position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(120,90,45,.5)}
+
+/* Price visibility toggle: set TSOK_SHOW_PRICES=false in .env to hide storefront prices. */
+.prices-hidden .pcard__price,
+.prices-hidden .product-card__price,
+.prices-hidden .product-card-homme__price,
+.prices-hidden .product-info__price,
+.prices-hidden .product-sticky-bar__price,
+.prices-hidden .constructor-product__price,
+.prices-hidden .progress-amount,
+.prices-hidden .panel-total,
+.prices-hidden .tier__price,
+.prices-hidden .gift-fmt__price,
+.prices-hidden .gift-summary__price,
+.prices-hidden .price-save,
+.prices-hidden .cart-item__price,
+.prices-hidden .cart-subtotal,
+.prices-hidden .checkout-summary-item__price,
+.prices-hidden .checkout-summary__total,
+.prices-hidden .result-card__price,
+.prices-hidden .program__price,
+.prices-hidden .duo__price,
+.prices-hidden .pcard__sub,
+.prices-hidden .js-add-to-cart,
+.prices-hidden #giftAddVisible,
+.prices-hidden #checkoutBtn,
+.prices-hidden #rBuy,
+.prices-hidden .cart-drawer__footer a[href*="checkout"],
+.prices-hidden #checkoutSubmitBtn {
+  display: none !important;
+}

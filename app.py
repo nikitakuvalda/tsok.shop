@@ -47,6 +47,20 @@ dotenv.load_dotenv(override=True)
 application.secret_key = os.getenv("FLASK_SECRET_KEY", "tsok-dev-secret-change-me")
 init_database()
 
+def _env_flag(name, default=True):
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+SHOW_PRICES = _env_flag("TSOK_SHOW_PRICES", True)
+
+
+@application.context_processor
+def inject_public_settings():
+    return {"show_prices": SHOW_PRICES}
+
+
 YOOKASSA_SHOP_ID   = os.getenv("YOOKASSA_SHOP_ID", "")
 YOOKASSA_SECRET_KEY = os.getenv("YOOKASSA_SECRET_KEY", "")
 YOOKASSA_CURRENCY   = os.getenv("YOOKASSA_CURRENCY", "RUB")
@@ -1074,6 +1088,8 @@ def check_yookassa_payment():
 
 @application.post("/api/yookassa/create-payment")
 def create_yookassa_payment():
+    if not SHOW_PRICES:
+        return jsonify({"error": "Оформление заказа временно недоступно."}), 403
     if is_rate_limited(_client_rate_limit_key()):
         return make_response(jsonify({"error": "Слишком много запросов. Попробуйте позже."}), 429)
 
