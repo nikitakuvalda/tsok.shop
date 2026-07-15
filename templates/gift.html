@@ -337,6 +337,7 @@
     $('#giftInitials').addEventListener('input', function (e) { state.initials = e.target.value; render(); });
 
     $('#giftAddVisible').addEventListener('click', function () {
+        if (window.TSOK_SHOW_PRICES === false) return;
         var t = TIERS[state.tier];
         var btn = $('#giftAddBtn');
         btn.dataset.id = 'gift-' + state.tier;

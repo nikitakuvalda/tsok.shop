@@ -762,6 +762,7 @@
     }
 
     function handleCheckout() {
+        if (window.TSOK_SHOW_PRICES === false) return;
         if (!isBoxCustomerRegistered()) {
             openBoxRegistration();
             return;
@@ -957,6 +958,7 @@
     });
 
     function addBox(p, now, label) {
+        if (window.TSOK_SHOW_PRICES === false) return;
         var b = document.getElementById('boxAddBtn');
         b.dataset.id = 'box-' + p.name;
         b.dataset.name = 'TSOK BOX \u00B7 \u00AB' + p.name + '\u00BB (3 мес, ' + label + ')';

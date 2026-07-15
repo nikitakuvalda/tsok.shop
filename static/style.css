@@ -1838,6 +1838,12 @@ input,select,textarea{font-family:inherit}
 .prices-hidden .result-card__price,
 .prices-hidden .program__price,
 .prices-hidden .duo__price,
-.prices-hidden .pcard__sub {
+.prices-hidden .pcard__sub,
+.prices-hidden .js-add-to-cart,
+.prices-hidden #giftAddVisible,
+.prices-hidden #checkoutBtn,
+.prices-hidden #rBuy,
+.prices-hidden .cart-drawer__footer a[href*="checkout"],
+.prices-hidden #checkoutSubmitBtn {
   display: none !important;
 }

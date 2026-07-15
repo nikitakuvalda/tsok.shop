@@ -22,6 +22,14 @@ function tsokStripPriceDetails(value) {
     return String(value).replace(/\s*·\s*[\d\s.,]+₽/g, '');
 }
 
+if (!tsokShowPrices) {
+    cart = [];
+    localStorage.removeItem('tsok_cart');
+    localStorage.removeItem('tsok_box_meta');
+    localStorage.removeItem('tsok_box_state');
+    boxMeta = null;
+}
+
 /* Нормализация пути к картинке: data-img хранится как 'img/Pearl3.jpg',
    но в корзине/чекауте/конструкторе рендерится напрямую и без /static/ даёт 404. */
 function tsokImg(path) {
@@ -41,6 +49,10 @@ function saveFavs() {
 }
 
 function addToCart(id, name, price, size, brand, img) {
+    if (!tsokShowPrices) {
+        showToast('Добавление в корзину временно недоступно', 'cart');
+        return;
+    }
     const existing = cart.find(i => i.id === id);
     if (existing) {
         existing.qty += 1;
@@ -348,6 +360,13 @@ function initCatalogFilter() {
    ADD TO CART — DATA ATTRS
    ============================================================ */
 function initAddToCartBtns() {
+    if (!tsokShowPrices) {
+        document.querySelectorAll('.js-add-to-cart').forEach(btn => {
+            btn.disabled = true;
+            btn.setAttribute('aria-hidden', 'true');
+        });
+        return;
+    }
     document.querySelectorAll('.js-add-to-cart').forEach(btn => {
         btn.addEventListener('click', () => {
             const id    = btn.dataset.id    || 'product-' + Math.random().toString(36).slice(2, 7);
@@ -780,6 +799,13 @@ function initCheckoutPage() {
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
+        if (!tsokShowPrices) {
+            if (errorEl) {
+                errorEl.textContent = 'Оформление заказа временно недоступно.';
+                errorEl.hidden = false;
+            }
+            return;
+        }
         if (!cart.length) {
             openCart();
             return;

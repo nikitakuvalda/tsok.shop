@@ -1147,6 +1147,8 @@ def check_yookassa_payment():
 
 @application.post("/api/yookassa/create-payment")
 def create_yookassa_payment():
+    if not SHOW_PRICES:
+        return jsonify({"error": "Оформление заказа временно недоступно."}), 403
     if is_rate_limited(_client_rate_limit_key()):
         return make_response(jsonify({"error": "Слишком много запросов. Попробуйте позже."}), 429)
 
