@@ -1,6 +1,33 @@
 <!-- ═══════════════════════════════════════════
      ЕДИНАЯ ШАПКА САЙТА — TSOK Boutique 2.0
      ═══════════════════════════════════════════ -->
+
+<script>
+window.TSOK_PRODUCTS = {{ db_products_by_id|tojson }};
+window.tsokFormatPrice = function (value) {
+    var num = Number(value || 0);
+    return num.toLocaleString('ru-RU') + ' ₽';
+};
+window.tsokApplyDbProductPrices = function () {
+    var products = window.TSOK_PRODUCTS || {};
+    document.querySelectorAll('.js-add-to-cart[data-id]').forEach(function (button) {
+        var product = products[button.dataset.id];
+        if (!product) return;
+        button.dataset.price = product.price;
+        button.dataset.name = product.name || button.dataset.name || '';
+        button.dataset.size = product.size || button.dataset.size || '';
+        button.dataset.brand = product.brand || button.dataset.brand || '';
+        if (product.image) button.dataset.img = product.image;
+        var card = button.closest('.product-card, .pcard, .product-card-homme, .constructor-product');
+        if (!card) return;
+        card.querySelectorAll('.product-card__price, .pcard__price, .product-card-homme__price, .constructor-product__price').forEach(function (priceNode) {
+            priceNode.textContent = window.tsokFormatPrice(product.price);
+        });
+    });
+};
+document.addEventListener('DOMContentLoaded', window.tsokApplyDbProductPrices);
+</script>
+
 <script>
 (function () {
     window.TSOK_SHOW_PRICES = {{ show_prices|tojson }};
@@ -124,6 +151,7 @@
         </div>
     </div>
 </div>
+
 <script>
 (function () {
     var KEY = 'tsok_cookie_consent';

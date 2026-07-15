@@ -82,6 +82,7 @@ GIFT_LABELS = {
 }
 DELIVERY_FEE = Decimal("700")
 MIN_BOX_ITEMS = 3
+TEST_SUBSCRIPTION_BOX_PRODUCT_ID = "tsok-test-subscription-box-3m"
 
 def _selected_count(items):
     return sum(item["qty"] for item in items)
@@ -89,6 +90,24 @@ def _selected_count(items):
 def _calculate_box_quote(items, plan_code="once", vip_gift=""):
     plan = SUBSCRIPTION_PLANS.get(plan_code) or SUBSCRIPTION_PLANS["once"]
     count = _selected_count(items)
+    if plan_code == "test-3m" and len(items) == 1 and items[0].get("id") == TEST_SUBSCRIPTION_BOX_PRODUCT_ID:
+        return {
+            "plan_code": "test-3m",
+            "plan_label": "Тестовая подписка 3 месяца",
+            "item_count": count,
+            "base_total": Decimal("3"),
+            "discount_percent": 0,
+            "discount_amount": Decimal("0"),
+            "delivery_fee": Decimal("0"),
+            "free_delivery": True,
+            "gift_enabled": False,
+            "vip_gift": "",
+            "payable_total": Decimal("1"),
+            "monthly_payment": Decimal("1"),
+            "subscription_months": 3,
+            "subscription_total": Decimal("3"),
+            "bnpl": None,
+        }
     if count < MIN_BOX_ITEMS:
         raise ValueError("Минимальный состав TSOK BOX — 3 товара.")
     base_total = sum(item["line_total"] for item in items)
@@ -296,6 +315,33 @@ def _payment_field(payment, field_name):
     return getattr(payment, field_name, None)
 
 
+
+
+def _product_payload(product):
+    price = Decimal(str(product["price"]))
+    image = product.get("image") or ""
+    return {
+        "id": product["id"],
+        "name": product["name"],
+        "price": int(price) if price == price.to_integral_value() else float(price),
+        "price_label": f"{int(price) if price == price.to_integral_value() else price} ₽".replace(".", ","),
+        "size": product.get("size", ""),
+        "brand": product.get("brand", ""),
+        "category": product.get("category", ""),
+        "description": product.get("description", ""),
+        "image": image,
+        "image_url": url_for("static", filename=image) if image else "",
+    }
+
+
+@application.context_processor
+def inject_product_prices():
+    products = [_product_payload(product) for product in list_products()]
+    return {
+        "db_products": products,
+        "db_products_by_id": {product["id"]: product for product in products},
+    }
+
 def _client_rate_limit_key():
     forwarded_for = request.headers.get("X-Forwarded-For", "")
     client_ip = forwarded_for.split(",", 1)[0].strip() or request.remote_addr or "unknown"
@@ -303,7 +349,7 @@ def _client_rate_limit_key():
 
 
 def _render_cached_template(template_name):
-    cache_key = f"page:v1:{template_name}"
+    cache_key = f"page:v2:{template_name}:products"
     cached_html = cache_get_text(cache_key)
     if cached_html is not None:
         return Response(cached_html, mimetype="text/html")
@@ -534,6 +580,29 @@ def _sync_yookassa_payment(order_number=None, payment_id=None):
     return {"status": payment_status, "order_number": row["order_number"], "payment_id": row["payment_id"]}
 
 
+
+def _receipt_customer(customer):
+    email = str(customer.get("email", "")).strip()
+    phone_digits = "".join(ch for ch in str(customer.get("phone", "")) if ch.isdigit())
+    receipt_customer = {}
+    if "@" in email:
+        receipt_customer["email"] = email
+    if 10 <= len(phone_digits) <= 15:
+        receipt_customer["phone"] = phone_digits
+    return receipt_customer
+
+
+def _receipt_item_for_product(item, quote=None):
+    is_test_subscription = bool(quote and quote.get("plan_code") == "test-3m" and item.get("id") == TEST_SUBSCRIPTION_BOX_PRODUCT_ID)
+    return {
+        "description": item["name"][:128],
+        "quantity": str(item["qty"]),
+        "amount": {"value": _format_amount(item["price"]), "currency": YOOKASSA_CURRENCY},
+        "vat_code": int(os.getenv("YOOKASSA_VAT_CODE", "1")),
+        "payment_subject": "service" if is_test_subscription else "commodity",
+        "payment_mode": "full_payment",
+    }
+
 def _create_yookassa_payment(items, total, customer, delivery, quote=None, benefits=None):
     if not YOOKASSA_SHOP_ID or not YOOKASSA_SECRET_KEY:
         raise RuntimeError("Не настроены YOOKASSA_SHOP_ID и YOOKASSA_SECRET_KEY.")
@@ -553,22 +622,12 @@ def _create_yookassa_payment(items, total, customer, delivery, quote=None, benef
     if quote:
         payload["save_payment_method"] = True
     if os.getenv("YOOKASSA_SEND_RECEIPT", "false").lower() in {"1", "true", "yes", "on"}:
+        receipt_customer = _receipt_customer(customer)
+        if not receipt_customer:
+            raise ValueError("Для фискального чека укажите корректный email или телефон.")
         payload["receipt"] = {
-            "customer": {
-                "email": str(customer.get("email", "")).strip(),
-                "phone": str(customer.get("phone", "")).strip(),
-            },
-            "items": [
-                {
-                    "description":    item["name"][:128],
-                    "quantity":       str(item["qty"]),
-                    "amount":         {"value": _format_amount(item["price"]), "currency": YOOKASSA_CURRENCY},
-                    "vat_code":       int(os.getenv("YOOKASSA_VAT_CODE", "1")),
-                    "payment_subject": "commodity",
-                    "payment_mode":   "full_payment",
-                }
-                for item in items
-            ],
+            "customer": receipt_customer,
+            "items": [_receipt_item_for_product(item, quote) for item in items],
         }
     Configuration.account_id = YOOKASSA_SHOP_ID
     Configuration.secret_key  = YOOKASSA_SECRET_KEY
@@ -1099,7 +1158,10 @@ def create_yookassa_payment():
         quote = None
         if payload.get("box"):
             box_payload = payload.get("box") if isinstance(payload.get("box"), dict) else {}
-            quote = _calculate_box_quote(items, box_payload.get("plan", "once"), box_payload.get("vip_gift", ""))
+            requested_plan = box_payload.get("plan", "once")
+            is_test_box = len(items) == 1 and items[0].get("id") == TEST_SUBSCRIPTION_BOX_PRODUCT_ID
+            if requested_plan != "test-3m" or is_test_box:
+                quote = _calculate_box_quote(items, requested_plan, box_payload.get("vip_gift", ""))
         subtotal_for_benefits = quote["payable_total"] if quote else total
         benefits = _checkout_benefits_from_payload(payload, subtotal_for_benefits, is_subscription_box=bool(quote))
         payment, order_number = _create_yookassa_payment(items, total, customer, delivery, quote, benefits)
@@ -1281,7 +1343,10 @@ def checkout_preview():
         quote = None
         if payload.get("box"):
             box_payload = payload.get("box") if isinstance(payload.get("box"), dict) else {}
-            quote = _calculate_box_quote(items, box_payload.get("plan", "once"), box_payload.get("vip_gift", ""))
+            requested_plan = box_payload.get("plan", "once")
+            is_test_box = len(items) == 1 and items[0].get("id") == TEST_SUBSCRIPTION_BOX_PRODUCT_ID
+            if requested_plan != "test-3m" or is_test_box:
+                quote = _calculate_box_quote(items, requested_plan, box_payload.get("vip_gift", ""))
         subtotal = quote["payable_total"] if quote else total
         benefits = _checkout_benefits_from_payload(payload, subtotal, is_subscription_box=bool(quote))
     except (ValueError, InvalidOperation) as error:
